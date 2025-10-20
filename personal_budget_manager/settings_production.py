@@ -25,15 +25,18 @@ ALLOWED_HOSTS = [
     # Add your custom domain here
 ]
 
-# Database configuration
+# Database configuration for Azure SQL Server
 DATABASES = {
     'default': {
-        'ENGINE': 'mysql.connector.django',
+        'ENGINE': 'mssql',
         'NAME': os.environ.get('DB_NAME', 'personal_budget_manager'),
         'USER': os.environ.get('DB_USER', 'db_admin'),
-        'PASSWORD': os.environ.get('DB_PASSWORD', ''),
-        'HOST': os.environ.get('DB_HOST', ''),
-        'PORT': os.environ.get('DB_PORT', '3306'),
+        'PASSWORD': os.environ.get('DB_PASSWORD', 'Soesh@123'),
+        'HOST': os.environ.get('DB_HOST', 'train-reserevation-system.database.windows.net'),
+        'PORT': os.environ.get('DB_PORT', '1433'),
+        'OPTIONS': {
+            'driver': 'ODBC Driver 17 for SQL Server',
+        },
     }
 }
 
