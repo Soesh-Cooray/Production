@@ -37,4 +37,4 @@ ENV PORT=8000
 EXPOSE 8000
 
 # Use gunicorn to serve the WSGI app
-CMD ["gunicorn", "personal_budget_manager.wsgi:application", "--bind", "0.0.0.0:8000", "--workers", "3"]
+CMD ["bash", "-lc", "gunicorn personal_budget_manager.wsgi:application --bind 0.0.0.0:${PORT:-8000} --workers 3"]
