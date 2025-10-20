@@ -1,11 +1,15 @@
 
 import axios from 'axios';
 
-const API_URL = 'http://localhost:8000/api/';  
+// Root API base (e.g., https://your-backend.vercel.app). Falls back to current origin
+export const API_BASE =
+  process.env.REACT_APP_API_BASE ||
+  (typeof window !== 'undefined' && window.__API_BASE__) ||
+  (typeof window !== 'undefined' ? window.location.origin : '');
 
-
+// Budget endpoints live under /api/
 const apiClient = axios.create({
-  baseURL: API_URL,
+  baseURL: `${API_BASE}/api/`,
 });
 
 

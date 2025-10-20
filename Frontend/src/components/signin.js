@@ -3,6 +3,7 @@ import { Box, Card, TextField, Button, Typography, Link, useTheme } from '@mui/m
 import AttachMoneyIcon from '@mui/icons-material/AttachMoney';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
+import { API_BASE } from '../api';
 
 function SignInPage() {
   const theme = useTheme();
@@ -14,7 +15,7 @@ function SignInPage() {
 
   const handleSignIn = async () => {
     try {
-      const response = await axios.post('http://127.0.0.1:8000/auth/jwt/create/', {
+      const response = await axios.post(`${API_BASE}/auth/jwt/create/`, {
         username,
         password,
       });

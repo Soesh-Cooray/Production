@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { Box, Card, TextField, Button, Typography, Link } from '@mui/material';
 import AttachMoneyIcon from '@mui/icons-material/AttachMoney';
 import axios from 'axios';
+import { API_BASE } from '../api';
 import { useNavigate } from 'react-router-dom';
 
 function SignUpPage() {
@@ -50,7 +51,7 @@ function SignUpPage() {
         }
 
         try {
-            const response = await axios.post('http://127.0.0.1:8000/auth/users/', {
+            const response = await axios.post(`${API_BASE}/auth/users/`, {
                 first_name: name,
                 username: email,
                 password,
