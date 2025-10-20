@@ -25,19 +25,15 @@ ALLOWED_HOSTS = [
     # Add your custom domain here
 ]
 
-# Database configuration for MS AZURE SQL SERVER
-
+# Database configuration
 DATABASES = {
     'default': {
-        'ENGINE': 'sql_server.pyodbc',
-        'NAME': 'personal_budget_manager',
-        'USER': 'db_admin',
-        'PASSWORD': 'Soesh@123',
-        'HOST': 'train-reserevation-system.database.windows.net',
-        'PORT': '1433',
-        'OPTIONS': {
-            'driver': 'ODBC Driver 17 for SQL Server',
-        },
+        'ENGINE': 'mysql.connector.django',
+        'NAME': os.environ.get('DB_NAME', 'personal_budget_manager'),
+        'USER': os.environ.get('DB_USER', 'db_admin'),
+        'PASSWORD': os.environ.get('DB_PASSWORD', ''),
+        'HOST': os.environ.get('DB_HOST', ''),
+        'PORT': os.environ.get('DB_PORT', '3306'),
     }
 }
 
