@@ -1,0 +1,17 @@
+{
+  "builds": [
+    {
+      "src": "personal_budget_manager/wsgi.py",
+      "use": "@vercel/python"
+    }
+  ],
+  "routes": [
+    {
+      "src": "/(.*)",
+      "dest": "personal_budget_manager/wsgi.py"
+    }
+  ],
+  "env": {
+    "DJANGO_SETTINGS_MODULE": "personal_budget_manager.settings_production"
+  }
+} 
