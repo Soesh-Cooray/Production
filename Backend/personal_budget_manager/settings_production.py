@@ -48,7 +48,8 @@ DEFAULT_FROM_EMAIL = EMAIL_HOST_USER
 # CORS settings for production
 CORS_ALLOWED_ORIGINS = [
     "https://production-budget-master-frontend.vercel.app",
-    
+    "https://budget-master-app.vercel.app",
+
 ]
 
 CORS_ALLOWED_ORIGIN_REGEXES = [
