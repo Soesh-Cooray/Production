@@ -1,4 +1,5 @@
 echo "Building the project..."
+export DJANGO_SETTINGS_MODULE=personal_budget_manager.settings_production
 python3.9 -m ensurepip
 python3.9 -m pip install --upgrade pip
 python3.9 -m pip install -r requirements.txt
