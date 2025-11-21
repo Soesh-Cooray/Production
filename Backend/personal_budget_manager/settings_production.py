@@ -47,11 +47,18 @@ DEFAULT_FROM_EMAIL = EMAIL_HOST_USER
 # CORS settings for production
 CORS_ALLOWED_ORIGINS = [
     "https://production-budget-master-frontend.vercel.app",
-    "https://production-budget-master-frontend-9lc7w9mkb.vercel.app",
+    "https://production-budget-master-fron-git-b3fc2c-soesh-coorays-projects.vercel.app",
+    "https://production-budget-master-frontend-4hm3tvdrp.vercel.app",
 ]
 
 CORS_ALLOW_CREDENTIALS = True
 CORS_ALLOW_ALL_ORIGINS = False  # Set to False in production
+
+CSRF_TRUSTED_ORIGINS = [
+    "https://production-budget-master-frontend.vercel.app",
+    "https://production-budget-master-fron-git-b3fc2c-soesh-coorays-projects.vercel.app",
+    "https://production-budget-master-frontend-4hm3tvdrp.vercel.app",
+]
 
 # Static files configuration
 STATIC_URL = '/static/'
