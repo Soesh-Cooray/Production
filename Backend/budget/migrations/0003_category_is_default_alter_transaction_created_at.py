@@ -29,7 +29,7 @@ def seed_default_categories(apps, schema_editor):
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('budget', '0002_auto_20250728_2243'),
+        ('budget', '0001_initial'),
     ]
 
     operations = [
@@ -37,11 +37,6 @@ class Migration(migrations.Migration):
             model_name='category',
             name='is_default',
             field=models.BooleanField(default=False),
-        ),
-        migrations.AlterField(
-            model_name='transaction',
-            name='created_at',
-            field=models.DateTimeField(auto_now_add=True),
         ),
         migrations.RunPython(seed_default_categories),
     ]
