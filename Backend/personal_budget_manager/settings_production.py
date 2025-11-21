@@ -46,9 +46,8 @@ DEFAULT_FROM_EMAIL = EMAIL_HOST_USER
 
 # CORS settings for production
 CORS_ALLOWED_ORIGINS = [
-    "https://your-frontend-domain.vercel.app",
-    "https://your-frontend-domain.now.sh",
-    # Add your frontend domain here
+    "https://production-budget-master-frontend.vercel.app",
+    "https://production-budget-master-frontend-9lc7w9mkb.vercel.app",
 ]
 
 CORS_ALLOW_CREDENTIALS = True
