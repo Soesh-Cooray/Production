@@ -101,6 +101,10 @@ LOGGING = {
     },
 }
 
+# Djoser / Email Settings
+DOMAIN = 'budget-master-app.vercel.app'
+SITE_NAME = 'BudgetMaster'
+
 # Whitenoise configuration
 MIDDLEWARE.insert(1, 'whitenoise.middleware.WhiteNoiseMiddleware')
 

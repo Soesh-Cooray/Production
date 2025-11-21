@@ -6,6 +6,7 @@ from django.utils.encoding import force_bytes
 from django.utils.http import urlsafe_base64_encode
 from django.utils.translation import gettext as _
 from djoser.email import PasswordResetEmail, PasswordChangedConfirmationEmail
+from django.conf import settings
 
 
 class CustomPasswordResetEmail(PasswordResetEmail):
@@ -26,8 +27,8 @@ class CustomPasswordResetEmail(PasswordResetEmail):
             context["site_name"] = site.name
             context["domain"] = site.domain
         except:
-            context["site_name"] = "BudgetMaster"
-            context["domain"] = "localhost:3000"
+            context["site_name"] = getattr(settings, 'SITE_NAME', 'BudgetMaster')
+            context["domain"] = getattr(settings, 'DOMAIN', 'localhost:3000')
             
         context["protocol"] = "https" if self.request.is_secure() else "http"
         
@@ -77,8 +78,8 @@ class CustomPasswordChangedEmail(PasswordChangedConfirmationEmail):
             context["site_name"] = site.name
             context["domain"] = site.domain
         except:
-            context["site_name"] = "BudgetMaster"
-            context["domain"] = "localhost:3000"
+            context["site_name"] = getattr(settings, 'SITE_NAME', 'BudgetMaster')
+            context["domain"] = getattr(settings, 'DOMAIN', 'localhost:3000')
             
         context["protocol"] = "https" if self.request.is_secure() else "http"
         return context
@@ -111,4 +112,4 @@ class CustomPasswordChangedEmail(PasswordChangedConfirmationEmail):
         context = self.get_context_data()
         self.subject = _("Password Changed - BudgetMaster")
         self.html_body = render_to_string(self.template_name, context)
-        self.text_body = render_to_string(self.text_template_name, context) 
+        self.text_body = render_to_string(self.text_template_name, context)
