@@ -45,10 +45,13 @@ EMAIL_HOST_PASSWORD = os.environ.get('EMAIL_HOST_PASSWORD', 'mrlo pfps uaog pcjo
 DEFAULT_FROM_EMAIL = EMAIL_HOST_USER
 
 # CORS settings for production
+# CORS settings for production
 CORS_ALLOWED_ORIGINS = [
     "https://production-budget-master-frontend.vercel.app",
-    "https://production-budget-master-fron-git-b3fc2c-soesh-coorays-projects.vercel.app",
-    "https://production-budget-master-frontend-4hm3tvdrp.vercel.app",
+]
+
+CORS_ALLOWED_ORIGIN_REGEXES = [
+    r"^https://production-budget-master-frontend.*\.vercel\.app$",
 ]
 
 CORS_ALLOW_CREDENTIALS = True
