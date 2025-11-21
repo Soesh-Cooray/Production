@@ -4,15 +4,17 @@ import AttachMoneyIcon from '@mui/icons-material/AttachMoney';
 import axios from 'axios';
 
 
+import { API_BASE } from '../api';
+
 function ForgotPasswordPage() {
     const [email, setEmail] = useState('');
     const [message, setMessage] = useState('');
-    
+
 
     const handleResetRequest = async () => {
         try {
             console.log("Sending password reset request for email:", email);
-            const response = await axios.post('http://127.0.0.1:8000/auth/users/reset_password/', 
+            const response = await axios.post(`${API_BASE}/auth/users/reset_password/`,
                 { email },
                 {
                     headers: {
@@ -55,7 +57,7 @@ function ForgotPasswordPage() {
                 <Typography variant="h6" sx={{ fontWeight: 'bold', fontSize: 30 }}>Reset your password</Typography>
             </Box>
 
-          
+
             <Card sx={{ padding: 4, width: '350px', borderRadius: 4 }} elevation={5}>
                 {message && (
                     <Typography variant="body2" color={message.startsWith("Error") ? "error" : "success"} gutterBottom textAlign="center">

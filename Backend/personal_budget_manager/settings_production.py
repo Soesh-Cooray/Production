@@ -63,6 +63,7 @@ CSRF_TRUSTED_ORIGINS = [
     "https://production-budget-master-frontend.vercel.app",
     "https://production-budget-master-fron-git-b3fc2c-soesh-coorays-projects.vercel.app",
     "https://production-budget-master-frontend-4hm3tvdrp.vercel.app",
+    "https://budget-master-app.vercel.app",
 ]
 
 # Static files configuration
