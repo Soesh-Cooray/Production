@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Box, Typography, Paper, Grid, LinearProgress, List, ListItem, ListItemText, Chip, Avatar, CircularProgress, Card, useTheme, TextField, Button } from '@mui/material';
 import { styled } from '@mui/material/styles';
 import { Bar, Doughnut } from 'react-chartjs-2';
-import { Chart as ChartJS, CategoryScale,LinearScale,BarElement,ArcElement,Title,Tooltip,Legend } from 'chart.js';
+import { Chart as ChartJS, CategoryScale, LinearScale, BarElement, ArcElement, Title, Tooltip, Legend } from 'chart.js';
 import AccountBalanceWalletIcon from '@mui/icons-material/AccountBalanceWallet';
 import ArrowCircleUpIcon from '@mui/icons-material/ArrowCircleUp';
 import ArrowCircleDownIcon from '@mui/icons-material/ArrowCircleDown';
@@ -62,11 +62,11 @@ const BudgetProgressBar = styled(LinearProgress)(({ theme }) => ({
 const BudgetProgressCard = ({ name, spent, amount, remaining, percent, currencySymbol }) => {
   const theme = useTheme();
   return (
-    <Card sx={{ 
-      p: 3, 
-      borderRadius: 3, 
-      boxShadow: theme.palette.mode === 'dark' ? '0 2px 10px rgba(0, 0, 0, 0.2)' : '0 2px 10px rgba(0,0,0,0.05)', 
-      mb: 2, 
+    <Card sx={{
+      p: 3,
+      borderRadius: 3,
+      boxShadow: theme.palette.mode === 'dark' ? '0 2px 10px rgba(0, 0, 0, 0.2)' : '0 2px 10px rgba(0,0,0,0.05)',
+      mb: 2,
       minWidth: 320,
       backgroundColor: theme.palette.background.paper,
     }}>
@@ -75,15 +75,15 @@ const BudgetProgressCard = ({ name, spent, amount, remaining, percent, currencyS
         <Typography sx={{ fontWeight: 500, color: theme.palette.text.primary }}>{currencySymbol}{spent.toFixed(2)}</Typography>
         <Typography sx={{ fontWeight: 500, color: theme.palette.text.primary }}>of {currencySymbol}{Number(amount).toLocaleString(undefined, { minimumFractionDigits: 2 })}</Typography>
       </Box>
-      <LinearProgress 
-        variant="determinate" 
-        value={percent} 
-        sx={{ 
-          height: 8, 
-          borderRadius: 4, 
-          backgroundColor: theme.palette.mode === 'dark' ? 'rgba(255, 255, 255, 0.1)' : '#f5f5f5', 
-          mb: 1 
-        }} 
+      <LinearProgress
+        variant="determinate"
+        value={percent}
+        sx={{
+          height: 8,
+          borderRadius: 4,
+          backgroundColor: theme.palette.mode === 'dark' ? 'rgba(255, 255, 255, 0.1)' : '#f5f5f5',
+          mb: 1
+        }}
       />
       <Box display="flex" justifyContent="space-between" alignItems="center">
         <Typography variant="body2" color="textSecondary">Remaining: {currencySymbol}{Number(remaining).toLocaleString(undefined, { minimumFractionDigits: 2 })}</Typography>
@@ -143,14 +143,14 @@ const Dashboard = () => {
     }
   }
 
-  
+
   const getGreeting = () => {
     const hour = new Date().getHours();
     if (hour < 12) return 'Good Morning';
     if (hour < 18) return 'Good Afternoon';
     return 'Good Evening';
   };
-  
+
   const handleStartDateChange = (newValue) => {
     setStartDate(newValue);
     localStorage.setItem('dashboardStartDate', newValue.toISOString());
@@ -172,7 +172,7 @@ const Dashboard = () => {
       setLoading(true);
       const formattedStartDate = formatDateForApi(startDate);
       const formattedEndDate = formatDateForApi(endDate);
-      
+
       const [expensesRes, incomesRes, savingsRes, budgetsRes, categoriesRes] = await Promise.all([
         transactionAPI.getExpenses(formattedStartDate, formattedEndDate),
         transactionAPI.getIncomes(formattedStartDate, formattedEndDate),
@@ -194,7 +194,7 @@ const Dashboard = () => {
       const totalIncome = incomes.reduce((sum, income) => sum + parseFloat(income.amount), 0);
       const totalExpenses = expenses.reduce((sum, expense) => sum + parseFloat(expense.amount), 0);
       const totalSavings = savingsTxns.reduce((sum, saving) => sum + parseFloat(saving.amount), 0);
-      const currentBalance = totalIncome - totalExpenses - totalSavings;     
+      const currentBalance = totalIncome - totalExpenses - totalSavings;
       const monthsInRange = getMonthsInRange();
       const incomeVsExpenses = processIncomeVsExpensesData(incomes, expenses, monthsInRange);
       const expenseBreakdown = processExpenseBreakdownData(expenses);
@@ -238,7 +238,7 @@ const Dashboard = () => {
     const incomeData = new Array(6).fill(0);
     const expenseData = new Array(6).fill(0);
 
-    
+
     incomes.forEach(income => {
       const date = new Date(income.date);
       const monthIndex = months.indexOf(date.toLocaleString('default', { month: 'short' }));
@@ -247,7 +247,7 @@ const Dashboard = () => {
       }
     });
 
-   
+
     expenses.forEach(expense => {
       const date = new Date(expense.date);
       const monthIndex = months.indexOf(date.toLocaleString('default', { month: 'short' }));
@@ -333,7 +333,7 @@ const Dashboard = () => {
       },
       tooltip: {
         callbacks: {
-          label: function(context) {
+          label: function (context) {
             return `${context.label}: ${context.raw}%`;
           }
         }
@@ -356,11 +356,15 @@ const Dashboard = () => {
     }
 
     return transactions
-      .filter(txn =>
-        txn.category === budget.category &&
-        new Date(txn.date) >= budgetStart &&
-        new Date(txn.date) < periodEnd
-      )
+      .filter(txn => {
+        const txnCatId = typeof txn.category === 'object' ? txn.category.id : txn.category;
+        const budgetCatId = typeof budget.category === 'object' ? budget.category.id : budget.category;
+        return (
+          txnCatId === budgetCatId &&
+          new Date(txn.date) >= budgetStart &&
+          new Date(txn.date) < periodEnd
+        );
+      })
       .reduce((sum, txn) => sum + parseFloat(txn.amount), 0);
   };
 
@@ -434,9 +438,9 @@ const Dashboard = () => {
       </Typography>
 
       {/* Date Range Picker */}
-      <Paper 
-        elevation={0} 
-        sx={{ 
+      <Paper
+        elevation={0}
+        sx={{
           mb: 4,
           p: 3,
           borderRadius: 2,
@@ -445,12 +449,12 @@ const Dashboard = () => {
         }}
       >
         <LocalizationProvider dateAdapter={AdapterDateFns}>
-          <Box sx={{ 
-            display: 'flex', 
-            flexDirection: { xs: 'column', sm: 'row' }, 
-            gap: 2, 
+          <Box sx={{
+            display: 'flex',
+            flexDirection: { xs: 'column', sm: 'row' },
+            gap: 2,
             alignItems: { xs: 'stretch', sm: 'center' },
-            '& .MuiTextField-root': { 
+            '& .MuiTextField-root': {
               backgroundColor: theme.palette.background.paper,
               borderRadius: 1,
               width: { xs: '100%', sm: '200px' }
@@ -467,10 +471,10 @@ const Dashboard = () => {
               onChange={handleEndDateChange}
               renderInput={(params) => <TextField {...params} fullWidth />}
             />
-            <Button 
-              variant="contained" 
+            <Button
+              variant="contained"
               onClick={fetchData}
-              sx={{ 
+              sx={{
                 height: 53,
                 px: 4,
                 width: { xs: '100%', sm: 'auto' },
@@ -493,7 +497,7 @@ const Dashboard = () => {
           <StatCard>
             <Box sx={{ display: 'flex', justifyContent: 'space-between', width: 350, alignItems: 'center', mb: 1 }}>
               <Typography variant="subtitle2" color="textSecondary">Current Balance</Typography>
-              <AccountBalanceWalletIcon sx={{ color: theme.palette.mode === 'dark' ? '#F7FDFF' : '#000000' }}/>
+              <AccountBalanceWalletIcon sx={{ color: theme.palette.mode === 'dark' ? '#F7FDFF' : '#000000' }} />
             </Box>
             <StatValue>{currencySymbol}{financialData.currentBalance.toLocaleString('en-US', { minimumFractionDigits: 2 })}</StatValue>
             <StatLabel>Total balance across all accounts</StatLabel>
@@ -503,7 +507,7 @@ const Dashboard = () => {
           <StatCard>
             <Box sx={{ display: 'flex', justifyContent: 'space-between', width: 350, alignItems: 'center', mb: 1 }}>
               <Typography variant="subtitle2" color="textSecondary">Total Income</Typography>
-              <ArrowCircleUpIcon sx={{ color: theme.palette.mode === 'dark' ? '#81c784' : '#2eb432' }}/>
+              <ArrowCircleUpIcon sx={{ color: theme.palette.mode === 'dark' ? '#81c784' : '#2eb432' }} />
             </Box>
             <StatValue sx={{ color: theme.palette.mode === 'dark' ? '#81c784' : '#4caf50' }}>
               {currencySymbol}{financialData.totalIncome.toLocaleString('en-US', { minimumFractionDigits: 2 })}
@@ -515,7 +519,7 @@ const Dashboard = () => {
           <StatCard>
             <Box sx={{ display: 'flex', justifyContent: 'space-between', width: 350, alignItems: 'center', mb: 1 }}>
               <Typography variant="subtitle2" color="textSecondary">Total Expenses</Typography>
-              <ArrowCircleDownIcon sx={{ color: theme.palette.mode === 'dark' ? '#e57373' : '#f44336' }}/>
+              <ArrowCircleDownIcon sx={{ color: theme.palette.mode === 'dark' ? '#e57373' : '#f44336' }} />
             </Box>
             <StatValue sx={{ color: theme.palette.mode === 'dark' ? '#e57373' : '#f44336' }}>
               {currencySymbol}{financialData.totalExpenses.toLocaleString('en-US', { minimumFractionDigits: 2 })}
@@ -527,7 +531,7 @@ const Dashboard = () => {
           <StatCard>
             <Box sx={{ display: 'flex', justifyContent: 'space-between', width: 350, alignItems: 'center', mb: 1 }}>
               <Typography variant="subtitle2" color="textSecondary">Total Savings</Typography>
-              <SavingsSharpIcon sx={{ color: theme.palette.mode === 'dark' ? '#7986cb' : '#3949ab' }}/>
+              <SavingsSharpIcon sx={{ color: theme.palette.mode === 'dark' ? '#7986cb' : '#3949ab' }} />
             </Box>
             <StatValue sx={{ color: theme.palette.mode === 'dark' ? '#7986cb' : '#3949ab' }}>
               {currencySymbol}{financialData.totalSavings?.toLocaleString('en-US', { minimumFractionDigits: 2 })}
@@ -544,7 +548,7 @@ const Dashboard = () => {
             <Typography variant="h6" sx={{ mb: 0.5, color: theme.palette.text.primary }}>Income vs Expenses</Typography>
             <Typography variant="body2" color="textSecondary" sx={{ mb: 2 }}>Your financial balance over time</Typography>
             <Box sx={{ height: 400, width: '100%' }}>
-              <Bar 
+              <Bar
                 data={{
                   labels: financialData.incomeVsExpenses.labels,
                   datasets: [
@@ -561,7 +565,7 @@ const Dashboard = () => {
                       barThickness: 30,
                     },
                   ],
-                }} 
+                }}
                 options={{
                   ...barChartOptions,
                   scales: {
@@ -594,7 +598,7 @@ const Dashboard = () => {
                       },
                     },
                   },
-                }} 
+                }}
               />
             </Box>
           </StyledPaper>
@@ -604,7 +608,7 @@ const Dashboard = () => {
             <Typography variant="h6" sx={{ mb: 0.5, color: theme.palette.text.primary }}>Expense Breakdown</Typography>
             <Typography variant="body2" color="textSecondary" sx={{ mb: 2 }}>Your spending by category</Typography>
             <Box sx={{ height: 400, width: '100%', display: 'flex', justifyContent: 'center', mx: 'auto' }}>
-              <Doughnut 
+              <Doughnut
                 data={{
                   labels: financialData.expenseBreakdown.labels,
                   datasets: [{
@@ -613,7 +617,7 @@ const Dashboard = () => {
                     borderWidth: 0,
                     cutout: '70%',
                   }],
-                }} 
+                }}
                 options={{
                   ...doughnutChartOptions,
                   plugins: {
@@ -627,11 +631,11 @@ const Dashboard = () => {
                       borderWidth: 1,
                     },
                   },
-                }} 
+                }}
               />
             </Box>
             <Box sx={{ width: '100%', display: 'flex', justifyContent: 'center', mt: 2, pb: 2 }}>
-              <Box sx={{ display: 'flex', gap: 2, flexWrap: 'wrap', justifyContent: 'center'}}>
+              <Box sx={{ display: 'flex', gap: 2, flexWrap: 'wrap', justifyContent: 'center' }}>
                 {financialData.expenseBreakdown.labels.map((label, index) => (
                   <Box key={label} sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
                     <Box sx={{ width: 12, height: 12, borderRadius: '50%', bgcolor: financialData.expenseBreakdown.colors[index] }} />
@@ -648,8 +652,8 @@ const Dashboard = () => {
 
       {/* Recent Transactions */}
       <Typography variant="h6" sx={{ mb: 2, fontWeight: 'bold', color: theme.palette.text.primary }}>Recent Transactions</Typography>
-      <Paper sx={{ 
-        mb: 4, 
+      <Paper sx={{
+        mb: 4,
         p: 2,
         backgroundColor: theme.palette.background.paper,
         boxShadow: theme.palette.mode === 'dark' ? '0 2px 10px rgba(0, 0, 0, 0.2)' : '0 2px 10px rgba(0,0,0,0.05)',
@@ -658,16 +662,16 @@ const Dashboard = () => {
           {recentTransactions.map((transaction) => (
             <ListItem key={transaction.id} divider>
               <Box sx={{ display: 'flex', width: '100%', alignItems: 'center' }}>
-                <Avatar sx={{ 
-                  bgcolor: transaction.transaction_type === 'income' 
+                <Avatar sx={{
+                  bgcolor: transaction.transaction_type === 'income'
                     ? theme.palette.mode === 'dark' ? 'rgba(129, 199, 132, 0.1)' : '#e8f5e9'
                     : theme.palette.mode === 'dark' ? 'rgba(229, 115, 115, 0.1)' : '#ffebee',
-                  color: transaction.transaction_type === 'income' 
+                  color: transaction.transaction_type === 'income'
                     ? theme.palette.mode === 'dark' ? '#81c784' : '#4caf50'
                     : theme.palette.mode === 'dark' ? '#e57373' : '#f44336',
-                  width: 40, 
-                  height: 40, 
-                  mr: 2 
+                  width: 40,
+                  height: 40,
+                  mr: 2
                 }}>
                   {transaction.transaction_type === 'income' ? '+' : '-'}
                 </Avatar>
@@ -677,21 +681,21 @@ const Dashboard = () => {
                   </Typography>
                   <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mt: 0.5 }}>
                     <Typography variant="caption" color="textSecondary">{transaction.date}</Typography>
-                    <Chip 
-                      label={transaction.category_name || 'Unknown'} 
-                      size="small" 
-                      sx={{ 
-                        height: 20, 
-                        fontSize: '0.625rem', 
+                    <Chip
+                      label={transaction.category_name || 'Unknown'}
+                      size="small"
+                      sx={{
+                        height: 20,
+                        fontSize: '0.625rem',
                         bgcolor: theme.palette.mode === 'dark' ? 'rgba(255, 255, 255, 0.1)' : '#f0f0f0',
                         color: theme.palette.text.secondary
-                      }} 
+                      }}
                     />
                   </Box>
                 </Box>
-                <Typography 
-                  variant="body2" 
-                  sx={{ 
+                <Typography
+                  variant="body2"
+                  sx={{
                     fontWeight: 'bold',
                     color: transaction.transaction_type === 'income'
                       ? theme.palette.mode === 'dark' ? '#81c784' : '#4caf50'
@@ -713,7 +717,7 @@ const Dashboard = () => {
           const spent = calculateSpent(budget);
           const remaining = Number(budget.amount) - spent;
           const percent = Number(budget.amount) ? Math.min((spent / Number(budget.amount)) * 100, 100) : 0;
-          const categoryName = categories.find(cat => cat.id === budget.category)?.name || 'Category';
+          const categoryName = typeof budget.category === 'object' ? budget.category.name : categories.find(cat => cat.id === budget.category)?.name || 'Category';
           return (
             <Grid item xs={12} sm={6} md={4} key={budget.id}>
               <BudgetProgressCard
