@@ -11,19 +11,20 @@ import BudgetsPage from './components/budgets';
 import Dashboard from './components/dashboard';
 import Reports from './components/reports';
 import Sidebar from './components/sidebar';
+import SettingsPage from './components/settings';
 import { ThemeProvider } from './context/ThemeContext';
 import { DRAWER_WIDTH, COLLAPSED_WIDTH } from './constants';
 
 function App() {
     const location = useLocation();
-    const showSidebar = ['/transaction', '/budgets', '/reports','/dashboard'].includes(location.pathname);
+    const showSidebar = ['/transaction', '/budgets', '/reports', '/dashboard', '/settings'].includes(location.pathname);
     const [open, setOpen] = useState(true);
 
     const handleDrawerToggle = () => {
         setOpen((prev) => !prev);
     };
-    
-    
+
+
     useEffect(() => {
         const style = document.createElement('style');
         style.innerHTML = `
@@ -45,7 +46,7 @@ function App() {
             }
         `;
         document.head.appendChild(style);
-        
+
         return () => {
             document.head.removeChild(style);
         };
@@ -57,7 +58,7 @@ function App() {
 
     return (
         <ThemeProvider>
-            <Box sx={{ 
+            <Box sx={{
                 display: 'flex',
                 margin: 0,
                 padding: 0,
@@ -74,11 +75,11 @@ function App() {
                     component="main"
                     sx={{
                         flexGrow: 1,
-                        width: showSidebar ? 
-                            `calc(100% - ${open ? DRAWER_WIDTH : COLLAPSED_WIDTH}px)` : 
+                        width: showSidebar ?
+                            `calc(100% - ${open ? DRAWER_WIDTH : COLLAPSED_WIDTH}px)` :
                             '100%',
-                        marginLeft: showSidebar ? 
-                            `${open ? DRAWER_WIDTH : COLLAPSED_WIDTH}px` : 
+                        marginLeft: showSidebar ?
+                            `${open ? DRAWER_WIDTH : COLLAPSED_WIDTH}px` :
                             0,
                         transition: (theme) =>
                             theme.transitions.create(['width', 'margin'], {
@@ -99,6 +100,7 @@ function App() {
                         <Route path="/budgets" element={<BudgetsPage />} />
                         <Route path="/reports" element={<Reports />} />
                         <Route path="/dashboard" element={<Dashboard />} />
+                        <Route path="/settings" element={<SettingsPage />} />
                         <Route path="*" element={<Navigate to="/" replace />} />
                     </Routes>
                 </Box>

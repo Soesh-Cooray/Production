@@ -11,6 +11,7 @@ import ExitToAppIcon from '@mui/icons-material/ExitToApp';
 import MenuIcon from '@mui/icons-material/Menu';
 import Brightness4Icon from '@mui/icons-material/Brightness4';
 import Brightness7Icon from '@mui/icons-material/Brightness7';
+import SettingsIcon from '@mui/icons-material/Settings';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { DRAWER_WIDTH } from '../constants';
 import { useTheme as useCustomTheme } from '../context/ThemeContext';
@@ -19,68 +20,68 @@ const COLLAPSED_WIDTH = 69;
 
 // List of all currencies 
 const currencyList = [
-  { code: 'USD', symbol: '$', name: 'US Dollar' },
-  { code: 'EUR', symbol: '€', name: 'Euro' },
-  { code: 'INR', symbol: '₹', name: 'Indian Rupee' },
-  { code: 'GBP', symbol: '£', name: 'British Pound' },
-  { code: 'JPY', symbol: '¥', name: 'Japanese Yen' },
-  { code: 'CAD', symbol: 'C$', name: 'Canadian Dollar' },
-  { code: 'AUD', symbol: 'A$', name: 'Australian Dollar' },
-  { code: 'CNY', symbol: '¥', name: 'Chinese Yuan' },
-  { code: 'CHF', symbol: 'Fr', name: 'Swiss Franc' },
-  { code: 'SGD', symbol: 'S$', name: 'Singapore Dollar' },
-  { code: 'HKD', symbol: 'HK$', name: 'Hong Kong Dollar' },
-  { code: 'NZD', symbol: 'NZ$', name: 'New Zealand Dollar' },
-  { code: 'SEK', symbol: 'kr', name: 'Swedish Krona' },
-  { code: 'KRW', symbol: '₩', name: 'South Korean Won' },
-  { code: 'ZAR', symbol: 'R', name: 'South African Rand' },
-  { code: 'RUB', symbol: '₽', name: 'Russian Ruble' },
-  { code: 'BRL', symbol: 'R$', name: 'Brazilian Real' },
-  { code: 'MXN', symbol: '$', name: 'Mexican Peso' },
-  { code: 'TRY', symbol: '₺', name: 'Turkish Lira' },
-  { code: 'SAR', symbol: '﷼', name: 'Saudi Riyal' },
-  { code: 'AED', symbol: 'د.إ', name: 'UAE Dirham' },
-  { code: 'PLN', symbol: 'zł', name: 'Polish Zloty' },
-  { code: 'THB', symbol: '฿', name: 'Thai Baht' },
-  { code: 'IDR', symbol: 'Rp', name: 'Indonesian Rupiah' },
-  { code: 'MYR', symbol: 'RM', name: 'Malaysian Ringgit' },
-  { code: 'DKK', symbol: 'kr', name: 'Danish Krone' },
-  { code: 'NOK', symbol: 'kr', name: 'Norwegian Krone' },
-  { code: 'CZK', symbol: 'Kč', name: 'Czech Koruna' },
-  { code: 'HUF', symbol: 'Ft', name: 'Hungarian Forint' },
-  { code: 'ILS', symbol: '₪', name: 'Israeli New Shekel' },
-  { code: 'PHP', symbol: '₱', name: 'Philippine Peso' },
-  { code: 'CLP', symbol: '$', name: 'Chilean Peso' },
-  { code: 'PKR', symbol: '₨', name: 'Pakistani Rupee' },
-  { code: 'EGP', symbol: '£', name: 'Egyptian Pound' },
-  { code: 'BDT', symbol: '৳', name: 'Bangladeshi Taka' },
-  { code: 'VND', symbol: '₫', name: 'Vietnamese Dong' },
-  { code: 'NGN', symbol: '₦', name: 'Nigerian Naira' },
-  { code: 'KWD', symbol: 'د.ك', name: 'Kuwaiti Dinar' },
-  { code: 'QAR', symbol: 'ر.ق', name: 'Qatari Riyal' },
-  { code: 'COP', symbol: '$', name: 'Colombian Peso' },
-  { code: 'LKR', symbol: '₨', name: 'Sri Lankan Rupee' },
-  { code: 'MAD', symbol: 'د.م.', name: 'Moroccan Dirham' },
-  { code: 'UAH', symbol: '₴', name: 'Ukrainian Hryvnia' },
-  { code: 'RON', symbol: 'lei', name: 'Romanian Leu' },
-  { code: 'BGN', symbol: 'лв', name: 'Bulgarian Lev' },
-  { code: 'HRK', symbol: 'kn', name: 'Croatian Kuna' },
-  { code: 'ISK', symbol: 'kr', name: 'Icelandic Krona' },
-  { code: 'JOD', symbol: 'د.ا', name: 'Jordanian Dinar' },
-  { code: 'OMR', symbol: 'ر.ع.', name: 'Omani Rial' },
-  { code: 'DZD', symbol: 'دج', name: 'Algerian Dinar' },
-  { code: 'TWD', symbol: 'NT$', name: 'New Taiwan Dollar' },
-  { code: 'KES', symbol: 'KSh', name: 'Kenyan Shilling' },
-  { code: 'TZS', symbol: 'TSh', name: 'Tanzanian Shilling' },
-  { code: 'GHS', symbol: '₵', name: 'Ghanaian Cedi' },
-  { code: 'ETB', symbol: 'Br', name: 'Ethiopian Birr' },
-  { code: 'UGX', symbol: 'USh', name: 'Ugandan Shilling' },
-  { code: 'ZMW', symbol: 'ZK', name: 'Zambian Kwacha' },
-  { code: 'MUR', symbol: '₨', name: 'Mauritian Rupee' },
-  { code: 'BHD', symbol: 'ب.د', name: 'Bahraini Dinar' },
-  { code: 'XOF', symbol: 'CFA', name: 'West African CFA franc' },
-  { code: 'XAF', symbol: 'FCFA', name: 'Central African CFA franc' },
-  { code: 'XPF', symbol: '₣', name: 'CFP franc' },
+    { code: 'USD', symbol: '$', name: 'US Dollar' },
+    { code: 'EUR', symbol: '€', name: 'Euro' },
+    { code: 'INR', symbol: '₹', name: 'Indian Rupee' },
+    { code: 'GBP', symbol: '£', name: 'British Pound' },
+    { code: 'JPY', symbol: '¥', name: 'Japanese Yen' },
+    { code: 'CAD', symbol: 'C$', name: 'Canadian Dollar' },
+    { code: 'AUD', symbol: 'A$', name: 'Australian Dollar' },
+    { code: 'CNY', symbol: '¥', name: 'Chinese Yuan' },
+    { code: 'CHF', symbol: 'Fr', name: 'Swiss Franc' },
+    { code: 'SGD', symbol: 'S$', name: 'Singapore Dollar' },
+    { code: 'HKD', symbol: 'HK$', name: 'Hong Kong Dollar' },
+    { code: 'NZD', symbol: 'NZ$', name: 'New Zealand Dollar' },
+    { code: 'SEK', symbol: 'kr', name: 'Swedish Krona' },
+    { code: 'KRW', symbol: '₩', name: 'South Korean Won' },
+    { code: 'ZAR', symbol: 'R', name: 'South African Rand' },
+    { code: 'RUB', symbol: '₽', name: 'Russian Ruble' },
+    { code: 'BRL', symbol: 'R$', name: 'Brazilian Real' },
+    { code: 'MXN', symbol: '$', name: 'Mexican Peso' },
+    { code: 'TRY', symbol: '₺', name: 'Turkish Lira' },
+    { code: 'SAR', symbol: '﷼', name: 'Saudi Riyal' },
+    { code: 'AED', symbol: 'د.إ', name: 'UAE Dirham' },
+    { code: 'PLN', symbol: 'zł', name: 'Polish Zloty' },
+    { code: 'THB', symbol: '฿', name: 'Thai Baht' },
+    { code: 'IDR', symbol: 'Rp', name: 'Indonesian Rupiah' },
+    { code: 'MYR', symbol: 'RM', name: 'Malaysian Ringgit' },
+    { code: 'DKK', symbol: 'kr', name: 'Danish Krone' },
+    { code: 'NOK', symbol: 'kr', name: 'Norwegian Krone' },
+    { code: 'CZK', symbol: 'Kč', name: 'Czech Koruna' },
+    { code: 'HUF', symbol: 'Ft', name: 'Hungarian Forint' },
+    { code: 'ILS', symbol: '₪', name: 'Israeli New Shekel' },
+    { code: 'PHP', symbol: '₱', name: 'Philippine Peso' },
+    { code: 'CLP', symbol: '$', name: 'Chilean Peso' },
+    { code: 'PKR', symbol: '₨', name: 'Pakistani Rupee' },
+    { code: 'EGP', symbol: '£', name: 'Egyptian Pound' },
+    { code: 'BDT', symbol: '৳', name: 'Bangladeshi Taka' },
+    { code: 'VND', symbol: '₫', name: 'Vietnamese Dong' },
+    { code: 'NGN', symbol: '₦', name: 'Nigerian Naira' },
+    { code: 'KWD', symbol: 'د.ك', name: 'Kuwaiti Dinar' },
+    { code: 'QAR', symbol: 'ر.ق', name: 'Qatari Riyal' },
+    { code: 'COP', symbol: '$', name: 'Colombian Peso' },
+    { code: 'LKR', symbol: '₨', name: 'Sri Lankan Rupee' },
+    { code: 'MAD', symbol: 'د.م.', name: 'Moroccan Dirham' },
+    { code: 'UAH', symbol: '₴', name: 'Ukrainian Hryvnia' },
+    { code: 'RON', symbol: 'lei', name: 'Romanian Leu' },
+    { code: 'BGN', symbol: 'лв', name: 'Bulgarian Lev' },
+    { code: 'HRK', symbol: 'kn', name: 'Croatian Kuna' },
+    { code: 'ISK', symbol: 'kr', name: 'Icelandic Krona' },
+    { code: 'JOD', symbol: 'د.ا', name: 'Jordanian Dinar' },
+    { code: 'OMR', symbol: 'ر.ع.', name: 'Omani Rial' },
+    { code: 'DZD', symbol: 'دج', name: 'Algerian Dinar' },
+    { code: 'TWD', symbol: 'NT$', name: 'New Taiwan Dollar' },
+    { code: 'KES', symbol: 'KSh', name: 'Kenyan Shilling' },
+    { code: 'TZS', symbol: 'TSh', name: 'Tanzanian Shilling' },
+    { code: 'GHS', symbol: '₵', name: 'Ghanaian Cedi' },
+    { code: 'ETB', symbol: 'Br', name: 'Ethiopian Birr' },
+    { code: 'UGX', symbol: 'USh', name: 'Ugandan Shilling' },
+    { code: 'ZMW', symbol: 'ZK', name: 'Zambian Kwacha' },
+    { code: 'MUR', symbol: '₨', name: 'Mauritian Rupee' },
+    { code: 'BHD', symbol: 'ب.د', name: 'Bahraini Dinar' },
+    { code: 'XOF', symbol: 'CFA', name: 'West African CFA franc' },
+    { code: 'XAF', symbol: 'FCFA', name: 'Central African CFA franc' },
+    { code: 'XPF', symbol: '₣', name: 'CFP franc' },
 
 ];
 
@@ -246,6 +247,20 @@ function Sidebar({ open, onClose }) {
 
                 <ListItem
                     button
+                    key="Settings"
+                    onClick={() => handleNavigation('/settings')}
+                    sx={{
+                        backgroundColor: isActive('/settings') ? 'rgba(128, 128, 128, 0.68)' : 'transparent',
+                    }}
+                >
+                    <ListItemIcon sx={{ minWidth: 0, mr: 3, justifyContent: open ? 'flex-start' : 'center' }}>
+                        <SettingsIcon />
+                    </ListItemIcon>
+                    <ListItemText primary="Settings" sx={{ opacity: open ? 1 : 0 }} />
+                </ListItem>
+
+                <ListItem
+                    button
                     key="Logout"
                     onClick={handleLogout}
                     className="logout-item"
@@ -301,37 +316,37 @@ function Sidebar({ open, onClose }) {
                 </ListItem>
                 {/* Currency Label */}
                 {open && (
-                  <Box sx={{ display: 'flex', alignItems: 'left', justifyContent: 'center', mt: 3, mb: 1, width: '100%' }}>
-                    <AttachMoneyIcon sx={{ mr: 1 }} />
-                    <Typography sx={{ fontWeight: 500, textAlign: 'left' }}>Currency</Typography>
-                  </Box>
+                    <Box sx={{ display: 'flex', alignItems: 'left', justifyContent: 'center', mt: 3, mb: 1, width: '100%' }}>
+                        <AttachMoneyIcon sx={{ mr: 1 }} />
+                        <Typography sx={{ fontWeight: 500, textAlign: 'left' }}>Currency</Typography>
+                    </Box>
                 )}
                 {/* Currency Selector */}
                 {open && (
-                  <select
-                    value={currency}
-                    onChange={handleCurrencyChange}
-                    style={{
-                      borderRadius: 6,
-                      padding: '8px 12px',
-                      fontSize: 15,
-                      minWidth: 220,
-                      width: '100%',
-                      textAlign: 'left',
-                      display: 'block',
-                      margin: '0 auto',
-                      background: theme.palette.background.paper,
-                      color: theme.palette.text.primary,
-                      border: `1px solid ${theme.palette.divider}`,
-                      transition: 'background 0.3s, color 0.3s'
-                    }}
-                  >
-                    {currencyList.map((cur) => (
-                      <option key={cur.code} value={cur.code}>
-                        {cur.code} {cur.symbol} - {cur.name}
-                      </option>
-                    ))}
-                  </select>
+                    <select
+                        value={currency}
+                        onChange={handleCurrencyChange}
+                        style={{
+                            borderRadius: 6,
+                            padding: '8px 12px',
+                            fontSize: 15,
+                            minWidth: 220,
+                            width: '100%',
+                            textAlign: 'left',
+                            display: 'block',
+                            margin: '0 auto',
+                            background: theme.palette.background.paper,
+                            color: theme.palette.text.primary,
+                            border: `1px solid ${theme.palette.divider}`,
+                            transition: 'background 0.3s, color 0.3s'
+                        }}
+                    >
+                        {currencyList.map((cur) => (
+                            <option key={cur.code} value={cur.code}>
+                                {cur.code} {cur.symbol} - {cur.name}
+                            </option>
+                        ))}
+                    </select>
                 )}
             </Box>
         </Drawer>
