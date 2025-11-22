@@ -4,7 +4,7 @@ import AttachMoneyIcon from '@mui/icons-material/AttachMoney';
 import axios from 'axios';
 import { useNavigate, useLocation } from 'react-router-dom';
 
-import { API_BASE } from '../config';
+import { API_BASE } from '../api';
 
 function ResetPasswordConfirmPage() {
     const [password, setPassword] = useState('');
