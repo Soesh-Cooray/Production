@@ -4,6 +4,8 @@ import AttachMoneyIcon from '@mui/icons-material/AttachMoney';
 import axios from 'axios';
 import { useNavigate, useLocation } from 'react-router-dom';
 
+import { API_BASE } from '../config';
+
 function ResetPasswordConfirmPage() {
     const [password, setPassword] = useState('');
     const [confirmPassword, setConfirmPassword] = useState('');
@@ -48,7 +50,7 @@ function ResetPasswordConfirmPage() {
         }
 
         try {
-            
+
             const params = new URLSearchParams(location.search);
             const uid = params.get('uid');
             const token = params.get('token');
@@ -58,7 +60,7 @@ function ResetPasswordConfirmPage() {
                 return;
             }
 
-            await axios.post('http://127.0.0.1:8000/auth/users/reset_password_confirm/', {
+            await axios.post(`${API_BASE}/auth/users/reset_password_confirm/`, {
                 uid,
                 token,
                 new_password: password,
@@ -71,7 +73,7 @@ function ResetPasswordConfirmPage() {
             }, 2000);
         } catch (error) {
             if (error.response && error.response.data) {
-               
+
                 const errorMessage = Object.values(error.response.data)[0];
                 setMessage(`Error: ${errorMessage}`);
             } else {
@@ -140,7 +142,7 @@ function ResetPasswordConfirmPage() {
                     Password Complexity:
                 </Typography>
                 <Typography variant="body2" color="black" textAlign="left" mt={1} sx={{ fontWeight: 'bold' }}>
-                    <ul>  
+                    <ul>
                         <li>Must be 8-16 characters long </li>
                         <li>Must contain at least one capital letter </li>
                         <li>Must contain one special character</li>
