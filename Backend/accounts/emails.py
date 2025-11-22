@@ -21,14 +21,17 @@ class CustomPasswordResetEmail(PasswordResetEmail):
             context["uid"] = urlsafe_base64_encode(force_bytes(user.pk))
             context["token"] = default_token_generator.make_token(user)
             
-        
-        try:
-            site = get_current_site(self.request)
-            context["site_name"] = site.name
-            context["domain"] = site.domain
-        except:
-            context["site_name"] = getattr(settings, 'SITE_NAME', 'BudgetMaster')
-            context["domain"] = getattr(settings, 'DOMAIN', 'localhost:3000')
+        # Prioritize settings.DOMAIN
+        context["site_name"] = getattr(settings, 'SITE_NAME', 'BudgetMaster')
+        context["domain"] = getattr(settings, 'DOMAIN', None)
+
+        if not context["domain"]:
+            try:
+                site = get_current_site(self.request)
+                context["site_name"] = site.name
+                context["domain"] = site.domain
+            except:
+                context["domain"] = 'localhost:3000'
             
         context["protocol"] = "https" if self.request.is_secure() else "http"
         
@@ -72,14 +75,17 @@ class CustomPasswordChangedEmail(PasswordChangedConfirmationEmail):
     def get_context_data(self):
         context = super().get_context_data()
         
-        
-        try:
-            site = get_current_site(self.request)
-            context["site_name"] = site.name
-            context["domain"] = site.domain
-        except:
-            context["site_name"] = getattr(settings, 'SITE_NAME', 'BudgetMaster')
-            context["domain"] = getattr(settings, 'DOMAIN', 'localhost:3000')
+        # Prioritize settings.DOMAIN
+        context["site_name"] = getattr(settings, 'SITE_NAME', 'BudgetMaster')
+        context["domain"] = getattr(settings, 'DOMAIN', None)
+
+        if not context["domain"]:
+            try:
+                site = get_current_site(self.request)
+                context["site_name"] = site.name
+                context["domain"] = site.domain
+            except:
+                context["domain"] = 'localhost:3000'
             
         context["protocol"] = "https" if self.request.is_secure() else "http"
         return context
