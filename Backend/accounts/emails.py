@@ -31,7 +31,7 @@ class CustomPasswordResetEmail(PasswordResetEmail):
                 context["site_name"] = site.name
                 context["domain"] = site.domain
             except:
-                context["domain"] = 'localhost:3000'
+                context["domain"] = 'budget-master-app.vercel.app'
             
         context["protocol"] = "https" if self.request.is_secure() else "http"
         
@@ -85,7 +85,7 @@ class CustomPasswordChangedEmail(PasswordChangedConfirmationEmail):
                 context["site_name"] = site.name
                 context["domain"] = site.domain
             except:
-                context["domain"] = 'localhost:3000'
+                context["domain"] = 'budget-master-app.vercel.app'
             
         context["protocol"] = "https" if self.request.is_secure() else "http"
         return context
