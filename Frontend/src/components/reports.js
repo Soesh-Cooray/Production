@@ -25,8 +25,9 @@ const StyledCard = styled(Card)(({ theme }) => ({
   height: '100%',
   display: 'flex',
   flexDirection: 'column',
-  borderRadius: theme.spacing(1),
-  boxShadow: '0px 2px 10px rgba(0, 0, 0, 0.05)',
+  borderRadius: theme.spacing(2),
+  boxShadow: '0px 4px 12px rgba(0, 0, 0, 0.15)',
+  border: `1px solid ${theme.palette.divider}`,
   padding: theme.spacing(2),
 }));
 
