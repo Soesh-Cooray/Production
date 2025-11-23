@@ -1,9 +1,10 @@
 import React, { useState, useEffect } from 'react';
-import { Box, Typography, Card,CardContent, Grid, Container,Paper,Tabs,Tab,Select,MenuItem,FormControl,InputLabel,CircularProgress
+import {
+  Box, Typography, Card, CardContent, Grid, Container, Paper, Tabs, Tab, Select, MenuItem, FormControl, InputLabel, CircularProgress
 } from '@mui/material';
 import { styled } from '@mui/material/styles';
 import { Line, Bar, Pie, Doughnut } from 'react-chartjs-2';
-import {Chart as ChartJS,CategoryScale,LinearScale,PointElement,LineElement,BarElement,ArcElement,Title,Tooltip,Legend,} from 'chart.js';
+import { Chart as ChartJS, CategoryScale, LinearScale, PointElement, LineElement, BarElement, ArcElement, Title, Tooltip, Legend, } from 'chart.js';
 import { transactionAPI, getCurrencySymbol } from '../api';
 
 // Register ChartJS components
@@ -31,15 +32,15 @@ const StyledCard = styled(Card)(({ theme }) => ({
 
 const AmountTypography = styled(Typography)(({ theme, color }) => ({
   fontWeight: 'bold',
-  color: color === 'income' 
-    ? '#00C853' 
-    : color === 'expense' 
-    ? '#FF3D00' 
-    : color === 'savings' 
-    ? '#191CFF' 
-    : color === 'balance' 
-    ? theme.palette.mode === 'dark' ? '#ffffff' : '#000000'
-    : '#1E88E5',
+  color: color === 'income'
+    ? '#00C853'
+    : color === 'expense'
+      ? '#FF3D00'
+      : color === 'savings'
+        ? '#191CFF'
+        : color === 'balance'
+          ? theme.palette.mode === 'dark' ? '#ffffff' : '#000000'
+          : '#1E88E5',
   fontSize: '2rem',
   marginTop: theme.spacing(1),
 }));
@@ -138,19 +139,19 @@ const Reports = () => {
       const filteredIncomes = filterByTimeRange(incomes);
       const filteredExpenses = filterByTimeRange(expenses);
       const filteredSavings = filterByTimeRange(savingsTxns);
-      
-     
+
+
       const totalIncome = filteredIncomes.reduce((sum, income) => sum + parseFloat(income.amount), 0);
       const totalExpenses = filteredExpenses.reduce((sum, expense) => sum + parseFloat(expense.amount), 0);
       const totalSavings = filteredSavings.reduce((sum, saving) => sum + parseFloat(saving.amount), 0);
       const netBalance = totalIncome - totalExpenses - totalSavings;
 
-      
+
       const months = getMonthsForTimeRange();
       const incomeVsExpenses = processIncomeVsExpensesData(incomes, expenses, months);
 
 
-    
+
       const expenseBreakdown = processExpenseBreakdownData(filteredExpenses);
       const incomeBreakdown = processIncomeBreakdownData(filteredIncomes);
       const savingsBreakdown = processSavingsBreakdownData(filteredSavings);
@@ -180,7 +181,7 @@ const Reports = () => {
     const months = [];
     const today = new Date();
     const range = parseInt(timeRange);
-    
+
     for (let i = range - 1; i >= 0; i--) {
       const date = new Date(today.getFullYear(), today.getMonth() - i, 1);
       months.push(date.toLocaleString('default', { month: 'short', year: 'numeric' }));
@@ -192,7 +193,7 @@ const Reports = () => {
     const incomeData = new Array(months.length).fill(0);
     const expenseData = new Array(months.length).fill(0);
 
- 
+
     incomes.forEach(income => {
       const date = new Date(income.date);
       const monthIndex = months.indexOf(date.toLocaleString('default', { month: 'short', year: 'numeric' }));
@@ -229,7 +230,7 @@ const Reports = () => {
       totalExpenses += amount;
     });
 
-  
+
     const labels = Object.keys(categoryTotals);
     const values = Object.values(categoryTotals);
     const percentages = values.map(value => ((value / totalExpenses) * 100).toFixed(1));
@@ -263,7 +264,7 @@ const Reports = () => {
         data: months.map((month) =>
           expenses
             .filter(e => (e.category_name || 'Uncategorized') === category &&
-                         new Date(e.date).toLocaleString('default', { month: 'short', year: 'numeric' }) === month)
+              new Date(e.date).toLocaleString('default', { month: 'short', year: 'numeric' }) === month)
             .reduce((sum, e) => sum + parseFloat(e.amount), 0)
         ),
         backgroundColor: expenseColors[idx % expenseColors.length],
@@ -305,14 +306,14 @@ const Reports = () => {
 
     // Calculate totals per source
     incomes.forEach(income => {
-      
+
       const source = income.category_name || 'Uncategorized';
       const amount = parseFloat(income.amount);
       sourceTotals[source] = (sourceTotals[source] || 0) + amount;
       totalIncome += amount;
     });
 
-   
+
     const labels = Object.keys(sourceTotals);
     const values = Object.values(sourceTotals);
     const percentages = values.map(value => ((value / totalIncome) * 100).toFixed(1));
@@ -408,7 +409,7 @@ const Reports = () => {
     cutout: '70%',
   };
 
-  
+
 
   const pieOptions = {
     responsive: true,
@@ -516,7 +517,7 @@ const Reports = () => {
       <Grid container spacing={3} mb={4}>
         <Grid item xs={12} md={3}>
           <StyledCard>
-            <Card sx={{ height: 150, width: 330, padding: 2,}}>
+            <Card sx={{ height: '100%', minHeight: 150, width: '100%', padding: 2, }}>
               <Box>
                 <Typography variant="subtitle1" color="text.secondary" gutterBottom>
                   Total Income
@@ -530,7 +531,7 @@ const Reports = () => {
         </Grid>
         <Grid item xs={12} md={3}>
           <StyledCard>
-            <Card sx={{ height: 150, width: 330, padding: 2,}}>
+            <Card sx={{ height: '100%', minHeight: 150, width: '100%', padding: 2, }}>
               <Box>
                 <Typography variant="subtitle1" color="text.secondary" gutterBottom>
                   Total Expenses
@@ -544,7 +545,7 @@ const Reports = () => {
         </Grid>
         <Grid item xs={12} md={3}>
           <StyledCard>
-            <Card sx={{ height: 150, width: 330, padding: 2,}}>
+            <Card sx={{ height: '100%', minHeight: 150, width: '100%', padding: 2, }}>
               <Box>
                 <Typography variant="subtitle1" color="text.secondary" gutterBottom>
                   Total Savings
@@ -558,7 +559,7 @@ const Reports = () => {
         </Grid>
         <Grid item xs={12} md={3}>
           <StyledCard>
-            <Card sx={{ height: 150, width: 330, padding: 2,}}>
+            <Card sx={{ height: '100%', minHeight: 150, width: '100%', padding: 2, }}>
               <Box>
                 <Typography variant="subtitle1" color="text.secondary" gutterBottom>
                   Net Balance
@@ -572,16 +573,16 @@ const Reports = () => {
         </Grid>
       </Grid>
 
-      <Paper sx={{ 
-        mb: 4, 
+      <Paper sx={{
+        mb: 4,
         borderRadius: 4
       }}>
-        <Tabs 
-          value={tabValue} 
-          onChange={(e, newValue) => setTabValue(newValue)} 
+        <Tabs
+          value={tabValue}
+          onChange={(e, newValue) => setTabValue(newValue)}
           indicatorColor="primary"
           textColor="primary"
-          sx={{ borderBottom: 1, borderColor: 'divider', borderRadius: 4}}
+          sx={{ borderBottom: 1, borderColor: 'divider', borderRadius: 4 }}
         >
           <Tab label="Overview" />
           <Tab label="Expenses" />
@@ -594,7 +595,7 @@ const Reports = () => {
           <Grid container spacing={3}>
             <Grid item xs={12} md={6}>
               <StyledCard>
-                <Card sx={{ height: 500, width: 500, }}>
+                <Card sx={{ height: 500, width: '100%', }}>
                   <CardContent>
                     <Typography variant="h6" gutterBottom>
                       Income vs Expenses
@@ -603,7 +604,7 @@ const Reports = () => {
                       Your financial balance over time
                     </Typography>
                     <Box height={350}>
-                      <Bar 
+                      <Bar
                         data={{
                           labels: financialData.incomeVsExpenses.labels,
                           datasets: [
@@ -620,8 +621,8 @@ const Reports = () => {
                               barThickness: 20,
                             },
                           ],
-                        }} 
-                        options={incomeExpenseChartOptions} 
+                        }}
+                        options={incomeExpenseChartOptions}
                       />
                     </Box>
                   </CardContent>
@@ -630,7 +631,7 @@ const Reports = () => {
             </Grid>
             <Grid item xs={12} md={6}>
               <StyledCard>
-                <Card sx={{ height: 500, width: 550 }}>
+                <Card sx={{ height: 500, width: '100%' }}>
                   <CardContent>
                     <Typography variant="h6" gutterBottom>
                       Expense Breakdown
@@ -640,7 +641,7 @@ const Reports = () => {
                     </Typography>
                     <Box height={350} display="flex" justifyContent="center">
                       <Box width="80%" height="100%">
-                        <Doughnut 
+                        <Doughnut
                           data={{
                             labels: financialData.expenseBreakdown.labels,
                             datasets: [{
@@ -648,8 +649,8 @@ const Reports = () => {
                               backgroundColor: financialData.expenseBreakdown.colors,
                               borderWidth: 0,
                             }],
-                          }} 
-                          options={doughnutOptions} 
+                          }}
+                          options={doughnutOptions}
                         />
                       </Box>
                     </Box>
@@ -671,7 +672,7 @@ const Reports = () => {
               </Typography>
               <Box height={400} display="flex" justifyContent="center">
                 <Box width="70%" height="100%">
-                  <Pie 
+                  <Pie
                     data={{
                       labels: financialData.expenseBreakdown.labels,
                       datasets: [{
@@ -679,8 +680,8 @@ const Reports = () => {
                         backgroundColor: financialData.expenseBreakdown.colors,
                         borderWidth: 0,
                       }],
-                    }} 
-                    options={pieOptions} 
+                    }}
+                    options={pieOptions}
                   />
                 </Box>
               </Box>
@@ -699,7 +700,7 @@ const Reports = () => {
               </Typography>
               <Box height={400} display="flex" justifyContent="center">
                 <Box width="70%" height="100%">
-                  <Pie 
+                  <Pie
                     data={{
                       labels: financialData.incomeBreakdown?.labels || [],
                       datasets: [{
@@ -707,8 +708,8 @@ const Reports = () => {
                         backgroundColor: financialData.incomeBreakdown?.colors || [],
                         borderWidth: 0,
                       }],
-                    }} 
-                    options={pieOptions} 
+                    }}
+                    options={pieOptions}
                   />
                 </Box>
               </Box>
@@ -727,7 +728,7 @@ const Reports = () => {
               </Typography>
               <Box height={400} display="flex" justifyContent="center">
                 <Box width="70%" height="100%">
-                  <Pie 
+                  <Pie
                     data={{
                       labels: financialData.savingsBreakdown.labels,
                       datasets: [{
@@ -735,7 +736,7 @@ const Reports = () => {
                         backgroundColor: financialData.savingsBreakdown.colors,
                         borderWidth: 0,
                       }],
-                    }} 
+                    }}
                     options={{
                       ...pieOptions,
                       plugins: {
@@ -752,7 +753,7 @@ const Reports = () => {
                           },
                         },
                       },
-                    }} 
+                    }}
                   />
                 </Box>
               </Box>
@@ -771,9 +772,9 @@ const Reports = () => {
               </Typography>
               <Box height={400}>
                 {console.log('Trends Bar Data:', financialData.categorySpendingOverTime)}
-                <Bar 
+                <Bar
                   data={financialData.categorySpendingOverTime}
-                  options={categorySpendingOptions} 
+                  options={categorySpendingOptions}
                 />
               </Box>
             </CardContent>

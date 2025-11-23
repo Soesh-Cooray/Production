@@ -8,7 +8,7 @@ import {
 import { Edit as EditIcon, Delete as DeleteIcon } from '@mui/icons-material';
 import MonetizationOnIcon from '@mui/icons-material/MonetizationOn';
 import { useNavigate } from 'react-router-dom';
-import { transactionAPI, categoryAPI, getCurrencySymbol } from '../api';  
+import { transactionAPI, categoryAPI, getCurrencySymbol } from '../api';
 
 const HoverMenuItem = styled(MenuItem)(({ theme }) => ({
   borderRadius: 5,
@@ -42,7 +42,7 @@ function TransactionsPage() {
 
 
   const [description, setDescription] = useState('');
-  const [date, setDate] = useState(new Date().toISOString().split('T')[0]); 
+  const [date, setDate] = useState(new Date().toISOString().split('T')[0]);
   const [category, setCategory] = useState('');
   const [type, setType] = useState('expense');
   const [amount, setAmount] = useState('');
@@ -50,21 +50,21 @@ function TransactionsPage() {
   const [deleteConfirmOpen, setDeleteConfirmOpen] = useState(false);
   const [transactionToDelete, setTransactionToDelete] = useState(null);
   const [currencySymbol, setCurrencySymbol] = useState(getCurrencySymbol());
-  const [sortAmountOrder, setSortAmountOrder] = useState(null); 
+  const [sortAmountOrder, setSortAmountOrder] = useState(null);
 
-  
+
   useEffect(() => {
     fetchData();
   }, []);
-  
+
   // Update available categories when type changes
   useEffect(() => {
     if (type === 'expense') {
-      setCategory(''); 
+      setCategory('');
     } else if (type === 'income') {
-      setCategory(''); 
+      setCategory('');
     } else if (type === 'savings') {
-      setCategory(''); 
+      setCategory('');
     }
   }, [type]);
 
@@ -83,24 +83,24 @@ function TransactionsPage() {
         transactionAPI.getSavings(),
         categoryAPI.getAll()
       ]);
-      
+
       setExpenses(expensesRes.data);
       setIncomes(incomesRes.data);
       setSavings(savingsRes.data);
       setAllCategories(categoriesRes.data);
-      
-      
+
+
       setExpenseCategories(categoriesRes.data.filter(cat => cat.transaction_type === 'expense'));
       setIncomeCategories(categoriesRes.data.filter(cat => cat.transaction_type === 'income'));
       setSavingsCategories(categoriesRes.data.filter(cat => cat.transaction_type === 'savings'));
-      
+
       setLoading(false);
     } catch (err) {
       console.error('Error fetching data:', err);
       setError('Failed to load data. Please try again.');
       setLoading(false);
-      
-      
+
+
       if (err.response && err.response.status === 401) {
         handleLogout();
       }
@@ -114,7 +114,7 @@ function TransactionsPage() {
   };
 
   const handleOpenAddDialog = () => {
-    
+
     setDescription('');
     setAmount('');
     setDate(new Date().toISOString().split('T')[0]);
@@ -205,7 +205,7 @@ function TransactionsPage() {
 
   const handleDeleteConfirm = async () => {
     if (!transactionToDelete) return;
-    
+
     try {
       await transactionAPI.delete(transactionToDelete.id);
       setSnackbar({
@@ -237,26 +237,26 @@ function TransactionsPage() {
   // Filter transactions based on search term, type filter, and category filter
   const filteredTransactions = () => {
     let transactions = [...expenses, ...incomes, ...savings];
-    
-    
+
+
     if (searchTerm) {
       const search = searchTerm.toLowerCase();
-      transactions = transactions.filter(t => 
+      transactions = transactions.filter(t =>
         t.description.toLowerCase().includes(search)
       );
     }
-    
-    
+
+
     if (filterType !== 'all') {
       transactions = transactions.filter(t => t.transaction_type === filterType);
     }
-    
-   
+
+
     if (filterCategory !== 'all') {
       transactions = transactions.filter(t => t.category === parseInt(filterCategory));
     }
-    
-    
+
+
     transactions.sort((a, b) => new Date(b.date) - new Date(a.date));
     if (sortAmountOrder) {
       transactions.sort((a, b) => sortAmountOrder === 'asc' ? a.amount - b.amount : b.amount - a.amount);
@@ -280,7 +280,7 @@ function TransactionsPage() {
       </Box>
     );
   }
-  
+
   return (
     <Box sx={{ padding: 2, minHeight: '100vh', bgcolor: theme.palette.background.default }}>
       {/* Header */}
@@ -294,30 +294,32 @@ function TransactionsPage() {
       </Box>
 
       {/* Filters */}
-      <Box display="flex" alignItems="center" mb={2} justifyContent="space-between">
-        <Box display="flex" alignItems="center">
+      <Box display="flex" alignItems="center" mb={2} justifyContent="space-between" flexWrap="wrap" gap={2}>
+        <Box display="flex" alignItems="center" flexWrap="wrap" gap={1} sx={{ width: { xs: '100%', md: 'auto' } }}>
           <TextField
             label="Search transactions..."
             size="small"
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
-            sx={{ 
-              mr: 1, 
-              '& .MuiOutlinedInput-root': { 
+            sx={{
+              mr: { xs: 0, md: 1 },
+              '& .MuiOutlinedInput-root': {
                 borderRadius: 2,
                 backgroundColor: theme.palette.background.paper,
               },
-              width: 200,
+              width: { xs: '100%', sm: 200 },
             }}
           />
           <Select
             value={filterType}
             onChange={(e) => setFilterType(e.target.value)}
             size="small"
-            sx={{ 
-              mr: 1, 
+            sx={{
+              mr: { xs: 0, md: 1 },
               borderRadius: 2,
               backgroundColor: theme.palette.background.paper,
+              width: { xs: '48%', sm: 'auto' },
+              minWidth: 120
             }}
             MenuProps={{
               PaperProps: {
@@ -326,7 +328,7 @@ function TransactionsPage() {
                   backgroundColor: theme.palette.background.paper,
                 },
               },
-            }}  
+            }}
           >
             <HoverMenuItem value="all">All Types</HoverMenuItem>
             <HoverMenuItem value="income">Income</HoverMenuItem>
@@ -337,9 +339,11 @@ function TransactionsPage() {
             value={filterCategory}
             onChange={(e) => setFilterCategory(e.target.value)}
             size="small"
-            sx={{ 
+            sx={{
               borderRadius: 2,
               backgroundColor: theme.palette.background.paper,
+              width: { xs: '48%', sm: 'auto' },
+              minWidth: 150
             }}
             MenuProps={{
               PaperProps: {
@@ -349,22 +353,23 @@ function TransactionsPage() {
                 },
               },
             }}
-          > 
+          >
             <HoverMenuItem value="all">All Categories</HoverMenuItem>
             {allCategories.map((cat) => (
               <HoverMenuItem key={cat.id} value={cat.id}>{cat.name}</HoverMenuItem>
             ))}
           </Select>
         </Box>
-        <Button 
-          variant="contained" 
-          sx={{ 
+        <Button
+          variant="contained"
+          sx={{
             borderRadius: 2,
             backgroundColor: theme.palette.primary.main,
             '&:hover': {
               backgroundColor: theme.palette.primary.dark,
             },
-          }} 
+            width: { xs: '100%', sm: 'auto' }
+          }}
           onClick={handleOpenAddDialog}
         >
           + Add Transaction
@@ -372,64 +377,66 @@ function TransactionsPage() {
       </Box>
 
       {/* Transactions Table or Clean State */}
-      {filteredTransactions().length > 0 ? ( 
-        <Table>
-          <TableHead>
-            <TableRow sx={{ backgroundColor: theme.palette.mode === 'dark' ? 'rgba(126, 125, 124, 0.29)' : '#e0f7fa' }}>
-              <TableCell sx={{ color: theme.palette.text.primary }}>Description</TableCell>
-              <TableCell sx={{ color: theme.palette.text.primary }}>Date</TableCell>
-              <TableCell sx={{ color: theme.palette.text.primary }}>Category</TableCell>
-              <TableCell sx={{ color: theme.palette.text.primary }}>Type</TableCell>
-              <TableCell sx={{ color: theme.palette.text.primary, cursor: 'pointer', userSelect: 'none' }} onClick={() => setSortAmountOrder(sortAmountOrder === 'asc' ? 'desc' : 'asc')}>
-                Amount
-                <span style={{ marginLeft: 4, fontSize: 16 }}>
-                  {sortAmountOrder === 'asc' ? '▲' : sortAmountOrder === 'desc' ? '▼' : ''}
-                </span>
-              </TableCell>
-              <TableCell sx={{ color: theme.palette.text.primary }}>Actions</TableCell>
-            </TableRow>
-          </TableHead>
-          <TableBody>
-            {filteredTransactions().map((transaction) => (
-              <TableRow key={transaction.id}>
-                <TableCell sx={{ color: theme.palette.text.primary }}>{transaction.description}</TableCell>
-                <TableCell sx={{ color: theme.palette.text.primary }}>{transaction.date}</TableCell>
-                <TableCell sx={{ color: theme.palette.text.primary }}>{transaction.category_name || 'Unknown'}</TableCell>
-                <TableCell sx={{ color: theme.palette.text.primary }}>
-                  {transaction.transaction_type === 'income' ? 'Income' : transaction.transaction_type === 'expense' ? 'Expense' : 'Savings'}
+      {filteredTransactions().length > 0 ? (
+        <Box sx={{ overflowX: 'auto' }}>
+          <Table sx={{ minWidth: 650 }}>
+            <TableHead>
+              <TableRow sx={{ backgroundColor: theme.palette.mode === 'dark' ? 'rgba(126, 125, 124, 0.29)' : '#e0f7fa' }}>
+                <TableCell sx={{ color: theme.palette.text.primary }}>Description</TableCell>
+                <TableCell sx={{ color: theme.palette.text.primary }}>Date</TableCell>
+                <TableCell sx={{ color: theme.palette.text.primary }}>Category</TableCell>
+                <TableCell sx={{ color: theme.palette.text.primary }}>Type</TableCell>
+                <TableCell sx={{ color: theme.palette.text.primary, cursor: 'pointer', userSelect: 'none' }} onClick={() => setSortAmountOrder(sortAmountOrder === 'asc' ? 'desc' : 'asc')}>
+                  Amount
+                  <span style={{ marginLeft: 4, fontSize: 16 }}>
+                    {sortAmountOrder === 'asc' ? '▲' : sortAmountOrder === 'desc' ? '▼' : ''}
+                  </span>
                 </TableCell>
-                <TableCell
-                  sx={{
-                    color: transaction.transaction_type === 'income'
-                      ? theme.palette.mode === 'dark' ? '#81c784' : 'green'
-                      : transaction.transaction_type === 'expense'
-                        ? theme.palette.mode === 'dark' ? '#e57373' : 'red'
-                        : theme.palette.mode === 'dark' ? '#7986cb' : '#3949ab',
-                    fontWeight: 'bold',
-                  }}
-                >
-                  {transaction.transaction_type === 'income' ? '+' : transaction.transaction_type === 'expense' ? '-' : ''}{currencySymbol}{parseFloat(transaction.amount).toFixed(2)}
-                </TableCell>
-                <TableCell>
-                  <IconButton 
-                    onClick={() => handleEditTransaction(transaction)}
-                    sx={{ color: theme.palette.text.primary }}
-                  >
-                    <EditIcon />
-                  </IconButton>
-                  <IconButton 
-                    onClick={() => handleDeleteClick(transaction)}
-                    sx={{ color: theme.palette.mode === 'dark' ? '#e57373' : '#f44336' }}
-                  >
-                    <DeleteIcon />
-                  </IconButton>
-                </TableCell>
+                <TableCell sx={{ color: theme.palette.text.primary }}>Actions</TableCell>
               </TableRow>
-            ))}
-          </TableBody>
-        </Table>
+            </TableHead>
+            <TableBody>
+              {filteredTransactions().map((transaction) => (
+                <TableRow key={transaction.id}>
+                  <TableCell sx={{ color: theme.palette.text.primary }}>{transaction.description}</TableCell>
+                  <TableCell sx={{ color: theme.palette.text.primary }}>{transaction.date}</TableCell>
+                  <TableCell sx={{ color: theme.palette.text.primary }}>{transaction.category_name || 'Unknown'}</TableCell>
+                  <TableCell sx={{ color: theme.palette.text.primary }}>
+                    {transaction.transaction_type === 'income' ? 'Income' : transaction.transaction_type === 'expense' ? 'Expense' : 'Savings'}
+                  </TableCell>
+                  <TableCell
+                    sx={{
+                      color: transaction.transaction_type === 'income'
+                        ? theme.palette.mode === 'dark' ? '#81c784' : 'green'
+                        : transaction.transaction_type === 'expense'
+                          ? theme.palette.mode === 'dark' ? '#e57373' : 'red'
+                          : theme.palette.mode === 'dark' ? '#7986cb' : '#3949ab',
+                      fontWeight: 'bold',
+                    }}
+                  >
+                    {transaction.transaction_type === 'income' ? '+' : transaction.transaction_type === 'expense' ? '-' : ''}{currencySymbol}{parseFloat(transaction.amount).toFixed(2)}
+                  </TableCell>
+                  <TableCell>
+                    <IconButton
+                      onClick={() => handleEditTransaction(transaction)}
+                      sx={{ color: theme.palette.text.primary }}
+                    >
+                      <EditIcon />
+                    </IconButton>
+                    <IconButton
+                      onClick={() => handleDeleteClick(transaction)}
+                      sx={{ color: theme.palette.mode === 'dark' ? '#e57373' : '#f44336' }}
+                    >
+                      <DeleteIcon />
+                    </IconButton>
+                  </TableCell>
+                </TableRow>
+              ))}
+            </TableBody>
+          </Table>
+        </Box>
       ) : (
-        
+
         <Box display="flex" flexDirection="column" alignItems="center" justifyContent="center" minHeight="50vh">
           <MonetizationOnIcon sx={{ fontSize: 200, color: theme.palette.mode === 'dark' ? '#90caf9' : '#0EA9FF' }} />
           <Typography variant="h6" gutterBottom sx={{ color: theme.palette.text.primary }}>
@@ -439,11 +446,11 @@ function TransactionsPage() {
             Start by adding your first transaction to track your income and expenses
           </Typography>
 
-          <Button 
-            variant="contained" 
-            onClick={handleOpenAddDialog} 
-            sx={{ 
-              mt: 2, 
+          <Button
+            variant="contained"
+            onClick={handleOpenAddDialog}
+            sx={{
+              mt: 2,
               borderRadius: 2,
               backgroundColor: theme.palette.primary.main,
               '&:hover': {
@@ -456,7 +463,7 @@ function TransactionsPage() {
         </Box>
       )}
 
-   
+
       <Dialog
         open={openAddDialog}
         onClose={handleCloseAddDialog}
@@ -471,11 +478,11 @@ function TransactionsPage() {
           {editingTransaction ? 'Edit Transaction' : 'Add Transaction'}
         </DialogTitle>
         <DialogContent>
-          <TextField 
-            label="What was this transaction for" 
-            fullWidth 
-            margin="normal" 
-            value={description} 
+          <TextField
+            label="What was this transaction for"
+            fullWidth
+            margin="normal"
+            value={description}
             onChange={(e) => setDescription(e.target.value)}
             sx={{
               '& .MuiOutlinedInput-root': {
@@ -483,12 +490,12 @@ function TransactionsPage() {
               },
             }}
           />
-          <TextField 
-            fullWidth 
-            margin="normal" 
-            type="date" 
-            value={date} 
-            onChange={(e) => setDate(e.target.value)} 
+          <TextField
+            fullWidth
+            margin="normal"
+            type="date"
+            value={date}
+            onChange={(e) => setDate(e.target.value)}
             InputLabelProps={{ shrink: true }}
             label="Date"
             inputProps={{ max: new Date().toISOString().split('T')[0] }}
@@ -500,8 +507,8 @@ function TransactionsPage() {
           />
           <FormControl fullWidth margin="normal">
             <InputLabel>Type</InputLabel>
-            <Select 
-              value={type} 
+            <Select
+              value={type}
               onChange={(e) => setType(e.target.value)}
               sx={{
                 backgroundColor: theme.palette.background.paper,
@@ -514,8 +521,8 @@ function TransactionsPage() {
           </FormControl>
           <FormControl fullWidth margin="normal">
             <InputLabel>Select Category</InputLabel>
-            <Select 
-              value={category} 
+            <Select
+              value={category}
               onChange={(e) => setCategory(e.target.value)}
               sx={{
                 backgroundColor: theme.palette.background.paper,
@@ -538,12 +545,12 @@ function TransactionsPage() {
               ))}
             </Select>
           </FormControl>
-          <TextField 
-            label="Amount" 
-            fullWidth 
-            margin="normal" 
-            type="number" 
-            value={amount} 
+          <TextField
+            label="Amount"
+            fullWidth
+            margin="normal"
+            type="number"
+            value={amount}
             onChange={(e) => setAmount(e.target.value)}
             sx={{
               '& .MuiOutlinedInput-root': {
@@ -555,10 +562,10 @@ function TransactionsPage() {
         <DialogActions>
           <Button
             onClick={handleCloseAddDialog}
-            sx={{ 
+            sx={{
               borderRadius: 4,
               color: theme.palette.text.primary,
-              '&:hover': { 
+              '&:hover': {
                 backgroundColor: theme.palette.mode === 'dark' ? 'rgba(255, 12, 12, 0.2)' : '#FF0C0C',
                 color: theme.palette.mode === 'dark' ? '#e57373' : '#f9fafb',
               },
@@ -566,13 +573,13 @@ function TransactionsPage() {
           >
             Cancel
           </Button>
-          <Button 
-            variant="contained" 
+          <Button
+            variant="contained"
             onClick={handleAddTransaction}
-            sx={{ 
+            sx={{
               borderRadius: 4,
               backgroundColor: theme.palette.primary.main,
-              '&:hover': { 
+              '&:hover': {
                 backgroundColor: theme.palette.mode === 'dark' ? 'rgba(22, 163, 74, 0.2)' : '#16a34a',
                 color: theme.palette.mode === 'dark' ? '#81c784' : '#f9fafb',
               },
@@ -583,7 +590,7 @@ function TransactionsPage() {
         </DialogActions>
       </Dialog>
 
-   
+
       <Dialog
         open={deleteConfirmOpen}
         onClose={() => setDeleteConfirmOpen(false)}
@@ -603,18 +610,18 @@ function TransactionsPage() {
         <DialogActions>
           <Button
             onClick={() => setDeleteConfirmOpen(false)}
-            sx={{ 
+            sx={{
               borderRadius: 4,
               color: theme.palette.text.primary,
             }}
           >
             Cancel
           </Button>
-          <Button 
-            variant="contained" 
+          <Button
+            variant="contained"
             color="error"
             onClick={handleDeleteConfirm}
-            sx={{ 
+            sx={{
               borderRadius: 4,
               backgroundColor: theme.palette.error.main,
               '&:hover': {
@@ -628,16 +635,16 @@ function TransactionsPage() {
       </Dialog>
 
       {/* Snackbar for notifications */}
-      <Snackbar 
-        open={snackbar.open} 
-        autoHideDuration={6000} 
+      <Snackbar
+        open={snackbar.open}
+        autoHideDuration={6000}
         onClose={handleCloseSnackbar}
         anchorOrigin={{ vertical: 'bottom', horizontal: 'center' }}
       >
-        <Alert 
-          onClose={handleCloseSnackbar} 
-          severity={snackbar.severity} 
-          sx={{ 
+        <Alert
+          onClose={handleCloseSnackbar}
+          severity={snackbar.severity}
+          sx={{
             width: '100%',
             backgroundColor: theme.palette.background.paper,
             color: theme.palette.text.primary,
