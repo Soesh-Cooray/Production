@@ -45,7 +45,7 @@ const SettingsPage = () => {
         try {
             const token = localStorage.getItem('accessToken');
             const response = await axios.get(`${API_BASE}/auth/users/me/`, {
-                headers: { Authorization: `JWT ${token}` }
+                headers: { Authorization: `Bearer ${token}` }
             });
             setUserDetails({
                 first_name: response.data.first_name || '',
@@ -71,7 +71,7 @@ const SettingsPage = () => {
                     first_name: userDetails.first_name,
                     email: userDetails.email
                 },
-                { headers: { Authorization: `JWT ${token}` } }
+                { headers: { Authorization: `Bearer ${token}` } }
             );
             setMessage({ type: 'success', text: 'Profile updated successfully.' });
         } catch (error) {
@@ -97,7 +97,7 @@ const SettingsPage = () => {
                     new_password: passwords.new_password,
                     re_new_password: passwords.re_new_password
                 },
-                { headers: { Authorization: `JWT ${token}` } }
+                { headers: { Authorization: `Bearer ${token}` } }
             );
             setMessage({ type: 'success', text: 'Password updated successfully.' });
             setPasswords({ current_password: '', new_password: '', re_new_password: '' });
@@ -117,7 +117,7 @@ const SettingsPage = () => {
         try {
             const token = localStorage.getItem('accessToken');
             await axios.delete(`${API_BASE}/auth/users/me/`, {
-                headers: { Authorization: `JWT ${token}` },
+                headers: { Authorization: `Bearer ${token}` },
                 data: { current_password: deletePassword } // Some configurations require password to delete
             });
 
