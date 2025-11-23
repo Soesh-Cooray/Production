@@ -255,7 +255,7 @@ function SignUpPage() {
 
                         <Typography variant="h6" gutterBottom>6. Contact Us</Typography>
                         <Typography paragraph>
-                            If you have questions or comments about this policy, you may email us at support@budgetmaster.com.
+                            If you have questions or comments about this policy, you may email us at budgetmaster@gmail.com.
                         </Typography>
                     </DialogContentText>
                 </DialogContent>

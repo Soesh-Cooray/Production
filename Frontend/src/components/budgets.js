@@ -1,13 +1,15 @@
 import React, { useState, useEffect } from 'react';
-import { Container,Typography,Card,Grid,LinearProgress,Box,IconButton,Dialog,DialogTitle,DialogContent,TextField,Select,
-    MenuItem,Button,FormControl,InputLabel,Paper,CircularProgress,Snackbar,Alert, useTheme} from '@mui/material';
+import {
+    Container, Typography, Card, Grid, LinearProgress, Box, IconButton, Dialog, DialogTitle, DialogContent, TextField, Select,
+    MenuItem, Button, FormControl, InputLabel, Paper, CircularProgress, Snackbar, Alert, useTheme
+} from '@mui/material';
 import EditIcon from '@mui/icons-material/Edit';
 import DeleteIcon from '@mui/icons-material/Delete';
 import CloseIcon from '@mui/icons-material/Close';
 import AddIcon from '@mui/icons-material/Add';
 import SavingsIcon from '@mui/icons-material/Savings';
 import CalendarTodayIcon from '@mui/icons-material/CalendarToday';
-import { categoryAPI, budgetAPI, transactionAPI,getCurrencySymbol } from '../api';
+import { categoryAPI, budgetAPI, transactionAPI, getCurrencySymbol } from '../api';
 
 function BudgetsPage() {
     const [budgets, setBudgets] = useState([]);
@@ -207,7 +209,7 @@ function BudgetsPage() {
                 })}
                 {budgets.length === 0 && (
                     <Grid item xs={12} sx={{ textAlign: 'center', mt: 4 }}>
-                        <Paper elevation={10} sx={{ padding: 5, width: 1150, height: 350, borderRadius: 2, backgroundColor: '#FFFFFF', borderColor: 'primary.main', borderStyle: 'dashed' }}>
+                        <Paper elevation={10} sx={{ padding: 5, width: 1150, height: 350, borderRadius: 2, borderColor: 'primary.main', borderStyle: 'dashed' }}>
                             <SavingsIcon sx={{ fontSize: 60, color: 'primary.main', mb: 2 }} />
                             <Typography variant="h6" color="textSecondary" mb={1}>
                                 No budgets set up yet
@@ -224,9 +226,9 @@ function BudgetsPage() {
                 )}
             </Grid>
 
-            <AddBudgetDialog 
-                open={isAddBudgetDialogOpen} 
-                onClose={handleAddBudgetClose} 
+            <AddBudgetDialog
+                open={isAddBudgetDialogOpen}
+                onClose={handleAddBudgetClose}
                 onAddBudget={handleAddNewBudget}
                 categories={categories}
                 onAddCustomCategory={fetchBudgetsCategoriesTransactions}
@@ -307,7 +309,7 @@ function AddBudgetDialog({ open, onClose, onAddBudget, categories, onAddCustomCa
             setNewCategoryName('');
             setIsAddingCustomCategory(false);
             setNewCategoryType('expense');
-            onAddCustomCategory(); 
+            onAddCustomCategory();
             setError('');
         } catch (err) {
             console.error('Error creating category:', err);
@@ -375,10 +377,10 @@ function AddBudgetDialog({ open, onClose, onAddBudget, categories, onAddCustomCa
                                 </Box>
                             </>
                         ) : (
-                            <Paper elevation={3} 
-                                sx={{ 
-                                    p: 2, mt: 1, mb: 2, borderRadius: 2, 
-                                    background: theme.palette.background.paper, 
+                            <Paper elevation={3}
+                                sx={{
+                                    p: 2, mt: 1, mb: 2, borderRadius: 2,
+                                    background: theme.palette.background.paper,
                                     color: theme.palette.text.primary,
                                     boxShadow: theme.palette.mode === 'dark' ? '0 2px 12px rgba(0,0,0,0.7)' : undefined,
                                     border: theme.palette.mode === 'dark' ? '1px solid #333' : '1px solid #e0e0e0',
@@ -395,8 +397,8 @@ function AddBudgetDialog({ open, onClose, onAddBudget, categories, onAddCustomCa
                                             onChange={(e) => setNewCategoryName(e.target.value)}
                                             error={!!error}
                                             helperText={error}
-                                            sx={{ 
-                                                background: theme.palette.background.default, 
+                                            sx={{
+                                                background: theme.palette.background.default,
                                                 borderRadius: 1,
                                                 input: { color: theme.palette.text.primary },
                                                 label: { color: theme.palette.text.primary },
@@ -413,8 +415,8 @@ function AddBudgetDialog({ open, onClose, onAddBudget, categories, onAddCustomCa
                                                 value={newCategoryType}
                                                 label="Type"
                                                 onChange={e => setNewCategoryType(e.target.value)}
-                                                sx={{ 
-                                                    background: theme.palette.background.default, 
+                                                sx={{
+                                                    background: theme.palette.background.default,
                                                     borderRadius: 1,
                                                     color: theme.palette.text.primary,
                                                 }}
@@ -435,15 +437,15 @@ function AddBudgetDialog({ open, onClose, onAddBudget, categories, onAddCustomCa
                                     </Grid>
                                 </Grid>
                                 <Box mt={2} display="flex" gap={1}>
-                                    <Button 
-                                        size="small" 
+                                    <Button
+                                        size="small"
                                         onClick={handleAddCustomCategory}
                                         variant="contained"
                                     >
                                         Add Category
                                     </Button>
-                                    <Button 
-                                        size="small" 
+                                    <Button
+                                        size="small"
                                         onClick={() => {
                                             setIsAddingCustomCategory(false);
                                             setNewCategoryName('');
@@ -510,11 +512,11 @@ function AddBudgetDialog({ open, onClose, onAddBudget, categories, onAddCustomCa
 }
 
 const BudgetProgressCard = ({ name, period, startDate, spent, amount, remaining, percent, onEdit, onDelete, currencySymbol }) => (
-    <Card sx={{ 
-        p: 3, 
-        borderRadius: 3, 
+    <Card sx={{
+        p: 3,
+        borderRadius: 3,
         boxShadow: '0 8px 24px rgba(0,0,0,0.12)',
-        mb: 2, 
+        mb: 2,
         minWidth: 320,
         transition: 'all 0.3s ease-in-out',
         '&:hover': {
@@ -550,13 +552,13 @@ const BudgetProgressCard = ({ name, period, startDate, spent, amount, remaining,
                 mb: 1,
                 '& .MuiLinearProgress-bar': {
                     backgroundColor:
-                     percent > 100
-                        ? '#b71c1c'      
-                        : percent > 80
-                            ? '#f44336'  
-                            : percent > 60
-                                ? '#ff9800' 
-                                : '#4caf50', 
+                        percent > 100
+                            ? '#b71c1c'
+                            : percent > 80
+                                ? '#f44336'
+                                : percent > 60
+                                    ? '#ff9800'
+                                    : '#4caf50',
                 },
             }}
         />
@@ -570,12 +572,12 @@ const BudgetProgressCard = ({ name, period, startDate, spent, amount, remaining,
                 sx={{
                     color:
                         percent > 100
-                        ? '#b71c1c'
+                            ? '#b71c1c'
                             : percent > 80
-                            ? '#f44336'
+                                ? '#f44336'
                                 : percent > 60
-                                ? '#ff9800'
-                                : undefined
+                                    ? '#ff9800'
+                                    : undefined
                 }}
             >
                 {percent.toFixed(0)}%
