@@ -486,7 +486,7 @@ const Reports = () => {
   }
 
   return (
-    <Container maxWidth="lg" sx={{ mt: 4, mb: 4 }}>
+    <Container maxWidth="xl" sx={{ mt: 4, mb: 4 }}>
       <Box mb={4}>
         <Typography variant="h4" component="h1" gutterBottom fontWeight="bold">
           Financial Reports
@@ -582,6 +582,9 @@ const Reports = () => {
           onChange={(e, newValue) => setTabValue(newValue)}
           indicatorColor="primary"
           textColor="primary"
+          variant="scrollable"
+          scrollButtons="auto"
+          allowScrollButtonsMobile
           sx={{ borderBottom: 1, borderColor: 'divider', borderRadius: 4 }}
         >
           <Tab label="Overview" />
