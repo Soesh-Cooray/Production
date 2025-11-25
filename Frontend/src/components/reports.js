@@ -597,7 +597,7 @@ const Reports = () => {
 
         <TabPanel value={tabValue} index={0}>
           <Grid container spacing={3}>
-            <Grid item xs={12} md={6}>
+            <Grid item xs={12}>
               <StyledCard>
                 <Card sx={{ height: 500, width: '100%', }}>
                   <CardContent>
@@ -628,35 +628,6 @@ const Reports = () => {
                         }}
                         options={incomeExpenseChartOptions}
                       />
-                    </Box>
-                  </CardContent>
-                </Card>
-              </StyledCard>
-            </Grid>
-            <Grid item xs={12} md={6}>
-              <StyledCard>
-                <Card sx={{ height: 500, width: '100%' }}>
-                  <CardContent>
-                    <Typography variant="h6" gutterBottom>
-                      Expense Breakdown
-                    </Typography>
-                    <Typography variant="body2" color="text.secondary" gutterBottom>
-                      Your spending by category
-                    </Typography>
-                    <Box height={350} display="flex" justifyContent="center">
-                      <Box width="80%" height="100%">
-                        <Doughnut
-                          data={{
-                            labels: financialData.expenseBreakdown.labels,
-                            datasets: [{
-                              data: financialData.expenseBreakdown.values,
-                              backgroundColor: financialData.expenseBreakdown.colors,
-                              borderWidth: 0,
-                            }],
-                          }}
-                          options={doughnutOptions}
-                        />
-                      </Box>
                     </Box>
                   </CardContent>
                 </Card>
