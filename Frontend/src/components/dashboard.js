@@ -235,22 +235,20 @@ const Dashboard = () => {
   };
 
   const processIncomeVsExpensesData = (incomes, expenses, months) => {
-    const incomeData = new Array(6).fill(0);
-    const expenseData = new Array(6).fill(0);
-
+    const incomeData = new Array(months.length).fill(0);
+    const expenseData = new Array(months.length).fill(0);
 
     incomes.forEach(income => {
       const date = new Date(income.date);
-      const monthIndex = months.indexOf(date.toLocaleString('default', { month: 'short' }));
+      const monthIndex = months.indexOf(format(date, 'MMM'));
       if (monthIndex !== -1) {
         incomeData[monthIndex] += parseFloat(income.amount);
       }
     });
 
-
     expenses.forEach(expense => {
       const date = new Date(expense.date);
-      const monthIndex = months.indexOf(date.toLocaleString('default', { month: 'short' }));
+      const monthIndex = months.indexOf(format(date, 'MMM'));
       if (monthIndex !== -1) {
         expenseData[monthIndex] += parseFloat(expense.amount);
       }
