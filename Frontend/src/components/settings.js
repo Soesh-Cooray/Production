@@ -12,6 +12,7 @@ import DeleteIcon from '@mui/icons-material/Delete';
 import SaveIcon from '@mui/icons-material/Save';
 import LockIcon from '@mui/icons-material/Lock';
 import EmailIcon from '@mui/icons-material/Email';
+import NotificationsActiveIcon from '@mui/icons-material/NotificationsActive';
 
 const SettingsPage = () => {
     const theme = useTheme();
@@ -24,6 +25,12 @@ const SettingsPage = () => {
         first_name: '',
         email: '',
         id: ''
+    });
+
+    // Notification Settings State
+    const [notificationSettings, setNotificationSettings] = useState({
+        reminder_frequency: 'none',
+        reminder_time: '09:00'
     });
 
     // Password Change State
@@ -39,13 +46,14 @@ const SettingsPage = () => {
 
     useEffect(() => {
         fetchUserDetails();
+        fetchNotificationSettings();
     }, []);
 
     const fetchUserDetails = async () => {
         try {
             const token = localStorage.getItem('accessToken');
             const response = await axios.get(`${API_BASE}/auth/users/me/`, {
-                headers: { Authorization: `Bearer ${token}` }
+                headers: { Authorization: `JWT ${token}` }
             });
             setUserDetails({
                 first_name: response.data.first_name || '',
@@ -55,6 +63,22 @@ const SettingsPage = () => {
         } catch (error) {
             console.error('Error fetching user details:', error);
             setMessage({ type: 'error', text: 'Failed to load user details.' });
+        }
+    };
+
+    const fetchNotificationSettings = async () => {
+        try {
+            const token = localStorage.getItem('accessToken');
+            const response = await axios.get(`${API_BASE}/auth/settings/notifications/`, {
+                headers: { Authorization: `JWT ${token}` }
+            });
+            setNotificationSettings({
+                reminder_frequency: response.data.reminder_frequency || 'none',
+                reminder_time: response.data.reminder_time ? response.data.reminder_time.substring(0, 5) : '09:00'
+            });
+        } catch (error) {
+            console.error('Error fetching notification settings:', error);
+            // Don't show error to user, just log it. Feature might be optional or new.
         }
     };
 
@@ -71,12 +95,30 @@ const SettingsPage = () => {
                     first_name: userDetails.first_name,
                     email: userDetails.email
                 },
-                { headers: { Authorization: `Bearer ${token}` } }
+                { headers: { Authorization: `JWT ${token}` } }
             );
             setMessage({ type: 'success', text: 'Profile updated successfully.' });
         } catch (error) {
             console.error('Error updating profile:', error);
             setMessage({ type: 'error', text: 'Failed to update profile. ' + (error.response?.data ? JSON.stringify(error.response.data) : '') });
+        } finally {
+            setLoading(false);
+        }
+    };
+
+    const handleUpdateNotifications = async () => {
+        setLoading(true);
+        setMessage({ type: '', text: '' });
+        try {
+            const token = localStorage.getItem('accessToken');
+            await axios.patch(`${API_BASE}/auth/settings/notifications/`,
+                notificationSettings,
+                { headers: { Authorization: `JWT ${token}` } }
+            );
+            setMessage({ type: 'success', text: 'Notification settings updated successfully.' });
+        } catch (error) {
+            console.error('Error updating notifications:', error);
+            setMessage({ type: 'error', text: 'Failed to update notification settings.' });
         } finally {
             setLoading(false);
         }
@@ -97,7 +139,7 @@ const SettingsPage = () => {
                     new_password: passwords.new_password,
                     re_new_password: passwords.re_new_password
                 },
-                { headers: { Authorization: `Bearer ${token}` } }
+                { headers: { Authorization: `JWT ${token}` } }
             );
             setMessage({ type: 'success', text: 'Password updated successfully.' });
             setPasswords({ current_password: '', new_password: '', re_new_password: '' });
@@ -117,7 +159,7 @@ const SettingsPage = () => {
         try {
             const token = localStorage.getItem('accessToken');
             await axios.delete(`${API_BASE}/auth/users/me/`, {
-                headers: { Authorization: `Bearer ${token}` },
+                headers: { Authorization: `JWT ${token}` },
                 data: { current_password: deletePassword } // Some configurations require password to delete
             });
 
@@ -182,6 +224,60 @@ const SettingsPage = () => {
                                 disabled={loading}
                             >
                                 Update Profile
+                            </Button>
+                        </Grid>
+                    </Grid>
+                </CardContent>
+            </Card>
+
+            {/* Notification Settings */}
+            <Card sx={{ mb: 3, borderRadius: 2, boxShadow: 3 }}>
+                <CardContent>
+                    <Typography variant="h6" gutterBottom display="flex" alignItems="center">
+                        <Box component="span" mr={1} display="flex"><NotificationsActiveIcon color="action" /></Box>
+                        Email Reminders
+                    </Typography>
+                    <Divider sx={{ mb: 3 }} />
+                    <Grid container spacing={2}>
+                        <Grid item xs={12} sm={6}>
+                            <TextField
+                                select
+                                label="Frequency"
+                                fullWidth
+                                value={notificationSettings.reminder_frequency}
+                                onChange={(e) => setNotificationSettings({ ...notificationSettings, reminder_frequency: e.target.value })}
+                                SelectProps={{
+                                    native: true,
+                                }}
+                            >
+                                <option value="none">None</option>
+                                <option value="daily">Daily</option>
+                                <option value="weekly">Weekly (Mondays)</option>
+                            </TextField>
+                        </Grid>
+                        <Grid item xs={12} sm={6}>
+                            <TextField
+                                label="Time (UTC)"
+                                type="time"
+                                fullWidth
+                                value={notificationSettings.reminder_time}
+                                onChange={(e) => setNotificationSettings({ ...notificationSettings, reminder_time: e.target.value })}
+                                InputLabelProps={{
+                                    shrink: true,
+                                }}
+                                inputProps={{
+                                    step: 300, // 5 min
+                                }}
+                            />
+                        </Grid>
+                        <Grid item xs={12}>
+                            <Button
+                                variant="contained"
+                                startIcon={<SaveIcon />}
+                                onClick={handleUpdateNotifications}
+                                disabled={loading}
+                            >
+                                Save Preferences
                             </Button>
                         </Grid>
                     </Grid>

@@ -1,0 +1,11 @@
+Hello {{ user.first_name|default:user.username }},
+
+This is your friendly reminder to record your transactions for the day!
+
+Keeping your budget up to date is the key to financial freedom. Take a moment to log your expenses and income.
+
+Record Transactions: {{ protocol }}://{{ domain }}/transaction
+
+You received this email because you enabled reminders in your BudgetMaster settings.
+
+BudgetMaster Team

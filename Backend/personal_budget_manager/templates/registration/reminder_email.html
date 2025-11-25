@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BudgetMaster Reminder</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            background-color: #f8f9fa;
+            margin: 0;
+            padding: 0;
+        }
+
+        .container {
+            max-width: 600px;
+            margin: 0 auto;
+            background-color: #ffffff;
+            border-radius: 8px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            overflow: hidden;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 30px;
+            text-align: center;
+        }
+
+        .content {
+            padding: 40px;
+        }
+
+        .button {
+            display: inline-block;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            text-decoration: none;
+            padding: 12px 25px;
+            border-radius: 25px;
+            font-weight: 600;
+            margin-top: 20px;
+        }
+
+        .footer {
+            background-color: #f8f9fa;
+            padding: 20px;
+            text-align: center;
+            color: #666;
+            font-size: 12px;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>BudgetMaster Reminder</h1>
+        </div>
+        <div class="content">
+            <p>Hello {{ user.first_name|default:user.username }},</p>
+            <p>This is your friendly reminder to record your transactions for the day!</p>
+            <p>Keeping your budget up to date is the key to financial freedom. Take a moment to log your expenses and
+                income.</p>
+            <div style="text-align: center;">
+                <a href="{{ protocol }}://{{ domain }}/transaction" class="button">Record Transactions</a>
+            </div>
+        </div>
+        <div class="footer">
+            <p>You received this email because you enabled reminders in your BudgetMaster settings.</p>
+            <p>&copy; 2025 BudgetMaster. All rights reserved.</p>
+        </div>
+    </div>
+</body>
+
+</html>
