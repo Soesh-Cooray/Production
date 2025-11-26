@@ -5,7 +5,7 @@ import {
     DialogContentText, DialogTitle, Grid, useTheme
 } from '@mui/material';
 import axios from 'axios';
-import { API_BASE } from '../api';
+import apiClient, { API_BASE } from '../api';
 import { useNavigate } from 'react-router-dom';
 import SettingsIcon from '@mui/icons-material/Settings';
 import DeleteIcon from '@mui/icons-material/Delete';
@@ -51,9 +51,8 @@ const SettingsPage = () => {
 
     const fetchUserDetails = async () => {
         try {
-            const token = localStorage.getItem('accessToken');
-            const response = await axios.get(`${API_BASE}/auth/users/me/`, {
-                headers: { Authorization: `JWT ${token}` }
+            const response = await apiClient.get('auth/users/me/', {
+                baseURL: API_BASE
             });
             setUserDetails({
                 first_name: response.data.first_name || '',
@@ -62,15 +61,14 @@ const SettingsPage = () => {
             });
         } catch (error) {
             console.error('Error fetching user details:', error);
-            setMessage({ type: 'error', text: 'Failed to load user details.' });
+            setMessage({ type: 'error', text: `Failed to load user details: ${error.message} ${error.response?.data ? JSON.stringify(error.response.data) : ''}` });
         }
     };
 
     const fetchNotificationSettings = async () => {
         try {
-            const token = localStorage.getItem('accessToken');
-            const response = await axios.get(`${API_BASE}/auth/settings/notifications/`, {
-                headers: { Authorization: `JWT ${token}` }
+            const response = await apiClient.get('auth/settings/notifications/', {
+                baseURL: API_BASE
             });
             setNotificationSettings({
                 reminder_frequency: response.data.reminder_frequency || 'none',
@@ -86,16 +84,15 @@ const SettingsPage = () => {
         setLoading(true);
         setMessage({ type: '', text: '' });
         try {
-            const token = localStorage.getItem('accessToken');
             // Note: Djoser /auth/users/me/ endpoint typically allows patching details
             // However, changing email might require re-verification depending on backend settings.
             // We will try to update first_name and email.
-            await axios.patch(`${API_BASE}/auth/users/me/`,
+            await apiClient.patch('auth/users/me/',
                 {
                     first_name: userDetails.first_name,
                     email: userDetails.email
                 },
-                { headers: { Authorization: `JWT ${token}` } }
+                { baseURL: API_BASE }
             );
             setMessage({ type: 'success', text: 'Profile updated successfully.' });
         } catch (error) {
@@ -110,10 +107,9 @@ const SettingsPage = () => {
         setLoading(true);
         setMessage({ type: '', text: '' });
         try {
-            const token = localStorage.getItem('accessToken');
-            await axios.patch(`${API_BASE}/auth/settings/notifications/`,
+            await apiClient.patch('auth/settings/notifications/',
                 notificationSettings,
-                { headers: { Authorization: `JWT ${token}` } }
+                { baseURL: API_BASE }
             );
             setMessage({ type: 'success', text: 'Notification settings updated successfully.' });
         } catch (error) {
@@ -132,14 +128,13 @@ const SettingsPage = () => {
         setLoading(true);
         setMessage({ type: '', text: '' });
         try {
-            const token = localStorage.getItem('accessToken');
-            await axios.post(`${API_BASE}/auth/users/set_password/`,
+            await apiClient.post('auth/users/set_password/',
                 {
                     current_password: passwords.current_password,
                     new_password: passwords.new_password,
                     re_new_password: passwords.re_new_password
                 },
-                { headers: { Authorization: `JWT ${token}` } }
+                { baseURL: API_BASE }
             );
             setMessage({ type: 'success', text: 'Password updated successfully.' });
             setPasswords({ current_password: '', new_password: '', re_new_password: '' });
@@ -157,9 +152,8 @@ const SettingsPage = () => {
     const handleDeleteAccount = async () => {
         setLoading(true);
         try {
-            const token = localStorage.getItem('accessToken');
-            await axios.delete(`${API_BASE}/auth/users/me/`, {
-                headers: { Authorization: `JWT ${token}` },
+            await apiClient.delete('auth/users/me/', {
+                baseURL: API_BASE,
                 data: { current_password: deletePassword } // Some configurations require password to delete
             });
 
