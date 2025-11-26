@@ -4,7 +4,6 @@ import {
     Divider, Alert, Dialog, DialogActions, DialogContent,
     DialogContentText, DialogTitle, Grid, useTheme
 } from '@mui/material';
-import axios from 'axios';
 import { apiClient, API_BASE } from '../api';
 import { useNavigate } from 'react-router-dom';
 import SettingsIcon from '@mui/icons-material/Settings';
