@@ -51,7 +51,7 @@ const SettingsPage = () => {
 
     const fetchUserDetails = async () => {
         try {
-            const response = await apiClient.get('auth/users/me/', {
+            const response = await apiClient.get('/auth/users/me/', {
                 baseURL: API_BASE
             });
             setUserDetails({
@@ -67,7 +67,7 @@ const SettingsPage = () => {
 
     const fetchNotificationSettings = async () => {
         try {
-            const response = await apiClient.get('auth/settings/notifications/', {
+            const response = await apiClient.get('/auth/settings/notifications/', {
                 baseURL: API_BASE
             });
             setNotificationSettings({
@@ -87,7 +87,7 @@ const SettingsPage = () => {
             // Note: Djoser /auth/users/me/ endpoint typically allows patching details
             // However, changing email might require re-verification depending on backend settings.
             // We will try to update first_name and email.
-            await apiClient.patch('auth/users/me/',
+            await apiClient.patch('/auth/users/me/',
                 {
                     first_name: userDetails.first_name,
                     email: userDetails.email
@@ -107,7 +107,7 @@ const SettingsPage = () => {
         setLoading(true);
         setMessage({ type: '', text: '' });
         try {
-            await apiClient.patch('auth/settings/notifications/',
+            await apiClient.patch('/auth/settings/notifications/',
                 notificationSettings,
                 { baseURL: API_BASE }
             );
@@ -128,7 +128,7 @@ const SettingsPage = () => {
         setLoading(true);
         setMessage({ type: '', text: '' });
         try {
-            await apiClient.post('auth/users/set_password/',
+            await apiClient.post('/auth/users/set_password/',
                 {
                     current_password: passwords.current_password,
                     new_password: passwords.new_password,
@@ -152,7 +152,7 @@ const SettingsPage = () => {
     const handleDeleteAccount = async () => {
         setLoading(true);
         try {
-            await apiClient.delete('auth/users/me/', {
+            await apiClient.delete('/auth/users/me/', {
                 baseURL: API_BASE,
                 data: { current_password: deletePassword } // Some configurations require password to delete
             });
