@@ -8,7 +8,7 @@ export const API_BASE =
   (typeof window !== 'undefined' ? window.location.origin : '');
 
 // Budget endpoints live under /api/
-const apiClient = axios.create({
+export const apiClient = axios.create({
   baseURL: `${API_BASE}/api/`,
 });
 
