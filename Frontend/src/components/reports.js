@@ -596,44 +596,40 @@ const Reports = () => {
         </Tabs>
 
         <TabPanel value={tabValue} index={0}>
-          <Grid container spacing={3} justifyContent="center">
-            <Grid item xs={12} md={10} lg={8}>
-              <StyledCard>
-                <Card sx={{ height: 500, width: '100%', }}>
-                  <CardContent>
-                    <Typography variant="h6" gutterBottom>
-                      Income vs Expenses
-                    </Typography>
-                    <Typography variant="body2" color="text.secondary" gutterBottom>
-                      Your financial balance over time
-                    </Typography>
-                    <Box height={350}>
-                      <Bar
-                        data={{
-                          labels: financialData.incomeVsExpenses.labels,
-                          datasets: [
-                            {
-                              label: 'Income',
-                              data: financialData.incomeVsExpenses.income,
-                              backgroundColor: '#00C853',
-                              barThickness: 20,
-                            },
-                            {
-                              label: 'Expenses',
-                              data: financialData.incomeVsExpenses.expenses,
-                              backgroundColor: '#FF3D00',
-                              barThickness: 20,
-                            },
-                          ],
-                        }}
-                        options={incomeExpenseChartOptions}
-                      />
-                    </Box>
-                  </CardContent>
-                </Card>
-              </StyledCard>
-            </Grid>
-          </Grid>
+          <StyledCard>
+            <Card sx={{ height: 500, width: '100%', }}>
+              <CardContent>
+                <Typography variant="h6" gutterBottom>
+                  Income vs Expenses
+                </Typography>
+                <Typography variant="body2" color="text.secondary" gutterBottom>
+                  Your financial balance over time
+                </Typography>
+                <Box height={350}>
+                  <Bar
+                    data={{
+                      labels: financialData.incomeVsExpenses.labels,
+                      datasets: [
+                        {
+                          label: 'Income',
+                          data: financialData.incomeVsExpenses.income,
+                          backgroundColor: '#00C853',
+                          barThickness: 20,
+                        },
+                        {
+                          label: 'Expenses',
+                          data: financialData.incomeVsExpenses.expenses,
+                          backgroundColor: '#FF3D00',
+                          barThickness: 20,
+                        },
+                      ],
+                    }}
+                    options={incomeExpenseChartOptions}
+                  />
+                </Box>
+              </CardContent>
+            </Card>
+          </StyledCard>
         </TabPanel>
 
         <TabPanel value={tabValue} index={1}>

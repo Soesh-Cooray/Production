@@ -46,7 +46,7 @@ const SettingsPage = () => {
 
     useEffect(() => {
         fetchUserDetails();
-        // fetchNotificationSettings(); // Temporarily disabled - backend endpoint not ready
+        fetchNotificationSettings();
     }, []);
 
     const fetchUserDetails = async () => {
