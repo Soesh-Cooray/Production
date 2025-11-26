@@ -110,3 +110,13 @@ SITE_NAME = 'BudgetMaster'
 MIDDLEWARE.insert(1, 'whitenoise.middleware.WhiteNoiseMiddleware')
 
 STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
+
+# Djoser Configuration
+DJOSER = {
+    'USER_CREATE_PASSWORD_RETYPE': True,
+    'SERIALIZERS': {
+        'user': 'accounts.serializers.CustomUserSerializer',
+        'current_user': 'accounts.serializers.CustomUserSerializer',
+        'user_create': 'accounts.serializers.UserCreateSerializer',
+    },
+}

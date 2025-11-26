@@ -1,6 +1,7 @@
 from django.contrib.auth import get_user_model
 from rest_framework import serializers
 from django.contrib.auth.password_validation import validate_password
+from djoser.serializers import UserSerializer
 
 # Reference to the custom or default User model
 User = get_user_model()
@@ -34,6 +35,15 @@ class UserCreateSerializer(serializers.ModelSerializer):
             password=validated_data['password']
         )
         return user
+
+
+# Custom serializer for updating user details (used by Djoser's /auth/users/me/ endpoint)
+class CustomUserSerializer(UserSerializer):
+    class Meta(UserSerializer.Meta):
+        model = User
+        fields = ('id', 'username', 'email', 'first_name')
+        read_only_fields = ('username',)  # Username cannot be changed
+
 
 from .models import NotificationSettings
 
