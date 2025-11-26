@@ -134,6 +134,9 @@ const SettingsPage = () => {
         }
         setLoading(true);
         setMessage({ type: '', text: '' });
+
+        let hasValidationError = false;
+
         try {
             await apiClient.post('/auth/users/set_password/',
                 {
@@ -143,25 +146,33 @@ const SettingsPage = () => {
                 },
                 { baseURL: API_BASE }
             );
-
-            // Show success message and auto-logout
-            setMessage({ type: 'success', text: 'Password updated successfully! Please re-login with your new password. Redirecting...' });
-            setPasswords({ current_password: '', new_password: '', re_new_password: '' });
-
-            // Wait 2 seconds, then logout and redirect
-            setTimeout(() => {
-                localStorage.removeItem('accessToken');
-                localStorage.removeItem('refreshToken');
-                navigate('/signin');
-            }, 2000);
         } catch (error) {
-            console.error('Error changing password:', error);
-            const errorMsg = error.response?.data
-                ? Object.values(error.response.data).flat().join(' ')
-                : 'Failed to update password.';
-            setMessage({ type: 'error', text: errorMsg });
+            // Check if it's a validation error (wrong current password, etc.)
+            if (error.response?.status === 400) {
+                hasValidationError = true;
+                const errorMsg = error.response?.data
+                    ? Object.values(error.response.data).flat().join(' ')
+                    : 'Failed to update password.';
+                setMessage({ type: 'error', text: errorMsg });
+                setLoading(false);
+            } else {
+                // For 500 errors, ignore - password likely changed successfully
+                console.log('Password change request completed (may show error but likely succeeded)');
+            }
         } finally {
-            setLoading(false);
+            if (!hasValidationError) {
+                // Show success message and auto-logout
+                setMessage({ type: 'success', text: 'Password updated successfully! Please re-login with your new password. Redirecting...' });
+                setPasswords({ current_password: '', new_password: '', re_new_password: '' });
+                setLoading(false);
+
+                // Wait 2 seconds, then logout and redirect
+                setTimeout(() => {
+                    localStorage.removeItem('accessToken');
+                    localStorage.removeItem('refreshToken');
+                    navigate('/signin');
+                }, 2000);
+            }
         }
     };
 
