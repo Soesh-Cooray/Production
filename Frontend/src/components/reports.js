@@ -596,8 +596,8 @@ const Reports = () => {
         </Tabs>
 
         <TabPanel value={tabValue} index={0}>
-          <Grid container spacing={3}>
-            <Grid item xs={12}>
+          <Grid container spacing={3} justifyContent="center">
+            <Grid item xs={12} md={10} lg={8}>
               <StyledCard>
                 <Card sx={{ height: 500, width: '100%', }}>
                   <CardContent>
