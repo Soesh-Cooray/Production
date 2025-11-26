@@ -50,4 +50,4 @@ from .models import NotificationSettings
 class NotificationSettingsSerializer(serializers.ModelSerializer):
     class Meta:
         model = NotificationSettings
-        fields = ('reminder_frequency', 'reminder_time')
+        fields = ('reminder_frequency', 'reminder_time', 'timezone')

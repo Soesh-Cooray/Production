@@ -29,7 +29,8 @@ const SettingsPage = () => {
     // Notification Settings State
     const [notificationSettings, setNotificationSettings] = useState({
         reminder_frequency: 'none',
-        reminder_time: '09:00'
+        reminder_time: '09:00',
+        timezone: 'UTC'
     });
 
     // Password Change State
@@ -71,7 +72,8 @@ const SettingsPage = () => {
             });
             setNotificationSettings({
                 reminder_frequency: response.data.reminder_frequency || 'none',
-                reminder_time: response.data.reminder_time ? response.data.reminder_time.substring(0, 5) : '09:00'
+                reminder_time: response.data.reminder_time ? response.data.reminder_time.substring(0, 5) : '09:00',
+                timezone: response.data.timezone || 'UTC'
             });
         } catch (error) {
             console.error('Error fetching notification settings:', error);
@@ -260,7 +262,7 @@ const SettingsPage = () => {
                     </Typography>
                     <Divider sx={{ mb: 3 }} />
                     <Grid container spacing={2}>
-                        <Grid item xs={12} sm={6}>
+                        <Grid item xs={12} sm={4}>
                             <TextField
                                 select
                                 label="Frequency"
@@ -276,9 +278,9 @@ const SettingsPage = () => {
                                 <option value="weekly">Weekly (Mondays)</option>
                             </TextField>
                         </Grid>
-                        <Grid item xs={12} sm={6}>
+                        <Grid item xs={12} sm={4}>
                             <TextField
-                                label="Time (UTC)"
+                                label="Time"
                                 type="time"
                                 fullWidth
                                 value={notificationSettings.reminder_time}
@@ -290,6 +292,47 @@ const SettingsPage = () => {
                                     step: 300, // 5 min
                                 }}
                             />
+                        </Grid>
+                        <Grid item xs={12} sm={4}>
+                            <TextField
+                                select
+                                label="Timezone"
+                                fullWidth
+                                value={notificationSettings.timezone}
+                                onChange={(e) => setNotificationSettings({ ...notificationSettings, timezone: e.target.value })}
+                                SelectProps={{
+                                    native: true,
+                                }}
+                            >
+                                <option value="GMT-12:00">GMT-12:00</option>
+                                <option value="GMT-11:00">GMT-11:00</option>
+                                <option value="GMT-10:00">GMT-10:00</option>
+                                <option value="GMT-9:00">GMT-9:00</option>
+                                <option value="GMT-8:00">GMT-8:00 (PST)</option>
+                                <option value="GMT-7:00">GMT-7:00 (MST)</option>
+                                <option value="GMT-6:00">GMT-6:00 (CST)</option>
+                                <option value="GMT-5:00">GMT-5:00 (EST)</option>
+                                <option value="GMT-4:00">GMT-4:00</option>
+                                <option value="GMT-3:00">GMT-3:00</option>
+                                <option value="GMT-2:00">GMT-2:00</option>
+                                <option value="GMT-1:00">GMT-1:00</option>
+                                <option value="UTC">UTC (GMT+0:00)</option>
+                                <option value="GMT+1:00">GMT+1:00</option>
+                                <option value="GMT+2:00">GMT+2:00</option>
+                                <option value="GMT+3:00">GMT+3:00</option>
+                                <option value="GMT+4:00">GMT+4:00</option>
+                                <option value="GMT+5:00">GMT+5:00</option>
+                                <option value="GMT+5:30">GMT+5:30 (India)</option>
+                                <option value="GMT+6:00">GMT+6:00</option>
+                                <option value="GMT+7:00">GMT+7:00</option>
+                                <option value="GMT+8:00">GMT+8:00 (China)</option>
+                                <option value="GMT+9:00">GMT+9:00 (Japan)</option>
+                                <option value="GMT+10:00">GMT+10:00 (Australia East)</option>
+                                <option value="GMT+11:00">GMT+11:00</option>
+                                <option value="GMT+12:00">GMT+12:00 (New Zealand)</option>
+                                <option value="GMT+13:00">GMT+13:00</option>
+                                <option value="GMT+14:00">GMT+14:00</option>
+                            </TextField>
                         </Grid>
                         <Grid item xs={12}>
                             <Button

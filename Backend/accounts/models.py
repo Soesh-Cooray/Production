@@ -13,6 +13,7 @@ class NotificationSettings(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE, related_name='notification_settings')
     reminder_frequency = models.CharField(max_length=10, choices=FREQUENCY_CHOICES, default='none')
     reminder_time = models.TimeField(null=True, blank=True)
+    timezone = models.CharField(max_length=20, default='UTC', help_text='Timezone in GMT format (e.g., GMT+5:30)')
     
     def __str__(self):
         return f"{self.user.username} - {self.reminder_frequency}"
