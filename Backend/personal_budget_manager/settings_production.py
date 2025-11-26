@@ -114,6 +114,10 @@ STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
 # Djoser Configuration
 DJOSER = {
     'USER_CREATE_PASSWORD_RETYPE': True,
+    'SEND_ACTIVATION_EMAIL': False,
+    'SEND_CONFIRMATION_EMAIL': False,
+    'PASSWORD_CHANGED_EMAIL_CONFIRMATION': False,
+    'USERNAME_CHANGED_EMAIL_CONFIRMATION': False,
     'SERIALIZERS': {
         'user': 'accounts.serializers.CustomUserSerializer',
         'current_user': 'accounts.serializers.CustomUserSerializer',
