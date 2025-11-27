@@ -1,0 +1,27 @@
+Welcome to BudgetMaster!
+
+Hello {{ user.get_username }}!
+
+Congratulations! Your BudgetMaster account has been successfully created. We're excited to have you join our community of smart money managers!
+
+What you can do with BudgetMaster:
+- Track your income and expenses effortlessly
+- Visualize your spending with beautiful charts and reports
+- Get insights into your financial habits
+- Set and achieve your financial goals
+- Receive helpful reminders to stay on track
+
+Your account is now active and ready to use! Visit the link below to log in and start managing your finances like a pro:
+
+{{ protocol }}://{{ domain }}/login
+
+Pro Tip: Start by adding your first transaction and explore the dashboard to see how BudgetMaster can help you take control of your finances!
+
+If you have any questions or need assistance, our support team is here to help. We're committed to making your experience with BudgetMaster exceptional.
+
+---
+BudgetMaster Team
+Thank you for choosing BudgetMaster!
+Together, let's build a better financial future.
+
+This is an automated message. Please do not reply to this email.

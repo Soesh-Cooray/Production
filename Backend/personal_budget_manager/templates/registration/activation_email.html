@@ -1,0 +1,229 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Welcome to BudgetMaster!</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            margin: 0;
+            padding: 0;
+            background-color: #f8f9fa;
+        }
+
+        .container {
+            max-width: 600px;
+            margin: 0 auto;
+            background-color: #ffffff;
+            border-radius: 8px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            overflow: hidden;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 40px;
+            text-align: center;
+        }
+
+        .header h1 {
+            margin: 0;
+            font-size: 32px;
+            font-weight: 600;
+        }
+
+        .header .logo {
+            font-size: 48px;
+            margin-bottom: 15px;
+        }
+
+        .header .subtitle {
+            font-size: 16px;
+            margin-top: 10px;
+            opacity: 0.95;
+        }
+
+        .content {
+            padding: 40px;
+        }
+
+        .greeting {
+            font-size: 20px;
+            margin-bottom: 20px;
+            color: #2c3e50;
+            font-weight: 600;
+        }
+
+        .message {
+            font-size: 16px;
+            margin-bottom: 25px;
+            color: #555;
+            line-height: 1.8;
+        }
+
+        .welcome-box {
+            background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+            border-left: 4px solid #667eea;
+            padding: 20px;
+            margin: 25px 0;
+            border-radius: 4px;
+        }
+
+        .welcome-box h2 {
+            margin: 0 0 15px 0;
+            color: #667eea;
+            font-size: 18px;
+        }
+
+        .welcome-box ul {
+            margin: 0;
+            padding-left: 20px;
+        }
+
+        .welcome-box li {
+            margin: 8px 0;
+            color: #555;
+        }
+
+        .activate-button {
+            display: inline-block;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            text-decoration: none;
+            padding: 16px 40px;
+            border-radius: 25px;
+            font-weight: 600;
+            font-size: 16px;
+            margin: 25px 0;
+            text-align: center;
+            box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4);
+            transition: all 0.3s ease;
+        }
+
+        .activate-button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(102, 126, 234, 0.6);
+        }
+
+        .username-info {
+            background-color: #f8f9fa;
+            border-left: 4px solid #667eea;
+            padding: 15px 20px;
+            margin: 20px 0;
+            border-radius: 4px;
+        }
+
+        .username-info strong {
+            color: #667eea;
+        }
+
+        .footer {
+            background-color: #f8f9fa;
+            padding: 30px 40px;
+            text-align: center;
+            color: #666;
+            font-size: 14px;
+        }
+
+        .footer p {
+            margin: 5px 0;
+        }
+
+        .info-box {
+            background-color: #e7f3ff;
+            border: 1px solid #b3d9ff;
+            border-radius: 4px;
+            padding: 15px;
+            margin: 20px 0;
+            color: #004085;
+        }
+
+        .link-fallback {
+            word-break: break-all;
+            background-color: #f8f9fa;
+            padding: 10px;
+            border-radius: 4px;
+            font-family: monospace;
+            font-size: 12px;
+            margin: 10px 0;
+        }
+
+        .emoji {
+            font-size: 24px;
+            margin-right: 8px;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <div class="header">
+            <div class="logo">💰</div>
+            <h1>Welcome to BudgetMaster!</h1>
+            <div class="subtitle">Your journey to financial freedom starts here</div>
+        </div>
+
+        <div class="content">
+            <div class="greeting">Hello {{ user.get_username }}! 👋</div>
+
+            <div class="message">
+                Congratulations! Your BudgetMaster account has been successfully created. We're excited to have you join
+                our community of smart money managers!
+            </div>
+
+            <div class="welcome-box">
+                <h2>🎉 What you can do with BudgetMaster:</h2>
+                <ul>
+                    <li>📊 Track your income and expenses effortlessly</li>
+                    <li>📈 Visualize your spending with beautiful charts and reports</li>
+                    <li>💡 Get insights into your financial habits</li>
+                    <li>🎯 Set and achieve your financial goals</li>
+                    <li>⏰ Receive helpful reminders to stay on track</li>
+                </ul>
+            </div>
+
+            <div class="message">
+                Your account is now <strong>active and ready to use</strong>! Click the button below to log in and start
+                managing your finances like a pro.
+            </div>
+
+            <div style="text-align: center;">
+                <a href="{{ protocol }}://{{ domain }}/login" class="activate-button">
+                    Get Started Now
+                </a>
+            </div>
+
+            <div class="info-box">
+                <strong>💡 Pro Tip:</strong> Start by adding your first transaction and explore the dashboard to see how
+                BudgetMaster can help you take control of your finances!
+            </div>
+
+            <div class="message" style="margin-top: 30px;">
+                If you have any questions or need assistance, our support team is here to help. We're committed to
+                making your experience with BudgetMaster exceptional.
+            </div>
+
+            <p style="font-size: 14px; color: #666;">If the button above doesn't work, you can copy and paste this link
+                into your browser:</p>
+            <div class="link-fallback">
+                {{ protocol }}://{{ domain }}/login
+            </div>
+        </div>
+
+        <div class="footer">
+            <p><strong>BudgetMaster Team</strong></p>
+            <p>Thank you for choosing BudgetMaster!</p>
+            <p>Together, let's build a better financial future.</p>
+            <p style="margin-top: 20px; font-size: 12px; color: #999;">
+                This is an automated message. Please do not reply to this email.
+            </p>
+        </div>
+    </div>
+</body>
+
+</html>

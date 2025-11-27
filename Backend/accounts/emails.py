@@ -119,3 +119,56 @@ class CustomPasswordChangedEmail(PasswordChangedConfirmationEmail):
         self.subject = _("Password Changed - BudgetMaster")
         self.html_body = render_to_string(self.template_name, context)
         self.text_body = render_to_string(self.text_template_name, context)
+
+
+class CustomActivationEmail(PasswordResetEmail):
+    template_name = "registration/activation_email.html"
+    text_template_name = "registration/activation_email.txt"
+
+    def get_context_data(self):
+        context = super().get_context_data()
+        
+        # Prioritize settings.DOMAIN
+        context["site_name"] = getattr(settings, 'SITE_NAME', 'BudgetMaster')
+        context["domain"] = getattr(settings, 'DOMAIN', None)
+
+        if not context["domain"]:
+            try:
+                site = get_current_site(self.request)
+                context["site_name"] = site.name
+                context["domain"] = site.domain
+            except:
+                context["domain"] = 'budget-master-app.vercel.app'
+            
+        context["protocol"] = "https" if self.request.is_secure() else "http"
+        return context
+
+    def send(self, to, *args, **kwargs):
+        self.to = to
+        self.cc = kwargs.pop("cc", [])
+        self.bcc = kwargs.pop("bcc", [])
+        self.reply_to = kwargs.pop("reply_to", [])
+        self.from_email = kwargs.pop("from_email", None)
+        
+        self.render()
+        
+        msg = EmailMultiAlternatives(
+            subject=self.subject,
+            body=self.text_body,
+            from_email=self.from_email,
+            to=self.to,
+            cc=self.cc,
+            bcc=self.bcc,
+            reply_to=self.reply_to,
+        )
+        
+        if self.html_body:
+            msg.attach_alternative(self.html_body, "text/html")
+        
+        msg.send()
+
+    def render(self):
+        context = self.get_context_data()
+        self.subject = _("Welcome to BudgetMaster - Account Created!")
+        self.html_body = render_to_string(self.template_name, context)
+        self.text_body = render_to_string(self.text_template_name, context)
