@@ -70,7 +70,7 @@ function SignUpPage() {
                 first_name: name,
                 username: email,
                 password,
-                password2: confirmPassword,
+                re_password: confirmPassword,
                 email: email,
             });
             console.log('Signup Response:', response);
