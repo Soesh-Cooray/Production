@@ -115,15 +115,18 @@ const SettingsPage = () => {
     const handleUpdateNotifications = async () => {
         setLoading(true);
         setMessage({ type: '', text: '' });
+        console.log('Saving notification settings:', notificationSettings);
         try {
-            await apiClient.patch('/auth/settings/notifications/',
+            const response = await apiClient.patch('/auth/settings/notifications/',
                 notificationSettings,
                 { baseURL: API_BASE }
             );
+            console.log('Notification settings saved successfully:', response.data);
             setMessage({ type: 'success', text: 'Notification settings updated successfully.' });
         } catch (error) {
             console.error('Error updating notifications:', error);
-            setMessage({ type: 'error', text: 'Failed to update notification settings.' });
+            console.error('Error response:', error.response?.data);
+            setMessage({ type: 'error', text: 'Failed to update notification settings. ' + (error.response?.data ? JSON.stringify(error.response.data) : error.message) });
         } finally {
             setLoading(false);
         }

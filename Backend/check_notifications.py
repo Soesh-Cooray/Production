@@ -1,0 +1,48 @@
+"""
+Quick script to check notification settings in the database
+Run with: python check_notifications.py
+"""
+import os
+import django
+
+# Setup Django
+os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'personal_budget_manager.settings')
+django.setup()
+
+from accounts.models import NotificationSettings
+from django.contrib.auth.models import User
+
+print("=== Notification Settings Check ===\n")
+
+# Get all users
+users = User.objects.all()
+print(f"Total users: {users.count()}\n")
+
+# Get all notification settings
+settings = NotificationSettings.objects.all()
+print(f"Total notification settings: {settings.count()}\n")
+
+if settings.count() == 0:
+    print("⚠️  No notification settings found!")
+    print("   Users need to save their settings in the Settings page.\n")
+else:
+    print("Notification Settings:")
+    print("-" * 80)
+    for s in settings:
+        print(f"User: {s.user.email}")
+        print(f"  Frequency: {s.reminder_frequency}")
+        print(f"  Time: {s.reminder_time}")
+        print(f"  Timezone: {s.timezone}")
+        print(f"  Will send? {s.reminder_frequency != 'none' and s.reminder_time is not None}")
+        print()
+
+# Show users without notification settings
+users_without_settings = []
+for user in users:
+    try:
+        user.notification_settings
+    except NotificationSettings.DoesNotExist:
+        users_without_settings.append(user.email)
+
+if users_without_settings:
+    print(f"\n⚠️  Users without notification settings: {', '.join(users_without_settings)}")
