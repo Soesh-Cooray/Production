@@ -112,10 +112,13 @@ MIDDLEWARE.insert(1, 'whitenoise.middleware.WhiteNoiseMiddleware')
 STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
 
 # Djoser Configuration
+# Djoser Configuration
 DJOSER = {
     'USER_ID_FIELD': 'id',
+    'LOGIN_FIELD': 'email',  # Explicitly set login field to email since that's what we use
     'USER_CREATE_PASSWORD_RETYPE': True,
     'PASSWORD_RESET_CONFIRM_URL': 'reset-password-confirm?uid={uid}&token={token}',
+    'USERNAME_RESET_CONFIRM_URL': 'username/reset/confirm/{uid}/{token}',
     'ACTIVATION_URL': 'activate/{uid}/{token}',
     'SEND_ACTIVATION_EMAIL': True,
     'ACTIVATION': False,
@@ -123,15 +126,15 @@ DJOSER = {
     'PASSWORD_CHANGED_EMAIL_CONFIRMATION': True,
     'USERNAME_CHANGED_EMAIL_CONFIRMATION': False,
     'PASSWORD_RESET_CONFIRM_RETYPE': True,
-    'PASSWORD_RESET_SHOW_EMAIL_NOT_FOUND': True,
+    'PASSWORD_RESET_SHOW_EMAIL_NOT_FOUND': True,  # CRITICAL: Must be True to avoid "User does not exist" error
     'EMAIL': {
         'password_reset': 'accounts.emails.CustomPasswordResetEmail',
         'password_changed_confirmation': 'accounts.emails.CustomPasswordChangedEmail',
         'activation': 'accounts.emails.CustomActivationEmail',
     },
     'SERIALIZERS': {
-        'user': 'accounts.serializers.CustomUserSerializer',
-        'current_user': 'accounts.serializers.CustomUserSerializer',
         'user_create': 'accounts.serializers.UserCreateSerializer',
+        'user': 'accounts.serializers.UserCreateSerializer',
+        'current_user': 'accounts.serializers.CustomUserSerializer',
     },
 }
