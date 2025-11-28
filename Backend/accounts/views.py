@@ -1,6 +1,5 @@
-from rest_framework import generics, permissions
+from rest_framework import permissions
 from django.contrib.auth import get_user_model
-from .serializers import UserCreateSerializer
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status
@@ -8,11 +7,6 @@ from .models import NotificationSettings
 from .serializers import NotificationSettingsSerializer
 
 User = get_user_model()
-
-class UserCreateView(generics.CreateAPIView):
-    queryset = User.objects.all()
-    serializer_class = UserCreateSerializer
-    permission_classes = [permissions.AllowAny]
 
 class NotificationSettingsView(APIView):
     permission_classes = [permissions.IsAuthenticated]
