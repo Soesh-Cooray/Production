@@ -118,9 +118,7 @@ DJOSER = {
     'USER_CREATE_PASSWORD_RETYPE': True,
     'PASSWORD_RESET_CONFIRM_URL': 'reset-password-confirm?uid={uid}&token={token}',
     'USERNAME_RESET_CONFIRM_URL': 'username/reset/confirm/{uid}/{token}',
-    'ACTIVATION_URL': 'activate/{uid}/{token}',
-    'SEND_ACTIVATION_EMAIL': True,
-    'ACTIVATION': False,
+    'SEND_ACTIVATION_EMAIL': False,  # Disabled - users don't need to activate
     'SEND_CONFIRMATION_EMAIL': True,
     'PASSWORD_CHANGED_EMAIL_CONFIRMATION': True,
     'USERNAME_CHANGED_EMAIL_CONFIRMATION': False,
@@ -129,7 +127,6 @@ DJOSER = {
     'EMAIL': {
         'password_reset': 'accounts.emails.CustomPasswordResetEmail',
         'password_changed_confirmation': 'accounts.emails.CustomPasswordChangedEmail',
-        'activation': 'accounts.emails.CustomActivationEmail',
     },
     'SERIALIZERS': {
         'user_create': 'accounts.serializers.UserCreateSerializer',

@@ -94,12 +94,9 @@ DJOSER = {
     'EMAIL': {
         'password_reset': 'accounts.emails.CustomPasswordResetEmail',
         'password_changed_confirmation': 'accounts.emails.CustomPasswordChangedEmail',
-        'activation': 'accounts.emails.CustomActivationEmail',
     },
     'USERNAME_RESET_CONFIRM_URL': 'username/reset/confirm/{uid}/{token}',
-    'ACTIVATION_URL': 'activate/{uid}/{token}',
-    'SEND_ACTIVATION_EMAIL': True,
-    'ACTIVATION': False,
+    'SEND_ACTIVATION_EMAIL': False,  # Disabled - users don't need to activate
     'SEND_CONFIRMATION_EMAIL': True,
     'PASSWORD_CHANGED_EMAIL_CONFIRMATION': True,
     'PASSWORD_RESET_CONFIRM_RETYPE': True,
