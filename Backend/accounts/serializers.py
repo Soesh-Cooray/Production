@@ -11,12 +11,28 @@ User = get_user_model()
 # Serializer for creating a new user, including password validation and confirmation
 # IMPORTANT: Must inherit from Djoser's UserCreateSerializer for proper integration
 class UserCreateSerializer(DjoserUserCreateSerializer):
+    re_password = serializers.CharField(
+        style={'input_type': 'password'},
+        write_only=True,
+        required=True
+    )
+
     class Meta(DjoserUserCreateSerializer.Meta):
         model = User
         fields = ('id', 'username', 'email', 'first_name', 'password', 're_password')
+
+    def validate(self, attrs):
+        if 're_password' in attrs:
+            re_password = attrs.pop('re_password')
+            password = attrs.get('password')
+            if password != re_password:
+                from rest_framework import serializers
+                raise serializers.ValidationError({"re_password": "Passwords must match."})
+        
+        return super().validate(attrs)
     
-    # Override perform_create to ensure username is passed correctly
-    def perform_create(self, validated_data):
+    # Override create (not perform_create) to ensure username is passed correctly
+    def create(self, validated_data):
         # Remove re_password before creating user
         validated_data.pop('re_password', None)
         
