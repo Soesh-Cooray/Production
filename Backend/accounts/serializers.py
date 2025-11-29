@@ -23,6 +23,11 @@ class UserCreateSerializer(DjoserUserCreateSerializer):
         required=True
     )
 
+    def __init__(self, *args, **kwargs):
+        logger.info(f"🔍 DEBUG: UserCreateSerializer.__init__ called! Instance being created.")
+        super().__init__(*args, **kwargs)
+        logger.info(f"🔍 DEBUG: UserCreateSerializer.__init__ completed")
+    
     class Meta(DjoserUserCreateSerializer.Meta):
         model = User
         fields = ('id', 'username', 'email', 'first_name', 'password', 're_password')
