@@ -11,16 +11,24 @@ const FAQ = () => {
     // FAQ data structure - you can manually add questions and answers here
     const faqData = [
         {
-            question: 'Sample Question 1?',
-            answer: 'This is a sample answer. You can replace this with your actual FAQ content.'
+            question: 'How do I create a new budget?',
+            answer: 'Go to the budgets page and click on the "Create New Budget" button.'
         },
         {
-            question: 'Sample Question 2?',
-            answer: 'This is another sample answer. You can replace this with your actual FAQ content.'
+            question: 'How do I add a new transaction?',
+            answer: 'Go to the transactions page and click on the "Add New Transaction" button. You can also either delete or edit a transaction by clicking on the corresponding button.'
         },
         {
-            question: 'Sample Question 3?',
-            answer: 'This is yet another sample answer. You can replace this with your actual FAQ content.'
+            question: 'How can I add a new category?',
+            answer: 'Goto the Budgets page click on "Crate New Budget" button. Then you fill the dialog with the neccasary information. Then the new category will be added to the list.'
+        },
+        {
+            question: 'How can I add email reminders?',
+            answer: 'Goto the Settings page and click on the "Email Reminders" button. Then you fill the dialog with the neccasary information. Then you will receive email reminders .'
+        },
+        {
+            question: 'How can I delete my account?',
+            answer: 'Goto the Settings page and click on the "Delete Account" button. Then your account will be deleted.'
         }
     ];
 
