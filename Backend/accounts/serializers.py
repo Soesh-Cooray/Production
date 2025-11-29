@@ -15,8 +15,6 @@ User = get_user_model()
 # Serializer for creating a new user, including password validation and confirmation
 # IMPORTANT: Must inherit from Djoser's UserCreateSerializer for proper integration
 class UserCreateSerializer(DjoserUserCreateSerializer):
-    logger.info("🔍 DEBUG: UserCreateSerializer class definition loading")
-    
     re_password = serializers.CharField(
         style={'input_type': 'password'},
         write_only=True,
