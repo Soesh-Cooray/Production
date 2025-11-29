@@ -12,6 +12,7 @@ import MenuIcon from '@mui/icons-material/Menu';
 import Brightness4Icon from '@mui/icons-material/Brightness4';
 import Brightness7Icon from '@mui/icons-material/Brightness7';
 import SettingsIcon from '@mui/icons-material/Settings';
+import HelpOutlineIcon from '@mui/icons-material/HelpOutline';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { DRAWER_WIDTH } from '../constants';
 import { useTheme as useCustomTheme } from '../context/ThemeContext';
@@ -257,6 +258,20 @@ function Sidebar({ open, onClose }) {
                         <SettingsIcon />
                     </ListItemIcon>
                     <ListItemText primary="Settings" sx={{ opacity: open ? 1 : 0 }} />
+                </ListItem>
+
+                <ListItem
+                    button
+                    key="FAQ"
+                    onClick={() => handleNavigation('/faq')}
+                    sx={{
+                        backgroundColor: isActive('/faq') ? 'rgba(128, 128, 128, 0.68)' : 'transparent',
+                    }}
+                >
+                    <ListItemIcon sx={{ minWidth: 0, mr: 3, justifyContent: open ? 'flex-start' : 'center' }}>
+                        <HelpOutlineIcon />
+                    </ListItemIcon>
+                    <ListItemText primary="FAQ" sx={{ opacity: open ? 1 : 0 }} />
                 </ListItem>
 
                 <ListItem

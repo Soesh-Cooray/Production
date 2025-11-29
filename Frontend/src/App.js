@@ -12,12 +12,13 @@ import Dashboard from './components/dashboard';
 import Reports from './components/reports';
 import Sidebar from './components/sidebar';
 import SettingsPage from './components/settings';
+import FAQ from './components/faq';
 import { ThemeProvider } from './context/ThemeContext';
 import { DRAWER_WIDTH, COLLAPSED_WIDTH } from './constants';
 
 function App() {
     const location = useLocation();
-    const showSidebar = ['/transaction', '/budgets', '/reports', '/dashboard', '/settings'].includes(location.pathname);
+    const showSidebar = ['/transaction', '/budgets', '/reports', '/dashboard', '/settings', '/faq'].includes(location.pathname);
     const [open, setOpen] = useState(true);
 
     const handleDrawerToggle = () => {
@@ -101,6 +102,7 @@ function App() {
                         <Route path="/reports" element={<Reports />} />
                         <Route path="/dashboard" element={<Dashboard />} />
                         <Route path="/settings" element={<SettingsPage />} />
+                        <Route path="/faq" element={<FAQ />} />
                         <Route path="*" element={<Navigate to="/" replace />} />
                     </Routes>
                 </Box>
