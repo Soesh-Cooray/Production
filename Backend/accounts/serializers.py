@@ -3,10 +3,6 @@ from rest_framework import serializers
 from django.contrib.auth.password_validation import validate_password
 from djoser.serializers import UserSerializer
 from djoser.serializers import UserCreateSerializer as DjoserUserCreateSerializer
-import logging
-
-logger = logging.getLogger(__name__)
-logger.info("🔍 DEBUG: accounts.serializers module loaded")
 
 # Reference to the custom or default User model
 User = get_user_model()
@@ -21,17 +17,11 @@ class UserCreateSerializer(DjoserUserCreateSerializer):
         required=True
     )
 
-    def __init__(self, *args, **kwargs):
-        logger.info(f"🔍 DEBUG: UserCreateSerializer.__init__ called! Instance being created.")
-        super().__init__(*args, **kwargs)
-        logger.info(f"🔍 DEBUG: UserCreateSerializer.__init__ completed")
-    
     class Meta(DjoserUserCreateSerializer.Meta):
         model = User
         fields = ('id', 'username', 'email', 'first_name', 'password', 're_password')
 
     def validate(self, attrs):
-        logger.info(f"🔍 DEBUG: UserCreateSerializer.validate called with keys: {attrs.keys()}")
         if 're_password' in attrs:
             re_password = attrs.pop('re_password')
             password = attrs.get('password')
@@ -39,25 +29,20 @@ class UserCreateSerializer(DjoserUserCreateSerializer):
                 from rest_framework import serializers
                 raise serializers.ValidationError({"re_password": "Passwords must match."})
         
-        result = super().validate(attrs)
-        logger.info("🔍 DEBUG: UserCreateSerializer.validate completed")
-        return result
+        return super().validate(attrs)
     
     # Override create (not perform_create) to ensure username is passed correctly
     def create(self, validated_data):
-        logger.info(f"🔍 DEBUG: UserCreateSerializer.create called with: {validated_data.keys()}")
         # Remove re_password before creating user
         validated_data.pop('re_password', None)
         
         # Ensure username is set (Djoser requires it)
-        logger.info(f"🔍 DEBUG: Creating user with username={validated_data.get('username')}, email={validated_data.get('email')}")
         user = User.objects.create_user(
             username=validated_data.get('username'),
             email=validated_data.get('email'),
             first_name=validated_data.get('first_name', ''),
             password=validated_data.get('password')
         )
-        logger.info(f"🔍 DEBUG: User created successfully: {user.id}")
         return user
 
 

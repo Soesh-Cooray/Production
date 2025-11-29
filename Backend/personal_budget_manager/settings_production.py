@@ -5,15 +5,9 @@ Django production settings for personal_budget_manager project.
 import os
 from pathlib import Path
 from .settings import *
-import logging
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
-
-# Add logging to confirm this file is loaded
-logging.basicConfig(level=logging.INFO)
-logger = logging.getLogger(__name__)
-logger.info("🔍 DEBUG: settings_production.py is being loaded!")
 
 # SECURITY WARNING: keep the secret key used in production secret!
 SECRET_KEY = os.environ.get('SECRET_KEY', 'django-insecure-al1hggzxc*!3+6-b+-o-ux!6&5al7_b7)+@n(0#riih1^8%1*2')
@@ -140,5 +134,3 @@ DJOSER = {
         'current_user': 'accounts.serializers.CustomUserSerializer',
     },
 }
-
-logger.info(f"🔍 DEBUG: DJOSER config set! user_create serializer = {DJOSER['SERIALIZERS']['user_create']}")
