@@ -10,8 +10,7 @@ import SavingsSharpIcon from '@mui/icons-material/SavingsSharp';
 import { AdapterDateFns } from '@mui/x-date-pickers/AdapterDateFns';
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import { DatePicker } from '@mui/x-date-pickers/DatePicker';
-import { transactionAPI, budgetAPI, categoryAPI, getCurrencySymbol } from '../api';
-import { jwtDecode } from 'jwt-decode';
+import { transactionAPI, budgetAPI, categoryAPI, getCurrencySymbol, apiClient, API_BASE } from '../api';
 import { format, subDays } from 'date-fns';
 
 // Register the chart components
@@ -128,20 +127,8 @@ const Dashboard = () => {
   const [transactions, setTransactions] = useState([]);
   const [savings, setSavings] = useState([]);
   const [currencySymbol, setCurrencySymbol] = useState(getCurrencySymbol());
-
-  let username = '';
-  let firstName = '';
-  const token = localStorage.getItem('accessToken');
-  if (token) {
-    try {
-      const decoded = jwtDecode(token);
-      firstName = decoded.first_name || '';
-      username = decoded.username || decoded.user || decoded.email || '';
-    } catch (e) {
-      username = '';
-      firstName = '';
-    }
-  }
+  const [firstName, setFirstName] = useState('');
+  const [username, setUsername] = useState('');
 
 
   const getGreeting = () => {
@@ -162,11 +149,30 @@ const Dashboard = () => {
   };
 
   useEffect(() => {
-    fetchData();
+    fetchUserInfo();
     const updateCurrency = () => setCurrencySymbol(getCurrencySymbol());
     window.addEventListener('currencyChange', updateCurrency);
     return () => window.removeEventListener('currencyChange', updateCurrency);
+  }, []);
+
+  useEffect(() => {
+    fetchData();
   }, [startDate, endDate]);
+
+  const fetchUserInfo = async () => {
+    try {
+      const response = await apiClient.get('/auth/users/me/', {
+        baseURL: API_BASE
+      });
+      setFirstName(response.data.first_name || '');
+      setUsername(response.data.username || response.data.email || '');
+    } catch (err) {
+      console.error('Error fetching user info:', err);
+      // Fallback to empty strings if API call fails
+      setFirstName('');
+      setUsername('');
+    }
+  };
   const fetchData = async () => {
     try {
       setLoading(true);
