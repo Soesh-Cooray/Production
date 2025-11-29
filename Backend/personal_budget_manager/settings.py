@@ -10,20 +10,24 @@ For the full list of settings and their values, see
 https://docs.djangoproject.com/en/5.2/ref/settings/
 """
 
+import os
 from pathlib import Path
+from dotenv import load_dotenv
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
+# Load environment variables from .env file
+load_dotenv(BASE_DIR / '.env')
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/5.2/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'django-insecure-al1hggzxc*!3+6-b+-o-ux!6&5al7_b7)+@n(0#riih1^8%1*2'
+SECRET_KEY = os.getenv('SECRET_KEY')
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = os.getenv('DEBUG', 'False') == 'True'
 
 ALLOWED_HOSTS = []
 
@@ -58,8 +62,8 @@ EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
 EMAIL_HOST = 'smtp.gmail.com'
 EMAIL_PORT = 587
 EMAIL_USE_TLS = True
-EMAIL_HOST_USER = 'budgetmaster2025@gmail.com'
-EMAIL_HOST_PASSWORD = 'mrlo pfps uaog pcjo'  # Your Gmail App Password
+EMAIL_HOST_USER = os.getenv('EMAIL_HOST_USER')
+EMAIL_HOST_PASSWORD = os.getenv('EMAIL_HOST_PASSWORD')
 DEFAULT_FROM_EMAIL = EMAIL_HOST_USER
 
 REST_FRAMEWORK = {
@@ -155,11 +159,11 @@ WSGI_APPLICATION = 'personal_budget_manager.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.mysql',
-        'NAME': 'personal_budget_manager',
-        'USER': 'budget_user',
-        'PASSWORD': 'soesh123',
-        'HOST': '127.0.0.1',
-        'PORT': '3306',
+        'NAME': os.getenv('DB_NAME', 'personal_budget_manager'),
+        'USER': os.getenv('DB_USER', 'budget_user'),
+        'PASSWORD': os.getenv('DB_PASSWORD'),
+        'HOST': os.getenv('DB_HOST', '127.0.0.1'),
+        'PORT': os.getenv('DB_PORT', '3306'),
         'OPTIONS': {
             'charset': 'utf8mb4',
         },

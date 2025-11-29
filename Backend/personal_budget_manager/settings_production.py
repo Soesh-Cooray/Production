@@ -10,7 +10,7 @@ from .settings import *
 BASE_DIR = Path(__file__).resolve().parent.parent
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = os.environ.get('SECRET_KEY', 'django-insecure-al1hggzxc*!3+6-b+-o-ux!6&5al7_b7)+@n(0#riih1^8%1*2')
+SECRET_KEY = os.environ.get('SECRET_KEY')
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = False
@@ -30,7 +30,6 @@ import dj_database_url
 # Database configuration for PostgreSQL (Vercel)
 DATABASES = {
     'default': dj_database_url.config(
-        default='postgres://user:password@localhost:5432/personal_budget_manager',
         conn_max_age=600
     )
 }
@@ -40,8 +39,8 @@ EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
 EMAIL_HOST = os.environ.get('EMAIL_HOST', 'smtp.gmail.com')
 EMAIL_PORT = int(os.environ.get('EMAIL_PORT', '587'))
 EMAIL_USE_TLS = True
-EMAIL_HOST_USER = os.environ.get('EMAIL_HOST_USER', 'budgetmaster2025@gmail.com')
-EMAIL_HOST_PASSWORD = os.environ.get('EMAIL_HOST_PASSWORD', 'mrlo pfps uaog pcjo')
+EMAIL_HOST_USER = os.environ.get('EMAIL_HOST_USER')
+EMAIL_HOST_PASSWORD = os.environ.get('EMAIL_HOST_PASSWORD')
 DEFAULT_FROM_EMAIL = EMAIL_HOST_USER
 
 # CORS settings for production
