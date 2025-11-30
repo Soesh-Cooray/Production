@@ -24,3 +24,11 @@ yarn-error.log*
 
 
 .env
+
+# Python
+venv/
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.Python
