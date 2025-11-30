@@ -20,15 +20,15 @@ const FAQ = () => {
         },
         {
             question: 'How can I add a new category?',
-            answer: 'Goto the Budgets page click on "Crate New Budget" button. Then you fill the dialog with the neccasary information. Then the new category will be added to the list.'
+            answer: 'Go to the Budgets page click on "Crate New Budget" button. Then you fill the dialog box with the new category information. Then the new category will be added to the list.'
         },
         {
             question: 'How can I add email reminders?',
-            answer: 'Goto the Settings page and click on the "Email Reminders" button. Then you fill the dialog with the neccasary information. Then you will receive email reminders .'
+            answer: 'Go to the Settings page and click on the "Email Reminders" button. Then you fill the dialog box with the necessary information. Then you will receive email reminders .'
         },
         {
             question: 'How can I delete my account?',
-            answer: 'Goto the Settings page and click on the "Delete Account" button. Then your account will be deleted.'
+            answer: 'Go to the Settings page and click on the "Delete Account" button. Then your account will be deleted.'
         }
     ];
 
@@ -52,8 +52,8 @@ const FAQ = () => {
                             sx={{
                                 mb: 2,
                                 borderRadius: 2,
-                                boxShadow: theme.palette.mode === 'dark' 
-                                    ? '0 2px 10px rgba(0, 0, 0, 0.2)' 
+                                boxShadow: theme.palette.mode === 'dark'
+                                    ? '0 2px 10px rgba(0, 0, 0, 0.2)'
                                     : '0 2px 10px rgba(0,0,0,0.05)',
                                 backgroundColor: theme.palette.background.paper,
                                 '&:before': {
@@ -70,15 +70,15 @@ const FAQ = () => {
                                     px: 3,
                                     py: 2,
                                     '&:hover': {
-                                        backgroundColor: theme.palette.mode === 'dark' 
-                                            ? 'rgba(255, 255, 255, 0.05)' 
+                                        backgroundColor: theme.palette.mode === 'dark'
+                                            ? 'rgba(255, 255, 255, 0.05)'
                                             : 'rgba(0, 0, 0, 0.02)',
                                     },
                                 }}
                             >
-                                <Typography 
-                                    variant="h6" 
-                                    sx={{ 
+                                <Typography
+                                    variant="h6"
+                                    sx={{
                                         fontWeight: 600,
                                         color: theme.palette.text.primary,
                                         fontSize: '1.1rem'
@@ -88,9 +88,9 @@ const FAQ = () => {
                                 </Typography>
                             </AccordionSummary>
                             <AccordionDetails sx={{ px: 3, pb: 3 }}>
-                                <Typography 
-                                    variant="body1" 
-                                    sx={{ 
+                                <Typography
+                                    variant="body1"
+                                    sx={{
                                         color: theme.palette.text.secondary,
                                         lineHeight: 1.7,
                                         whiteSpace: 'pre-line'
@@ -103,16 +103,16 @@ const FAQ = () => {
                     ))}
                 </Box>
 
-                <Box 
-                    sx={{ 
-                        mt: 6, 
-                        p: 3, 
+                <Box
+                    sx={{
+                        mt: 6,
+                        p: 3,
                         borderRadius: 2,
-                        backgroundColor: theme.palette.mode === 'dark' 
-                            ? 'rgba(255, 255, 255, 0.05)' 
+                        backgroundColor: theme.palette.mode === 'dark'
+                            ? 'rgba(255, 255, 255, 0.05)'
                             : 'rgba(0, 0, 0, 0.02)',
-                        border: `1px solid ${theme.palette.mode === 'dark' 
-                            ? 'rgba(255, 255, 255, 0.1)' 
+                        border: `1px solid ${theme.palette.mode === 'dark'
+                            ? 'rgba(255, 255, 255, 0.1)'
                             : 'rgba(0, 0, 0, 0.05)'}`,
                         textAlign: 'center'
                     }}
@@ -123,10 +123,10 @@ const FAQ = () => {
                     <Typography variant="body2" color="textSecondary">
                         If you can't find the answer you're looking for, please contact our support team.
                     </Typography>
-                    <Typography 
-                        variant="body1" 
-                        sx={{ 
-                            mt: 2, 
+                    <Typography
+                        variant="body1"
+                        sx={{
+                            mt: 2,
                             color: theme.palette.primary.main,
                             fontWeight: 500
                         }}
