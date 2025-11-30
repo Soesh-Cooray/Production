@@ -1,106 +1,237 @@
-# Getting Started with Create React App
+# BudgetMaster - Personal Budget Manager
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+A full-stack personal budget management application built with Django REST Framework and React.
 
-## Available Scripts
+## 🚀 Features
 
-In the project directory, you can run:
+- User authentication and authorization (JWT)
+- Income and expense tracking
+- Budget management
+- Financial reports and analytics
+- Email notifications and reminders
+- Password reset functionality
+- Mobile-responsive design
 
-### `npm start`
+## 🏗️ Tech Stack
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in your browser.
+### Backend
+- Django 4.2
+- Django REST Framework
+- PostgreSQL (Production) / MySQL (Development)
+- JWT Authentication (Simple JWT)
+- Djoser for user management
+- Whitenoise for static files
 
-The page will reload when you make changes.\
-You may also see any lint errors in the console.
+### Frontend
+- React.js
+- React Router
+- Axios for API calls
+- Modern responsive UI
 
-### `npm test`
+## 📋 Prerequisites
 
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+- Python 3.9+
+- Node.js 14+
+- PostgreSQL (for production) or MySQL (for development)
+- Gmail account for email functionality
 
-### `npm run build`
+## 🔧 Local Development Setup
 
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
+### Backend Setup
 
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
+1. **Clone the repository**
+   ```bash
+   git clone <repository-url>
+   cd Budget-Master-Production/Backend
+   ```
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
+2. **Create a virtual environment**
+   ```bash
+   python -m venv venv
+   source venv/bin/activate  # On Windows: venv\Scripts\activate
+   ```
 
-### `npm run eject`
+3. **Install dependencies**
+   ```bash
+   pip install -r requirements.txt
+   ```
 
-**Note: this is a one-way operation. Once you `eject`, you can't go back!**
+4. **Create `.env` file**
+   
+   Copy `.env.example` and fill in your credentials:
+   ```bash
+   cp .env.example .env
+   ```
 
-If you aren't satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
+   Required environment variables:
+   ```
+   SECRET_KEY=your-django-secret-key
+   DEBUG=True
+   DB_NAME=personal_budget_manager
+   DB_USER=budget_user
+   DB_PASSWORD=your-database-password
+   DB_HOST=127.0.0.1
+   DB_PORT=3306
+   EMAIL_HOST_USER=your-email@gmail.com
+   EMAIL_HOST_PASSWORD=your-gmail-app-password
+   ```
 
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you're on your own.
+5. **Run migrations**
+   ```bash
+   python manage.py migrate
+   python manage.py seed_categories  # Seed default categories
+   ```
 
-You don't have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn't feel obligated to use this feature. However we understand that this tool wouldn't be useful if you couldn't customize it when you are ready for it.
+6. **Create superuser (optional)**
+   ```bash
+   python manage.py createsuperuser
+   ```
 
-## Learn More
+7. **Run development server**
+   ```bash
+   python manage.py runserver
+   ```
 
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
+### Frontend Setup
 
-To learn React, check out the [React documentation](https://reactjs.org/).
+1. **Navigate to Frontend directory**
+   ```bash
+   cd ../Frontend
+   ```
 
-### Code Splitting
+2. **Install dependencies**
+   ```bash
+   npm install
+   ```
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/code-splitting](https://facebook.github.io/create-react-app/docs/code-splitting)
+3. **Start development server**
+   ```bash
+   npm start
+   ```
 
-### Analyzing the Bundle Size
+   The app will open at [http://localhost:3000](http://localhost:3000)
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size](https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size)
+## 🌐 Deployment (Vercel)
 
-### Making a Progressive Web App
+### Backend Deployment
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app](https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app)
+1. **Set Environment Variables in Vercel**
+   
+   Go to your Vercel project → Settings → Environment Variables and add:
+   - `SECRET_KEY` - Your Django secret key
+   - `EMAIL_HOST_USER` - Your Gmail address
+   - `EMAIL_HOST_PASSWORD` - Your Gmail App Password
+   - `DATABASE_URL` - PostgreSQL connection string (auto-set by Vercel Postgres)
 
-### Advanced Configuration
+2. **Deploy**
+   ```bash
+   vercel --prod
+   ```
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/advanced-configuration](https://facebook.github.io/create-react-app/docs/advanced-configuration)
+### Frontend Deployment
 
-### Deployment
+1. **Update API endpoint**
+   
+   Update `Frontend/src/constants.js` with your backend URL
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/deployment](https://facebook.github.io/create-react-app/docs/deployment)
+2. **Deploy**
+   ```bash
+   cd Frontend
+   vercel --prod
+   ```
 
-### `npm run build` fails to minify
+## 🔐 Security Notes
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify](https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify)
+- **Never commit `.env` files** - They are gitignored for security
+- **Use environment variables** for all sensitive data
+- **Generate strong SECRET_KEY** for production
+- **Use Gmail App Passwords** instead of your actual Gmail password
+- The project uses HTTPS in production with secure cookies
+
+## 📧 Email Setup (Gmail)
+
+1. Go to [Google Account App Passwords](https://myaccount.google.com/apppasswords)
+2. Create a new app password for "BudgetMaster"
+3. Copy the generated password (remove spaces)
+4. Add to your `.env` file or Vercel environment variables
+
+## 🗂️ Project Structure
 
 ```
-budget-app-v2
-├─ package-lock.json
-├─ package.json
-├─ public
-│  ├─ favicon.ico
-│  ├─ index.html
-│  ├─ logo192.png
-│  ├─ logo512.png
-│  ├─ manifest.json
-│  └─ robots.txt
-├─ README.md
-└─ src
-   ├─ api.js
-   ├─ App.css
-   ├─ App.js
-   ├─ App.test.js
-   ├─ components
-   │  ├─ budgets.js
-   │  ├─ dashboard.js
-   │  ├─ forgotpasswordpage.js
-   │  ├─ homepage.js
-   │  ├─ reports.js
-   │  ├─ sidebar.js
-   │  ├─ signin.js
-   │  ├─ signup.js
-   │  └─ transaction.js
-   ├─ constants.js
-   ├─ index.css
-   ├─ index.js
-   ├─ logo.svg
-   ├─ reportWebVitals.js
-   └─ setupTests.js
-
+Budget-Master-Production/
+├── Backend/
+│   ├── accounts/              # User authentication app
+│   ├── budget/                # Budget management app
+│   ├── personal_budget_manager/  # Django project settings
+│   ├── manage.py
+│   ├── requirements.txt
+│   ├── .env.example          # Environment variables template
+│   └── vercel.json           # Vercel deployment config
+├── Frontend/
+│   ├── public/
+│   ├── src/
+│   │   ├── components/       # React components
+│   │   ├── api.js           # API configuration
+│   │   ├── constants.js     # App constants
+│   │   └── App.js
+│   ├── package.json
+│   └── vercel.json
+└── README.md
 ```
+
+## 🛠️ Available Scripts
+
+### Backend
+
+```bash
+python manage.py runserver          # Start development server
+python manage.py makemigrations     # Create migrations
+python manage.py migrate            # Apply migrations
+python manage.py createsuperuser    # Create admin user
+python manage.py seed_categories    # Seed default categories
+python manage.py collectstatic      # Collect static files
+```
+
+### Frontend
+
+```bash
+npm start       # Start development server
+npm build       # Build for production
+npm test        # Run tests
+```
+
+## 🐛 Troubleshooting
+
+### Backend Issues
+
+**"SECRET_KEY must not be empty"**
+- Make sure you've set `SECRET_KEY` in your `.env` file or Vercel environment variables
+
+**Email not sending**
+- Verify Gmail App Password is correct
+- Check that 2FA is enabled on your Gmail account
+- Ensure `EMAIL_HOST_USER` and `EMAIL_HOST_PASSWORD` are set correctly
+
+**Database connection errors**
+- Verify database credentials in `.env`
+- Ensure PostgreSQL/MySQL is running
+- Check `DATABASE_URL` in production
+
+### Frontend Issues
+
+**API connection errors**
+- Verify backend URL in `constants.js`
+- Check CORS settings in Django settings
+- Ensure backend is running
+
+## 📝 License
+
+This project is private and proprietary.
+
+## 🤝 Contributing
+
+This is a private project. Please contact the owner for contribution guidelines.
+
+## 📧 Support
+
+For issues or questions, please contact the project maintainer.
