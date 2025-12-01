@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import {
     Drawer, List, ListItem, ListItemIcon, ListItemText, Toolbar,
     Typography, IconButton, Box, useTheme, Switch
@@ -98,10 +98,27 @@ function Sidebar({ open, onClose }) {
     };
 
     const handleLogout = () => {
+        // Save currency before clearing localStorage
+        const savedCurrency = localStorage.getItem('currency');
+
         localStorage.removeItem('accessToken');
         localStorage.removeItem('refreshToken');
+
+        // Restore currency after logout
+        if (savedCurrency) {
+            localStorage.setItem('currency', savedCurrency);
+        }
+
         navigate('/signin');
     };
+
+    // Load currency from localStorage on component mount
+    useEffect(() => {
+        const savedCurrency = localStorage.getItem('currency');
+        if (savedCurrency) {
+            setCurrency(savedCurrency);
+        }
+    }, []);
 
     const isActive = (path) => location.pathname === path;
 
