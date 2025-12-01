@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Box } from '@mui/material';
 import { Routes, Route, useLocation, Navigate } from 'react-router-dom';
+import { Analytics } from '@vercel/analytics/react';
 import HomePage from './components/homepage';
 import SignInPage from './components/signin';
 import SignUpPage from './components/signup';
@@ -59,6 +60,7 @@ function App() {
 
     return (
         <ThemeProvider>
+            <Analytics />
             <Box sx={{
                 display: 'flex',
                 margin: 0,
