@@ -48,13 +48,20 @@ class Transaction(models.Model):
         ('expense', 'Expense'),
         ('savings', 'Savings'),
     ]
-    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='transactions')
-    category = models.ForeignKey(Category, on_delete=models.CASCADE, related_name='transactions')
+    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='transactions', db_index=True)
+    category = models.ForeignKey(Category, on_delete=models.CASCADE, related_name='transactions', db_index=True)
     amount = models.DecimalField(max_digits=12, decimal_places=2)
     description = models.CharField(max_length=255)
-    date = models.DateField()
-    transaction_type = models.CharField(max_length=10, choices=TRANSACTION_TYPES)
+    date = models.DateField(db_index=True)  # Add index for date filtering
+    transaction_type = models.CharField(max_length=10, choices=TRANSACTION_TYPES, db_index=True)  # Add index
     created_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        indexes = [
+            models.Index(fields=['user', 'date'], name='user_date_idx'),  # Composite index for common queries
+            models.Index(fields=['user', 'transaction_type'], name='user_type_idx'),
+        ]
+        ordering = ['-date']  # Default ordering by date descending
 
     def __str__(self):
         return f"{self.description} - {self.amount}"

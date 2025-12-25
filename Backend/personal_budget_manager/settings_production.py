@@ -30,8 +30,21 @@ import dj_database_url
 # Database configuration for PostgreSQL (Vercel)
 DATABASES = {
     'default': dj_database_url.config(
-        conn_max_age=600
+        conn_max_age=0,  # No persistent connections - perfect for serverless/Neon
+        conn_health_checks=True,  # Ensure connections are healthy
     )
+}
+
+# Add caching to reduce database queries
+CACHES = {
+    'default': {
+        'BACKEND': 'django.core.cache.backends.locmem.LocMemCache',
+        'LOCATION': 'unique-snowflake',
+        'TIMEOUT': 300,  # 5 minutes
+        'OPTIONS': {
+            'MAX_ENTRIES': 1000
+        }
+    }
 }
 
 # Email Configuration (update with your production email settings)
