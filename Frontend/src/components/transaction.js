@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import {
   Box, Typography, Button, TextField, Select, Dialog, DialogTitle, DialogContent, DialogActions,
   Table, TableHead, TableBody, TableRow, TableCell, IconButton, FormControl, InputLabel,
@@ -101,28 +101,13 @@ function TransactionsPage() {
   const [sortAmountOrder, setSortAmountOrder] = useState(null);
 
 
-  useEffect(() => {
-    fetchData();
-  }, []);
+  const handleLogout = useCallback(() => {
+    localStorage.removeItem('accessToken');
+    localStorage.removeItem('refreshToken');
+    navigate('/signin');
+  }, [navigate]);
 
-  // Update available categories when type changes
-  useEffect(() => {
-    if (type === 'expense') {
-      setCategory('');
-    } else if (type === 'income') {
-      setCategory('');
-    } else if (type === 'savings') {
-      setCategory('');
-    }
-  }, [type]);
-
-  useEffect(() => {
-    const updateCurrency = () => setCurrencySymbol(getCurrencySymbol());
-    window.addEventListener('currencyChange', updateCurrency);
-    return () => window.removeEventListener('currencyChange', updateCurrency);
-  }, []);
-
-  const fetchData = async () => {
+  const fetchData = useCallback(async () => {
     setLoading(true);
     try {
       const [expensesRes, incomesRes, savingsRes, categoriesRes] = await Promise.all([
@@ -153,13 +138,30 @@ function TransactionsPage() {
         handleLogout();
       }
     }
-  };
+  }, [handleLogout]);
 
-  const handleLogout = () => {
-    localStorage.removeItem('accessToken');
-    localStorage.removeItem('refreshToken');
-    navigate('/signin');
-  };
+  useEffect(() => {
+    fetchData();
+  }, [fetchData]);
+
+  // Update available categories when type changes
+  useEffect(() => {
+    if (type === 'expense') {
+      setCategory('');
+    } else if (type === 'income') {
+      setCategory('');
+    } else if (type === 'savings') {
+      setCategory('');
+    }
+  }, [type]);
+
+  useEffect(() => {
+    const updateCurrency = () => setCurrencySymbol(getCurrencySymbol());
+    window.addEventListener('currencyChange', updateCurrency);
+    return () => window.removeEventListener('currencyChange', updateCurrency);
+  }, []);
+
+
 
   const handleOpenAddDialog = () => {
 
