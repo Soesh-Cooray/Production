@@ -629,13 +629,26 @@ function TransactionsPage() {
               </Grid>
               <Grid item xs={6}>
                 <FormControl fullWidth margin="normal">
-                  <InputLabel>Category</InputLabel>
+                  <InputLabel id="transaction-category-label">Category</InputLabel>
                   <Select
+                    labelId="transaction-category-label"
+                    id="transaction-category"
                     value={category}
                     onChange={(e) => setCategory(e.target.value)}
                     label="Category"
+                    displayEmpty
+                    renderValue={(selected) => {
+                      if (!selected) {
+                        return 'Select category';
+                      }
+                      const categories = type === 'expense' ? expenseCategories : type === 'income' ? incomeCategories : savingsCategories;
+                      return categories.find((cat) => cat.id === selected)?.name || 'Select category';
+                    }}
                     sx={{ borderRadius: 3 }}
                   >
+                    <MenuItem value="" disabled>
+                      Select category
+                    </MenuItem>
                     {(type === 'expense' ? expenseCategories : type === 'income' ? incomeCategories : savingsCategories).map((cat) => (
                       <HoverMenuItem key={cat.id} value={cat.id}>
                         {cat.name}
