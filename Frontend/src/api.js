@@ -132,8 +132,10 @@ export function getCurrencySymbol() {
   return found ? found.symbol : '$';
 }
 
-export default {
+const api = {
   transaction: transactionAPI,
   category: categoryAPI,
   budget: budgetAPI,
 };
+
+export default api;
