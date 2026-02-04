@@ -20,6 +20,10 @@ ChartJS.register(
   Legend
 );
 
+const EXPENSE_COLORS = ['#ff6767', '#ff7878', '#ff8989', '#ffaaaa', '#ffcfcf', '#ffe3e3', '#ffeeee'];
+const INCOME_COLORS = ['#47894b', '#5ea758', '#8bbd78', '#98c377', '#7be382'];
+const SAVINGS_COLORS = ['#1c96c5', '#20a7db', '#62c1e5', '#a0d9ef', '#cfecf7', '#d2ebff'];
+
 
 const StyledCard = styled(Card)(({ theme }) => ({
   height: '100%',
@@ -82,7 +86,7 @@ const Reports = () => {
       labels: [],
       values: [],
       percentages: [],
-      colors: ['#ff6767', '#ff7878', '#ff8989', '#ffaaaa', '#ffcfcf', '#ffe3e3', '#ffeeee']
+      colors: EXPENSE_COLORS
     },
     categorySpendingOverTime: {
       labels: [],
@@ -92,13 +96,13 @@ const Reports = () => {
       labels: [],
       values: [],
       percentages: [],
-      colors: ['#47894b', '#5ea758', '#8bbd78', '#98c377', '#7be382']
+      colors: INCOME_COLORS
     },
     savingsBreakdown: {
       labels: [],
       values: [],
       percentages: [],
-      colors: ['#1c96c5', '#20a7db', '#62c1e5', '#a0d9ef', '#cfecf7', '#d2ebff']
+      colors: SAVINGS_COLORS
     }
   });
   const [currencySymbol, setCurrencySymbol] = useState(getCurrencySymbol());
@@ -134,9 +138,9 @@ const Reports = () => {
       labels,
       values,
       percentages,
-      colors: financialData.expenseBreakdown.colors.slice(0, labels.length)
+      colors: EXPENSE_COLORS.slice(0, labels.length)
     };
-  }, [financialData.expenseBreakdown.colors]);
+  }, []);
 
   const processIncomeBreakdownData = useCallback((incomes) => {
     const sourceTotals = {};
@@ -157,9 +161,9 @@ const Reports = () => {
       labels,
       values,
       percentages,
-      colors: financialData.incomeBreakdown.colors.slice(0, labels.length)
+      colors: INCOME_COLORS.slice(0, labels.length)
     };
-  }, [financialData.incomeBreakdown.colors]);
+  }, []);
 
   const processSavingsBreakdownData = useCallback((savings) => {
     const categoryTotals = {};
@@ -180,9 +184,9 @@ const Reports = () => {
       labels,
       values,
       percentages,
-      colors: financialData.savingsBreakdown.colors.slice(0, labels.length)
+      colors: SAVINGS_COLORS.slice(0, labels.length)
     };
-  }, [financialData.savingsBreakdown.colors]);
+  }, []);
 
   // Helper to filter transactions by selected time range
   const filterByTimeRange = useCallback((items) => {
@@ -231,9 +235,9 @@ const Reports = () => {
     const incomeCategories = getCategories(incomes);
     const savingsCategories = getCategories(savings);
 
-    const expenseColors = financialData.expenseBreakdown.colors;
-    const incomeColors = financialData.incomeBreakdown.colors;
-    const savingsColors = financialData.savingsBreakdown.colors;
+    const expenseColors = EXPENSE_COLORS;
+    const incomeColors = INCOME_COLORS;
+    const savingsColors = SAVINGS_COLORS;
 
     const datasets = [
       ...expenseCategories.map((category, idx) => ({
@@ -275,7 +279,7 @@ const Reports = () => {
       labels: months,
       datasets,
     };
-  }, [financialData.expenseBreakdown.colors, financialData.incomeBreakdown.colors, financialData.savingsBreakdown.colors]);
+  }, []);
 
   const fetchData = useCallback(async () => {
     try {
@@ -698,7 +702,6 @@ const Reports = () => {
                 Track how your spending, income & savings change over time
               </Typography>
               <Box height={400}>
-                {console.log('Trends Bar Data:', financialData.categorySpendingOverTime)}
                 <Bar
                   data={financialData.categorySpendingOverTime}
                   options={categorySpendingOptions}
