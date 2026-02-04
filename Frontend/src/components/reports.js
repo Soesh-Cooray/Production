@@ -24,6 +24,175 @@ const EXPENSE_COLORS = ['#ff6767', '#ff7878', '#ff8989', '#ffaaaa', '#ffcfcf', '
 const INCOME_COLORS = ['#47894b', '#5ea758', '#8bbd78', '#98c377', '#7be382'];
 const SAVINGS_COLORS = ['#1c96c5', '#20a7db', '#62c1e5', '#a0d9ef', '#cfecf7', '#d2ebff'];
 
+const getMonthsForTimeRange = (timeRange) => {
+  const months = [];
+  const today = new Date();
+  const range = parseInt(timeRange);
+
+  for (let i = range - 1; i >= 0; i--) {
+    const date = new Date(today.getFullYear(), today.getMonth() - i, 1);
+    months.push(date.toLocaleString('default', { month: 'short', year: 'numeric' }));
+  }
+  return months;
+};
+
+const filterByTimeRange = (items, timeRange) => {
+  const range = parseInt(timeRange);
+  const today = new Date();
+  const start = new Date(today.getFullYear(), today.getMonth() - (range - 1), 1);
+  const end = new Date(today.getFullYear(), today.getMonth() + 1, 0, 23, 59, 59, 999);
+  return items.filter(item => {
+    const date = new Date(item.date);
+    return date >= start && date <= end;
+  });
+};
+
+const processIncomeVsExpensesData = (incomes, expenses, months) => {
+  const incomeData = new Array(months.length).fill(0);
+  const expenseData = new Array(months.length).fill(0);
+
+  incomes.forEach(income => {
+    const date = new Date(income.date);
+    const monthIndex = months.indexOf(date.toLocaleString('default', { month: 'short', year: 'numeric' }));
+    if (monthIndex !== -1) {
+      incomeData[monthIndex] += parseFloat(income.amount);
+    }
+  });
+
+  expenses.forEach(expense => {
+    const date = new Date(expense.date);
+    const monthIndex = months.indexOf(date.toLocaleString('default', { month: 'short', year: 'numeric' }));
+    if (monthIndex !== -1) {
+      expenseData[monthIndex] += parseFloat(expense.amount);
+    }
+  });
+
+  return {
+    labels: months,
+    income: incomeData,
+    expenses: expenseData
+  };
+};
+
+const processExpenseBreakdownData = (expenses) => {
+  const categoryTotals = {};
+  let totalExpenses = 0;
+
+  expenses.forEach(expense => {
+    const category = expense.category_name || 'Uncategorized';
+    const amount = parseFloat(expense.amount);
+    categoryTotals[category] = (categoryTotals[category] || 0) + amount;
+    totalExpenses += amount;
+  });
+
+  const labels = Object.keys(categoryTotals);
+  const values = Object.values(categoryTotals);
+  const percentages = values.map(value => ((value / totalExpenses) * 100).toFixed(1));
+
+  return {
+    labels,
+    values,
+    percentages,
+    colors: EXPENSE_COLORS.slice(0, labels.length)
+  };
+};
+
+const processIncomeBreakdownData = (incomes) => {
+  const sourceTotals = {};
+  let totalIncome = 0;
+
+  incomes.forEach(income => {
+    const source = income.category_name || 'Uncategorized';
+    const amount = parseFloat(income.amount);
+    sourceTotals[source] = (sourceTotals[source] || 0) + amount;
+    totalIncome += amount;
+  });
+
+  const labels = Object.keys(sourceTotals);
+  const values = Object.values(sourceTotals);
+  const percentages = values.map(value => ((value / totalIncome) * 100).toFixed(1));
+
+  return {
+    labels,
+    values,
+    percentages,
+    colors: INCOME_COLORS.slice(0, labels.length)
+  };
+};
+
+const processSavingsBreakdownData = (savings) => {
+  const categoryTotals = {};
+  let totalSavings = 0;
+
+  savings.forEach(saving => {
+    const category = saving.category_name || 'Uncategorized';
+    const amount = parseFloat(saving.amount);
+    categoryTotals[category] = (categoryTotals[category] || 0) + amount;
+    totalSavings += amount;
+  });
+
+  const labels = Object.keys(categoryTotals);
+  const values = Object.values(categoryTotals);
+  const percentages = values.map(value => ((value / totalSavings) * 100).toFixed(1));
+
+  return {
+    labels,
+    values,
+    percentages,
+    colors: SAVINGS_COLORS.slice(0, labels.length)
+  };
+};
+
+const processAllCategorySpendingOverTime = (expenses, incomes, savings, months) => {
+  const getCategories = (arr, key = 'category_name') =>
+    [...new Set(arr.map(item => item[key] || 'Uncategorized'))];
+
+  const expenseCategories = getCategories(expenses);
+  const incomeCategories = getCategories(incomes);
+  const savingsCategories = getCategories(savings);
+
+  const datasets = [
+    ...expenseCategories.map((category, idx) => ({
+      label: `Expense: ${category}`,
+      data: months.map((month) =>
+        expenses
+          .filter(e => (e.category_name || 'Uncategorized') === category &&
+            new Date(e.date).toLocaleString('default', { month: 'short', year: 'numeric' }) === month)
+          .reduce((sum, e) => sum + parseFloat(e.amount), 0)
+      ),
+      backgroundColor: EXPENSE_COLORS[idx % EXPENSE_COLORS.length],
+      stack: 'Expenses',
+    })),
+    ...incomeCategories.map((category, idx) => ({
+      label: `Income: ${category}`,
+      data: months.map((month) =>
+        incomes
+          .filter(i => (i.category_name || 'Uncategorized') === category &&
+            new Date(i.date).toLocaleString('default', { month: 'short', year: 'numeric' }) === month)
+          .reduce((sum, i) => sum + parseFloat(i.amount), 0)
+      ),
+      backgroundColor: INCOME_COLORS[idx % INCOME_COLORS.length],
+      stack: 'Income',
+    })),
+    ...savingsCategories.map((category, idx) => ({
+      label: `Savings: ${category}`,
+      data: months.map((month) =>
+        savings
+          .filter(s => (s.category_name || 'Uncategorized') === category &&
+            new Date(s.date).toLocaleString('default', { month: 'short', year: 'numeric' }) === month)
+          .reduce((sum, s) => sum + parseFloat(s.amount), 0)
+      ),
+      backgroundColor: SAVINGS_COLORS[idx % SAVINGS_COLORS.length],
+      stack: 'Savings',
+    })),
+  ];
+
+  return {
+    labels: months,
+    datasets,
+  };
+};
+
 
 const StyledCard = styled(Card)(({ theme }) => ({
   height: '100%',
@@ -107,180 +276,6 @@ const Reports = () => {
   });
   const [currencySymbol, setCurrencySymbol] = useState(getCurrencySymbol());
 
-  const getMonthsForTimeRange = useCallback(() => {
-    const months = [];
-    const today = new Date();
-    const range = parseInt(timeRange);
-
-    for (let i = range - 1; i >= 0; i--) {
-      const date = new Date(today.getFullYear(), today.getMonth() - i, 1);
-      months.push(date.toLocaleString('default', { month: 'short', year: 'numeric' }));
-    }
-    return months;
-  }, [timeRange]);
-
-  const processExpenseBreakdownData = useCallback((expenses) => {
-    const categoryTotals = {};
-    let totalExpenses = 0;
-
-    expenses.forEach(expense => {
-      const category = expense.category_name || 'Uncategorized';
-      const amount = parseFloat(expense.amount);
-      categoryTotals[category] = (categoryTotals[category] || 0) + amount;
-      totalExpenses += amount;
-    });
-
-    const labels = Object.keys(categoryTotals);
-    const values = Object.values(categoryTotals);
-    const percentages = values.map(value => ((value / totalExpenses) * 100).toFixed(1));
-
-    return {
-      labels,
-      values,
-      percentages,
-      colors: EXPENSE_COLORS.slice(0, labels.length)
-    };
-  }, []);
-
-  const processIncomeBreakdownData = useCallback((incomes) => {
-    const sourceTotals = {};
-    let totalIncome = 0;
-
-    incomes.forEach(income => {
-      const source = income.category_name || 'Uncategorized';
-      const amount = parseFloat(income.amount);
-      sourceTotals[source] = (sourceTotals[source] || 0) + amount;
-      totalIncome += amount;
-    });
-
-    const labels = Object.keys(sourceTotals);
-    const values = Object.values(sourceTotals);
-    const percentages = values.map(value => ((value / totalIncome) * 100).toFixed(1));
-
-    return {
-      labels,
-      values,
-      percentages,
-      colors: INCOME_COLORS.slice(0, labels.length)
-    };
-  }, []);
-
-  const processSavingsBreakdownData = useCallback((savings) => {
-    const categoryTotals = {};
-    let totalSavings = 0;
-
-    savings.forEach(saving => {
-      const category = saving.category_name || 'Uncategorized';
-      const amount = parseFloat(saving.amount);
-      categoryTotals[category] = (categoryTotals[category] || 0) + amount;
-      totalSavings += amount;
-    });
-
-    const labels = Object.keys(categoryTotals);
-    const values = Object.values(categoryTotals);
-    const percentages = values.map(value => ((value / totalSavings) * 100).toFixed(1));
-
-    return {
-      labels,
-      values,
-      percentages,
-      colors: SAVINGS_COLORS.slice(0, labels.length)
-    };
-  }, []);
-
-  // Helper to filter transactions by selected time range
-  const filterByTimeRange = useCallback((items) => {
-    const range = parseInt(timeRange);
-    const today = new Date();
-    const start = new Date(today.getFullYear(), today.getMonth() - (range - 1), 1);
-    const end = new Date(today.getFullYear(), today.getMonth() + 1, 0, 23, 59, 59, 999);
-    return items.filter(item => {
-      const date = new Date(item.date);
-      return date >= start && date <= end;
-    });
-  }, [timeRange]);
-
-  const processIncomeVsExpensesData = useCallback((incomes, expenses, months) => {
-    const incomeData = new Array(months.length).fill(0);
-    const expenseData = new Array(months.length).fill(0);
-
-    incomes.forEach(income => {
-      const date = new Date(income.date);
-      const monthIndex = months.indexOf(date.toLocaleString('default', { month: 'short', year: 'numeric' }));
-      if (monthIndex !== -1) {
-        incomeData[monthIndex] += parseFloat(income.amount);
-      }
-    });
-
-    expenses.forEach(expense => {
-      const date = new Date(expense.date);
-      const monthIndex = months.indexOf(date.toLocaleString('default', { month: 'short', year: 'numeric' }));
-      if (monthIndex !== -1) {
-        expenseData[monthIndex] += parseFloat(expense.amount);
-      }
-    });
-
-    return {
-      labels: months,
-      income: incomeData,
-      expenses: expenseData
-    };
-  }, []);
-
-  const processAllCategorySpendingOverTime = useCallback((expenses, incomes, savings, months) => {
-    const getCategories = (arr, key = 'category_name') =>
-      [...new Set(arr.map(item => item[key] || 'Uncategorized'))];
-
-    const expenseCategories = getCategories(expenses);
-    const incomeCategories = getCategories(incomes);
-    const savingsCategories = getCategories(savings);
-
-    const expenseColors = EXPENSE_COLORS;
-    const incomeColors = INCOME_COLORS;
-    const savingsColors = SAVINGS_COLORS;
-
-    const datasets = [
-      ...expenseCategories.map((category, idx) => ({
-        label: `Expense: ${category}`,
-        data: months.map((month) =>
-          expenses
-            .filter(e => (e.category_name || 'Uncategorized') === category &&
-              new Date(e.date).toLocaleString('default', { month: 'short', year: 'numeric' }) === month)
-            .reduce((sum, e) => sum + parseFloat(e.amount), 0)
-        ),
-        backgroundColor: expenseColors[idx % expenseColors.length],
-        stack: 'Expenses',
-      })),
-      ...incomeCategories.map((category, idx) => ({
-        label: `Income: ${category}`,
-        data: months.map((month) =>
-          incomes
-            .filter(i => (i.category_name || 'Uncategorized') === category &&
-              new Date(i.date).toLocaleString('default', { month: 'short', year: 'numeric' }) === month)
-            .reduce((sum, i) => sum + parseFloat(i.amount), 0)
-        ),
-        backgroundColor: incomeColors[idx % incomeColors.length],
-        stack: 'Income',
-      })),
-      ...savingsCategories.map((category, idx) => ({
-        label: `Savings: ${category}`,
-        data: months.map((month) =>
-          savings
-            .filter(s => (s.category_name || 'Uncategorized') === category &&
-              new Date(s.date).toLocaleString('default', { month: 'short', year: 'numeric' }) === month)
-            .reduce((sum, s) => sum + parseFloat(s.amount), 0)
-        ),
-        backgroundColor: savingsColors[idx % savingsColors.length],
-        stack: 'Savings',
-      })),
-    ];
-
-    return {
-      labels: months,
-      datasets,
-    };
-  }, []);
-
   const fetchData = useCallback(async () => {
     try {
       setLoading(true);
@@ -293,16 +288,16 @@ const Reports = () => {
       const incomes = incomesRes.data;
       const savingsTxns = savingsRes.data;
 
-      const filteredIncomes = filterByTimeRange(incomes);
-      const filteredExpenses = filterByTimeRange(expenses);
-      const filteredSavings = filterByTimeRange(savingsTxns);
+      const filteredIncomes = filterByTimeRange(incomes, timeRange);
+      const filteredExpenses = filterByTimeRange(expenses, timeRange);
+      const filteredSavings = filterByTimeRange(savingsTxns, timeRange);
 
       const totalIncome = filteredIncomes.reduce((sum, income) => sum + parseFloat(income.amount), 0);
       const totalExpenses = filteredExpenses.reduce((sum, expense) => sum + parseFloat(expense.amount), 0);
       const totalSavings = filteredSavings.reduce((sum, saving) => sum + parseFloat(saving.amount), 0);
       const netBalance = totalIncome - totalExpenses - totalSavings;
 
-      const months = getMonthsForTimeRange();
+      const months = getMonthsForTimeRange(timeRange);
       const incomeVsExpenses = processIncomeVsExpensesData(incomes, expenses, months);
 
       const expenseBreakdown = processExpenseBreakdownData(filteredExpenses);
@@ -328,7 +323,7 @@ const Reports = () => {
       setError('Failed to load reports data');
       setLoading(false);
     }
-  }, [filterByTimeRange, getMonthsForTimeRange, processExpenseBreakdownData, processIncomeBreakdownData, processSavingsBreakdownData, processIncomeVsExpensesData, processAllCategorySpendingOverTime]);
+  }, [timeRange]);
 
   useEffect(() => {
     fetchData();
