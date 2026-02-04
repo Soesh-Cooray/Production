@@ -639,15 +639,15 @@ function TransactionsPage() {
                     displayEmpty
                     renderValue={(selected) => {
                       if (!selected) {
-                        return 'Select category';
+                        return 'Category';
                       }
                       const categories = type === 'expense' ? expenseCategories : type === 'income' ? incomeCategories : savingsCategories;
-                      return categories.find((cat) => cat.id === selected)?.name || 'Select category';
+                      return categories.find((cat) => cat.id === selected)?.name || 'Category';
                     }}
                     sx={{ borderRadius: 3 }}
                   >
                     <MenuItem value="" disabled>
-                      Select category
+                      Category
                     </MenuItem>
                     {(type === 'expense' ? expenseCategories : type === 'income' ? incomeCategories : savingsCategories).map((cat) => (
                       <HoverMenuItem key={cat.id} value={cat.id}>
