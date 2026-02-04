@@ -24,6 +24,70 @@ ChartJS.register(
   Legend
 );
 
+const EXPENSE_COLORS = ['#ec407a', '#7c4dff', '#ff7043', '#4caf50', '#ff9800', '#2196f3'];
+
+const formatDateForApi = (date) => format(date, 'yyyy-MM-dd');
+
+const getMonthsInRange = (startDate, endDate) => {
+  const months = [];
+  const currentDate = new Date(startDate);
+  while (currentDate <= endDate) {
+    months.push(format(currentDate, 'MMM'));
+    currentDate.setMonth(currentDate.getMonth() + 1);
+  }
+  return months;
+};
+
+const processIncomeVsExpensesData = (incomes, expenses, months) => {
+  const incomeData = new Array(months.length).fill(0);
+  const expenseData = new Array(months.length).fill(0);
+
+  incomes.forEach(income => {
+    const date = new Date(income.date);
+    const monthIndex = months.indexOf(format(date, 'MMM'));
+    if (monthIndex !== -1) {
+      incomeData[monthIndex] += parseFloat(income.amount);
+    }
+  });
+
+  expenses.forEach(expense => {
+    const date = new Date(expense.date);
+    const monthIndex = months.indexOf(format(date, 'MMM'));
+    if (monthIndex !== -1) {
+      expenseData[monthIndex] += parseFloat(expense.amount);
+    }
+  });
+
+  return {
+    labels: months,
+    income: incomeData,
+    expenses: expenseData
+  };
+};
+
+const processExpenseBreakdownData = (expenses, colors) => {
+  const categoryTotals = {};
+  let totalExpenses = 0;
+
+  expenses.forEach(expense => {
+    const category = expense.category_name || 'Uncategorized';
+    const amount = parseFloat(expense.amount);
+    categoryTotals[category] = (categoryTotals[category] || 0) + amount;
+    totalExpenses += amount;
+  });
+
+  const labels = Object.keys(categoryTotals);
+  const values = Object.values(categoryTotals);
+  const percentages = values.map(value => ((value / totalExpenses) * 100).toFixed(1));
+
+  return {
+    labels,
+    values,
+    percentages,
+    colors: colors.slice(0, labels.length)
+  };
+};
+
 const StyledPaper = styled(Paper)(({ theme }) => ({
   padding: theme.spacing(3),
   borderRadius: 12,
@@ -110,7 +174,7 @@ const Dashboard = () => {
       labels: [],
       values: [],
       percentages: [],
-      colors: ['#ec407a', '#7c4dff', '#ff7043', '#4caf50', '#ff9800', '#2196f3']
+      colors: EXPENSE_COLORS
     }
   });
   const [recentTransactions, setRecentTransactions] = useState([]);
@@ -145,10 +209,6 @@ const Dashboard = () => {
     window.addEventListener('currencyChange', updateCurrency);
     return () => window.removeEventListener('currencyChange', updateCurrency);
   }, []);
-
-  useEffect(() => {
-    fetchData();
-  }, [fetchData]);
 
   const fetchUserInfo = async () => {
     try {
@@ -191,9 +251,9 @@ const Dashboard = () => {
       const totalExpenses = expenses.reduce((sum, expense) => sum + parseFloat(expense.amount), 0);
       const totalSavings = savingsTxns.reduce((sum, saving) => sum + parseFloat(saving.amount), 0);
       const currentBalance = totalIncome - totalExpenses - totalSavings;
-      const monthsInRange = getMonthsInRange();
+      const monthsInRange = getMonthsInRange(startDate, endDate);
       const incomeVsExpenses = processIncomeVsExpensesData(incomes, expenses, monthsInRange);
-      const expenseBreakdown = processExpenseBreakdownData(expenses);
+      const expenseBreakdown = processExpenseBreakdownData(expenses, EXPENSE_COLORS);
 
       setFinancialData({
         totalIncome,
@@ -220,66 +280,10 @@ const Dashboard = () => {
       setLoading(false);
     }
   }, [startDate, endDate]);
-  const getMonthsInRange = () => {
-    const months = [];
-    const currentDate = new Date(startDate);
-    while (currentDate <= endDate) {
-      months.push(format(currentDate, 'MMM'));
-      currentDate.setMonth(currentDate.getMonth() + 1);
-    }
-    return months;
-  };
 
-  const processIncomeVsExpensesData = (incomes, expenses, months) => {
-    const incomeData = new Array(months.length).fill(0);
-    const expenseData = new Array(months.length).fill(0);
-
-    incomes.forEach(income => {
-      const date = new Date(income.date);
-      const monthIndex = months.indexOf(format(date, 'MMM'));
-      if (monthIndex !== -1) {
-        incomeData[monthIndex] += parseFloat(income.amount);
-      }
-    });
-
-    expenses.forEach(expense => {
-      const date = new Date(expense.date);
-      const monthIndex = months.indexOf(format(date, 'MMM'));
-      if (monthIndex !== -1) {
-        expenseData[monthIndex] += parseFloat(expense.amount);
-      }
-    });
-
-    return {
-      labels: months,
-      income: incomeData,
-      expenses: expenseData
-    };
-  };
-
-  const processExpenseBreakdownData = (expenses) => {
-    const categoryTotals = {};
-    let totalExpenses = 0;
-
-    // Calculate totals per category
-    expenses.forEach(expense => {
-      const category = expense.category_name || 'Uncategorized';
-      const amount = parseFloat(expense.amount);
-      categoryTotals[category] = (categoryTotals[category] || 0) + amount;
-      totalExpenses += amount;
-    });
-
-    const labels = Object.keys(categoryTotals);
-    const values = Object.values(categoryTotals);
-    const percentages = values.map(value => ((value / totalExpenses) * 100).toFixed(1));
-
-    return {
-      labels,
-      values,
-      percentages,
-      colors: financialData.expenseBreakdown.colors.slice(0, labels.length)
-    };
-  };
+  useEffect(() => {
+    fetchData();
+  }, [fetchData]);
 
   const barChartOptions = {
     responsive: true,
@@ -360,11 +364,6 @@ const Dashboard = () => {
         );
       })
       .reduce((sum, txn) => sum + parseFloat(txn.amount), 0);
-  };
-
-
-  const formatDateForApi = (date) => {
-    return format(date, 'yyyy-MM-dd');
   };
 
 
