@@ -1,5 +1,5 @@
-import React, { useState, useEffect } from 'react';
-import { Box, Typography, Paper, Grid, LinearProgress, List, ListItem, ListItemText, Chip, Avatar, CircularProgress, Card, useTheme, TextField, Button } from '@mui/material';
+import React, { useState, useEffect, useCallback } from 'react';
+import { Box, Typography, Paper, Grid, LinearProgress, List, ListItem, Chip, Avatar, CircularProgress, Card, useTheme, TextField, Button } from '@mui/material';
 import { styled } from '@mui/material/styles';
 import { Bar, Doughnut } from 'react-chartjs-2';
 import { Chart as ChartJS, CategoryScale, LinearScale, BarElement, ArcElement, Title, Tooltip, Legend } from 'chart.js';
@@ -48,14 +48,6 @@ const StatValue = styled(Typography)(({ theme }) => ({
 const StatLabel = styled(Typography)(({ theme }) => ({
   fontSize: '0.75rem',
   color: theme.palette.text.secondary,
-}));
-
-const BudgetProgressBar = styled(LinearProgress)(({ theme }) => ({
-  height: 8,
-  borderRadius: 4,
-  marginTop: theme.spacing(1),
-  marginBottom: theme.spacing(1),
-  backgroundColor: theme.palette.mode === 'dark' ? 'rgba(255, 255, 255, 0.1)' : '#f5f5f5',
 }));
 
 const BudgetProgressCard = ({ name, spent, amount, remaining, percent, currencySymbol }) => {
@@ -125,7 +117,6 @@ const Dashboard = () => {
   const [recentBudgets, setRecentBudgets] = useState([]);
   const [categories, setCategories] = useState([]);
   const [transactions, setTransactions] = useState([]);
-  const [savings, setSavings] = useState([]);
   const [currencySymbol, setCurrencySymbol] = useState(getCurrencySymbol());
   const [firstName, setFirstName] = useState('');
   const [username, setUsername] = useState('');
@@ -157,7 +148,7 @@ const Dashboard = () => {
 
   useEffect(() => {
     fetchData();
-  }, [startDate, endDate]);
+  }, [fetchData]);
 
   const fetchUserInfo = async () => {
     try {
@@ -173,7 +164,7 @@ const Dashboard = () => {
       setUsername('');
     }
   };
-  const fetchData = async () => {
+  const fetchData = useCallback(async () => {
     try {
       setLoading(true);
       const formattedStartDate = formatDateForApi(startDate);
@@ -194,7 +185,6 @@ const Dashboard = () => {
       const allTransactions = [...expenses, ...incomes, ...savingsTxns].sort((a, b) => new Date(b.date) - new Date(a.date));
       setTransactions(allTransactions);
       setCategories(categoriesRes.data);
-      setSavings(savingsTxns);
 
       // Calculate totals
       const totalIncome = incomes.reduce((sum, income) => sum + parseFloat(income.amount), 0);
@@ -229,7 +219,7 @@ const Dashboard = () => {
       setError('Failed to load dashboard data');
       setLoading(false);
     }
-  };
+  }, [startDate, endDate]);
   const getMonthsInRange = () => {
     const months = [];
     const currentDate = new Date(startDate);
@@ -377,44 +367,6 @@ const Dashboard = () => {
     return format(date, 'yyyy-MM-dd');
   };
 
-  // Filtered data based on date range
-  const filteredTransactions = transactions.filter(txn => {
-    const txnDate = new Date(txn.date);
-    return txnDate >= startDate && txnDate <= endDate;
-  });
-
-  const filteredIncomeVsExpenses = {
-    labels: financialData.incomeVsExpenses.labels,
-    income: financialData.incomeVsExpenses.income.filter((_, index) => {
-      const monthStart = new Date();
-      monthStart.setMonth(monthStart.getMonth() - index);
-      return monthStart >= startDate;
-    }),
-    expenses: financialData.incomeVsExpenses.expenses.filter((_, index) => {
-      const monthStart = new Date();
-      monthStart.setMonth(monthStart.getMonth() - index);
-      return monthStart >= startDate;
-    }),
-  };
-
-  const filteredExpenseBreakdown = {
-    labels: financialData.expenseBreakdown.labels,
-    values: financialData.expenseBreakdown.values.filter((_, index) => {
-      const category = financialData.expenseBreakdown.labels[index];
-      const spentInCategory = calculateSpent({ category, start_date: startDate, end_date: endDate });
-      return spentInCategory > 0;
-    }),
-    percentages: financialData.expenseBreakdown.percentages.filter((_, index) => {
-      const category = financialData.expenseBreakdown.labels[index];
-      const spentInCategory = calculateSpent({ category, start_date: startDate, end_date: endDate });
-      return spentInCategory > 0;
-    }),
-    colors: financialData.expenseBreakdown.colors.filter((_, index) => {
-      const category = financialData.expenseBreakdown.labels[index];
-      const spentInCategory = calculateSpent({ category, start_date: startDate, end_date: endDate });
-      return spentInCategory > 0;
-    }),
-  };
 
   if (loading) {
     return (
