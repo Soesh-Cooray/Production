@@ -132,6 +132,8 @@ function BudgetsPage() {
         } else if (budget.period === 'weekly') {
             periodEnd = new Date(budgetStart);
             periodEnd.setDate(periodEnd.getDate() + 7);
+        } else if (budget.period === 'yearly') {
+            periodEnd = new Date(budgetStart.getFullYear() + 1, budgetStart.getMonth(), budgetStart.getDate());
         } else {
             periodEnd = new Date(budgetStart);
             periodEnd.setDate(periodEnd.getDate() + 1);
@@ -483,7 +485,7 @@ function AddBudgetDialog({ open, onClose, onAddBudget, categories, onAddCustomCa
                             >
                                 <MenuItem value="monthly">Monthly</MenuItem>
                                 <MenuItem value="weekly">Weekly</MenuItem>
-                                <MenuItem value="once">Once</MenuItem>
+                                <MenuItem value="yearly">Once</MenuItem>
                             </Select>
                         </FormControl>
                     </Grid>
