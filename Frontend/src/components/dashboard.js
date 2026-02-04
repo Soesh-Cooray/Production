@@ -191,7 +191,7 @@ const Dashboard = () => {
       const incomes = incomesRes.data;
       const savingsTxns = savingsRes.data;
       const budgets = budgetsRes.data;
-      const allTransactions = [...expenses, ...incomes].sort((a, b) => new Date(b.date) - new Date(a.date));
+      const allTransactions = [...expenses, ...incomes, ...savingsTxns].sort((a, b) => new Date(b.date) - new Date(a.date));
       setTransactions(allTransactions);
       setCategories(categoriesRes.data);
       setSavings(savingsTxns);
