@@ -1,9 +1,9 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import {
   Box, Typography, Card, CardContent, Grid, Container, Paper, Tabs, Tab, Select, MenuItem, FormControl, InputLabel, CircularProgress
 } from '@mui/material';
 import { styled } from '@mui/material/styles';
-import { Line, Bar, Pie, Doughnut } from 'react-chartjs-2';
+import { Bar, Pie } from 'react-chartjs-2';
 import { Chart as ChartJS, CategoryScale, LinearScale, PointElement, LineElement, BarElement, ArcElement, Title, Tooltip, Legend, } from 'chart.js';
 import { transactionAPI, getCurrencySymbol } from '../api';
 
@@ -68,7 +68,6 @@ const Reports = () => {
   const [timeRange, setTimeRange] = useState('6');
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-  const [savings, setSavings] = useState([]);
   const [financialData, setFinancialData] = useState({
     totalIncome: 0,
     totalExpenses: 0,
@@ -104,81 +103,7 @@ const Reports = () => {
   });
   const [currencySymbol, setCurrencySymbol] = useState(getCurrencySymbol());
 
-  useEffect(() => {
-    fetchData();
-    const updateCurrency = () => setCurrencySymbol(getCurrencySymbol());
-    window.addEventListener('currencyChange', updateCurrency);
-    return () => window.removeEventListener('currencyChange', updateCurrency);
-  }, [timeRange]);
-
-  // Helper to filter transactions by selected time range
-  const filterByTimeRange = (items) => {
-    const range = parseInt(timeRange);
-    const today = new Date();
-    const start = new Date(today.getFullYear(), today.getMonth() - (range - 1), 1);
-    const end = new Date(today.getFullYear(), today.getMonth() + 1, 0, 23, 59, 59, 999);
-    return items.filter(item => {
-      const date = new Date(item.date);
-      return date >= start && date <= end;
-    });
-  };
-
-  const fetchData = async () => {
-    try {
-      setLoading(true);
-      const [expensesRes, incomesRes, savingsRes] = await Promise.all([
-        transactionAPI.getExpenses(),
-        transactionAPI.getIncomes(),
-        transactionAPI.getSavings()
-      ]);
-      const expenses = expensesRes.data;
-      const incomes = incomesRes.data;
-      const savingsTxns = savingsRes.data;
-      setSavings(savingsTxns);
-
-      // Filter by time range for totals
-      const filteredIncomes = filterByTimeRange(incomes);
-      const filteredExpenses = filterByTimeRange(expenses);
-      const filteredSavings = filterByTimeRange(savingsTxns);
-
-
-      const totalIncome = filteredIncomes.reduce((sum, income) => sum + parseFloat(income.amount), 0);
-      const totalExpenses = filteredExpenses.reduce((sum, expense) => sum + parseFloat(expense.amount), 0);
-      const totalSavings = filteredSavings.reduce((sum, saving) => sum + parseFloat(saving.amount), 0);
-      const netBalance = totalIncome - totalExpenses - totalSavings;
-
-
-      const months = getMonthsForTimeRange();
-      const incomeVsExpenses = processIncomeVsExpensesData(incomes, expenses, months);
-
-
-
-      const expenseBreakdown = processExpenseBreakdownData(filteredExpenses);
-      const incomeBreakdown = processIncomeBreakdownData(filteredIncomes);
-      const savingsBreakdown = processSavingsBreakdownData(filteredSavings);
-      const categorySpending = processAllCategorySpendingOverTime(expenses, incomes, savingsTxns, months);
-
-      setFinancialData({
-        totalIncome,
-        totalExpenses,
-        totalSavings,
-        netBalance,
-        incomeVsExpenses,
-        expenseBreakdown,
-        categorySpendingOverTime: categorySpending,
-        incomeBreakdown,
-        savingsBreakdown
-      });
-
-      setLoading(false);
-    } catch (err) {
-      console.error('Error fetching reports data:', err);
-      setError('Failed to load reports data');
-      setLoading(false);
-    }
-  };
-
-  const getMonthsForTimeRange = () => {
+  const getMonthsForTimeRange = useCallback(() => {
     const months = [];
     const today = new Date();
     const range = parseInt(timeRange);
@@ -188,12 +113,92 @@ const Reports = () => {
       months.push(date.toLocaleString('default', { month: 'short', year: 'numeric' }));
     }
     return months;
-  };
+  }, [timeRange]);
 
-  const processIncomeVsExpensesData = (incomes, expenses, months) => {
+  const processExpenseBreakdownData = useCallback((expenses) => {
+    const categoryTotals = {};
+    let totalExpenses = 0;
+
+    expenses.forEach(expense => {
+      const category = expense.category_name || 'Uncategorized';
+      const amount = parseFloat(expense.amount);
+      categoryTotals[category] = (categoryTotals[category] || 0) + amount;
+      totalExpenses += amount;
+    });
+
+    const labels = Object.keys(categoryTotals);
+    const values = Object.values(categoryTotals);
+    const percentages = values.map(value => ((value / totalExpenses) * 100).toFixed(1));
+
+    return {
+      labels,
+      values,
+      percentages,
+      colors: financialData.expenseBreakdown.colors.slice(0, labels.length)
+    };
+  }, [financialData.expenseBreakdown.colors]);
+
+  const processIncomeBreakdownData = useCallback((incomes) => {
+    const sourceTotals = {};
+    let totalIncome = 0;
+
+    incomes.forEach(income => {
+      const source = income.category_name || 'Uncategorized';
+      const amount = parseFloat(income.amount);
+      sourceTotals[source] = (sourceTotals[source] || 0) + amount;
+      totalIncome += amount;
+    });
+
+    const labels = Object.keys(sourceTotals);
+    const values = Object.values(sourceTotals);
+    const percentages = values.map(value => ((value / totalIncome) * 100).toFixed(1));
+
+    return {
+      labels,
+      values,
+      percentages,
+      colors: financialData.incomeBreakdown.colors.slice(0, labels.length)
+    };
+  }, [financialData.incomeBreakdown.colors]);
+
+  const processSavingsBreakdownData = useCallback((savings) => {
+    const categoryTotals = {};
+    let totalSavings = 0;
+
+    savings.forEach(saving => {
+      const category = saving.category_name || 'Uncategorized';
+      const amount = parseFloat(saving.amount);
+      categoryTotals[category] = (categoryTotals[category] || 0) + amount;
+      totalSavings += amount;
+    });
+
+    const labels = Object.keys(categoryTotals);
+    const values = Object.values(categoryTotals);
+    const percentages = values.map(value => ((value / totalSavings) * 100).toFixed(1));
+
+    return {
+      labels,
+      values,
+      percentages,
+      colors: financialData.savingsBreakdown.colors.slice(0, labels.length)
+    };
+  }, [financialData.savingsBreakdown.colors]);
+
+  // Helper to filter transactions by selected time range
+  const filterByTimeRange = useCallback((items) => {
+    const range = parseInt(timeRange);
+    const today = new Date();
+    const start = new Date(today.getFullYear(), today.getMonth() - (range - 1), 1);
+    const end = new Date(today.getFullYear(), today.getMonth() + 1, 0, 23, 59, 59, 999);
+    return items.filter(item => {
+      const date = new Date(item.date);
+      return date >= start && date <= end;
+    });
+  }, [timeRange]);
+
+  const processIncomeVsExpensesData = useCallback((incomes, expenses, months) => {
     const incomeData = new Array(months.length).fill(0);
     const expenseData = new Array(months.length).fill(0);
-
 
     incomes.forEach(income => {
       const date = new Date(income.date);
@@ -202,7 +207,6 @@ const Reports = () => {
         incomeData[monthIndex] += parseFloat(income.amount);
       }
     });
-
 
     expenses.forEach(expense => {
       const date = new Date(expense.date);
@@ -217,35 +221,9 @@ const Reports = () => {
       income: incomeData,
       expenses: expenseData
     };
-  };
+  }, []);
 
-  const processExpenseBreakdownData = (expenses) => {
-    const categoryTotals = {};
-    let totalExpenses = 0;
-
-    // Calculate totals per category
-    expenses.forEach(expense => {
-      const category = expense.category_name || 'Uncategorized';
-      const amount = parseFloat(expense.amount);
-      categoryTotals[category] = (categoryTotals[category] || 0) + amount;
-      totalExpenses += amount;
-    });
-
-
-    const labels = Object.keys(categoryTotals);
-    const values = Object.values(categoryTotals);
-    const percentages = values.map(value => ((value / totalExpenses) * 100).toFixed(1));
-
-    return {
-      labels,
-      values,
-      percentages,
-      colors: financialData.expenseBreakdown.colors.slice(0, labels.length)
-    };
-  };
-
-  const processAllCategorySpendingOverTime = (expenses, incomes, savings, months) => {
-    // Helper to get unique categories for each type
+  const processAllCategorySpendingOverTime = useCallback((expenses, incomes, savings, months) => {
     const getCategories = (arr, key = 'category_name') =>
       [...new Set(arr.map(item => item[key] || 'Uncategorized'))];
 
@@ -253,12 +231,10 @@ const Reports = () => {
     const incomeCategories = getCategories(incomes);
     const savingsCategories = getCategories(savings);
 
-    // Colors
     const expenseColors = financialData.expenseBreakdown.colors;
     const incomeColors = financialData.incomeBreakdown.colors;
     const savingsColors = financialData.savingsBreakdown.colors;
 
-    // Build datasets for each type
     const datasets = [
       ...expenseCategories.map((category, idx) => ({
         label: `Expense: ${category}`,
@@ -299,58 +275,64 @@ const Reports = () => {
       labels: months,
       datasets,
     };
-  };
+  }, [financialData.expenseBreakdown.colors, financialData.incomeBreakdown.colors, financialData.savingsBreakdown.colors]);
 
-  const processIncomeBreakdownData = (incomes) => {
-    const sourceTotals = {};
-    let totalIncome = 0;
+  const fetchData = useCallback(async () => {
+    try {
+      setLoading(true);
+      const [expensesRes, incomesRes, savingsRes] = await Promise.all([
+        transactionAPI.getExpenses(),
+        transactionAPI.getIncomes(),
+        transactionAPI.getSavings()
+      ]);
+      const expenses = expensesRes.data;
+      const incomes = incomesRes.data;
+      const savingsTxns = savingsRes.data;
 
-    // Calculate totals per source
-    incomes.forEach(income => {
+      const filteredIncomes = filterByTimeRange(incomes);
+      const filteredExpenses = filterByTimeRange(expenses);
+      const filteredSavings = filterByTimeRange(savingsTxns);
 
-      const source = income.category_name || 'Uncategorized';
-      const amount = parseFloat(income.amount);
-      sourceTotals[source] = (sourceTotals[source] || 0) + amount;
-      totalIncome += amount;
-    });
+      const totalIncome = filteredIncomes.reduce((sum, income) => sum + parseFloat(income.amount), 0);
+      const totalExpenses = filteredExpenses.reduce((sum, expense) => sum + parseFloat(expense.amount), 0);
+      const totalSavings = filteredSavings.reduce((sum, saving) => sum + parseFloat(saving.amount), 0);
+      const netBalance = totalIncome - totalExpenses - totalSavings;
 
+      const months = getMonthsForTimeRange();
+      const incomeVsExpenses = processIncomeVsExpensesData(incomes, expenses, months);
 
-    const labels = Object.keys(sourceTotals);
-    const values = Object.values(sourceTotals);
-    const percentages = values.map(value => ((value / totalIncome) * 100).toFixed(1));
+      const expenseBreakdown = processExpenseBreakdownData(filteredExpenses);
+      const incomeBreakdown = processIncomeBreakdownData(filteredIncomes);
+      const savingsBreakdown = processSavingsBreakdownData(filteredSavings);
+      const categorySpending = processAllCategorySpendingOverTime(expenses, incomes, savingsTxns, months);
 
-    return {
-      labels,
-      values,
-      percentages,
-      colors: financialData.incomeBreakdown.colors.slice(0, labels.length)
-    };
-  };
+      setFinancialData({
+        totalIncome,
+        totalExpenses,
+        totalSavings,
+        netBalance,
+        incomeVsExpenses,
+        expenseBreakdown,
+        categorySpendingOverTime: categorySpending,
+        incomeBreakdown,
+        savingsBreakdown
+      });
 
-  const processSavingsBreakdownData = (savings) => {
-    const categoryTotals = {};
-    let totalSavings = 0;
+      setLoading(false);
+    } catch (err) {
+      console.error('Error fetching reports data:', err);
+      setError('Failed to load reports data');
+      setLoading(false);
+    }
+  }, [filterByTimeRange, getMonthsForTimeRange, processExpenseBreakdownData, processIncomeBreakdownData, processSavingsBreakdownData, processIncomeVsExpensesData, processAllCategorySpendingOverTime]);
 
-    // Calculate totals per category
-    savings.forEach(saving => {
-      const category = saving.category_name || 'Uncategorized';
-      const amount = parseFloat(saving.amount);
-      categoryTotals[category] = (categoryTotals[category] || 0) + amount;
-      totalSavings += amount;
-    });
+  useEffect(() => {
+    fetchData();
+    const updateCurrency = () => setCurrencySymbol(getCurrencySymbol());
+    window.addEventListener('currencyChange', updateCurrency);
+    return () => window.removeEventListener('currencyChange', updateCurrency);
+  }, [fetchData]);
 
-    // Convert to arrays for chart
-    const labels = Object.keys(categoryTotals);
-    const values = Object.values(categoryTotals);
-    const percentages = values.map(value => ((value / totalSavings) * 100).toFixed(1));
-
-    return {
-      labels,
-      values,
-      percentages,
-      colors: financialData.savingsBreakdown.colors.slice(0, labels.length)
-    };
-  };
 
   // Chart configurations
   const incomeExpenseChartOptions = {
@@ -385,32 +367,6 @@ const Reports = () => {
       },
     },
   };
-
-
-  const doughnutOptions = {
-    responsive: true,
-    maintainAspectRatio: false,
-    plugins: {
-      legend: {
-        display: true,
-        position: 'bottom',
-      },
-      tooltip: {
-        callbacks: {
-          label: (context) => {
-            const label = context.label || '';
-            const value = context.parsed || 0;
-            const total = context.chart.data.datasets[0].data.reduce((a, b) => a + b, 0);
-            const percentage = Math.round((value / total) * 100);
-            return `${label}: ${percentage}% (${currencySymbol}${value.toLocaleString()})`;
-          },
-        },
-      },
-    },
-    cutout: '70%',
-  };
-
-
 
   const pieOptions = {
     responsive: true,
