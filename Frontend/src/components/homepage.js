@@ -139,6 +139,9 @@ function HomePage() {
         <Typography variant="body2">
           © 2025 BudgetMaster. All rights reserved.
         </Typography>
+        <Typography variant="body2">
+          Developed by Soesh Cooray
+        </Typography>
       </Box>
     </Box>
   );
