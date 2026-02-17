@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Box, Card, TextField, Button, Typography, Link, useTheme } from '@mui/material';
+import { Box, Card, TextField, Button, Typography, Link, useTheme, CircularProgress } from '@mui/material';
 import AttachMoneyIcon from '@mui/icons-material/AttachMoney';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
@@ -12,8 +12,16 @@ function SignInPage() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [errorMessage, setErrorMessage] = useState('');
+  const [isLoading, setIsLoading] = useState(false);
 
   const handleSignIn = async () => {
+    if (isLoading) {
+      return;
+    }
+
+    setIsLoading(true);
+    setErrorMessage('');
+
     try {
       const response = await axios.post(`${API_BASE}/auth/jwt/create/`, {
         email,
@@ -33,6 +41,8 @@ function SignInPage() {
       } else {
         setErrorMessage('Login failed. Please check your connection.');
       }
+    } finally {
+      setIsLoading(false);
     }
   };
 
@@ -113,8 +123,6 @@ function SignInPage() {
           }}
         />
         <Button
-          component={Link}
-          to="/dashboard"
           variant="contained"
           fullWidth
           sx={{
@@ -127,8 +135,13 @@ function SignInPage() {
             },
           }}
           onClick={handleSignIn}
+          disabled={isLoading}
         >
-          Sign In
+          {isLoading ? (
+            <CircularProgress size={22} color="inherit" />
+          ) : (
+            'Sign In'
+          )}
         </Button>
         <Typography variant="body2" align="center" mt={2}>
           <Link href="/forgotpassword" color={isDark ? 'primary.light' : 'primary.main'}>

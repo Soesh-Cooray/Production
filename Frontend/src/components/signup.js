@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import {
     Box, Card, TextField, Button, Typography, Link,
     Checkbox, FormControlLabel, Dialog, DialogTitle,
-    DialogContent, DialogContentText, DialogActions
+    DialogContent, DialogContentText, DialogActions, CircularProgress
 } from '@mui/material';
 import AttachMoneyIcon from '@mui/icons-material/AttachMoney';
 import axios from 'axios';
@@ -18,6 +18,7 @@ function SignUpPage() {
     const [confirmPasswordError, setConfirmPasswordError] = useState('');
     const [successMessage, setSuccessMessage] = useState('');
     const [errorMessage, setErrorMessage] = useState('');
+    const [isLoading, setIsLoading] = useState(false);
 
     // Privacy Policy State
     const [agreedToPolicy, setAgreedToPolicy] = useState(false);
@@ -46,22 +47,30 @@ function SignUpPage() {
     };
 
     const handleSignUp = async () => {
+        if (isLoading) {
+            return;
+        }
+
+        setIsLoading(true);
         const passwordErrorMessage = validatePassword(password);
         setPasswordError(passwordErrorMessage);
         setConfirmPasswordError("");
         setErrorMessage("");
 
         if (passwordErrorMessage) {
+            setIsLoading(false);
             return;
         }
 
         if (password !== confirmPassword) {
             setConfirmPasswordError("Passwords do not match.");
+            setIsLoading(false);
             return;
         }
 
         if (!agreedToPolicy) {
             setErrorMessage("You must agree to the Privacy Policy to create an account.");
+            setIsLoading(false);
             return;
         }
 
@@ -97,6 +106,8 @@ function SignUpPage() {
             } else {
                 setErrorMessage('Signup failed. Please try again.');
             }
+            } finally {
+                setIsLoading(false);
         }
     };
 
@@ -201,8 +212,18 @@ function SignUpPage() {
                     />
                 </Box>
 
-                <Button variant="contained" fullWidth sx={{ marginTop: 2, borderRadius: 4 }} onClick={handleSignUp}>
-                    Sign Up
+                <Button
+                    variant="contained"
+                    fullWidth
+                    sx={{ marginTop: 2, borderRadius: 4 }}
+                    onClick={handleSignUp}
+                    disabled={isLoading}
+                >
+                    {isLoading ? (
+                        <CircularProgress size={22} color="inherit" />
+                    ) : (
+                        'Sign Up'
+                    )}
                 </Button>
                 <Typography variant="body2" align="center" mt={2}>
                     Already have an account? <Link href="/signin">Sign in</Link>
