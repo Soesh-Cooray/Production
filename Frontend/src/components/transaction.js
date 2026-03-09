@@ -385,7 +385,7 @@ function TransactionsPage() {
           />
 
           <Stack direction="row" spacing={2} width={{ xs: '100%', md: 'auto' }}>
-            <FormControl size="small" sx={{ minWidth: 150 }}>
+            <FormControl size="small" sx={{ flex: { xs: 1, md: 'unset' }, minWidth: { xs: 0, md: 150 } }}>
               <Select
                 value={filterType}
                 onChange={(e) => setFilterType(e.target.value)}
@@ -399,7 +399,7 @@ function TransactionsPage() {
               </Select>
             </FormControl>
 
-            <FormControl size="small" sx={{ minWidth: 150 }}>
+            <FormControl size="small" sx={{ flex: { xs: 1, md: 'unset' }, minWidth: { xs: 0, md: 150 } }}>
               <Select
                 value={filterCategory}
                 onChange={(e) => setFilterCategory(e.target.value)}

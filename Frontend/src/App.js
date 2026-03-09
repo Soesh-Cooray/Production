@@ -20,7 +20,7 @@ import { DRAWER_WIDTH, COLLAPSED_WIDTH } from './constants';
 function App() {
     const location = useLocation();
     const showSidebar = ['/transaction', '/budgets', '/reports', '/dashboard', '/settings', '/faq'].includes(location.pathname);
-    const [open, setOpen] = useState(true);
+    const [open, setOpen] = useState(() => window.innerWidth >= 960);
 
     const handleDrawerToggle = () => {
         setOpen((prev) => !prev);
