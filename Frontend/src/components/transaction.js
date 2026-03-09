@@ -3,7 +3,7 @@ import {
   Box, Typography, Button, TextField, Select, Dialog, DialogTitle, DialogContent, DialogActions,
   Table, TableHead, TableBody, TableRow, TableCell, IconButton, FormControl, InputLabel,
   MenuItem, styled, CircularProgress, Snackbar, Alert, useTheme, Card,
-  TableContainer, Chip, Stack, InputAdornment, Tooltip, Container, Grid
+  TableContainer, Chip, Stack, InputAdornment, Tooltip, Container, Grid, useMediaQuery
 } from '@mui/material';
 
 import { 
@@ -68,6 +68,7 @@ const HoverMenuItem = styled(MenuItem)(({ theme }) => ({
 
 function TransactionsPage() {
   const theme = useTheme();
+  const isMobile = useMediaQuery(theme.breakpoints.down('md'));
   const navigate = useNavigate();
   const [openAddDialog, setOpenAddDialog] = useState(false);
   const [expenses, setExpenses] = useState([]);
@@ -415,114 +416,194 @@ function TransactionsPage() {
         </Stack>
       </StyledCard>
 
-      {/* Transactions Table */}
+      {/* Transactions Table / Mobile Cards */}
       {filteredTransactions().length > 0 ? (
-        <StyledCard>
-          <TableContainer>
-            <Table sx={{ minWidth: 700 }}>
-              <TableHead>
-                <StyledTableHeadRow>
-                  <TableCell>Description</TableCell>
-                  <TableCell>Date</TableCell>
-                  <TableCell>Category</TableCell>
-                  <TableCell>Type</TableCell>
-                  <TableCell 
-                    onClick={() => setSortAmountOrder(sortAmountOrder === 'asc' ? 'desc' : 'asc')}
-                    sx={{ cursor: 'pointer', userSelect: 'none' }}
+        isMobile ? (
+          /* Mobile: card list — no horizontal scrolling */
+          <Stack spacing={2}>
+            {filteredTransactions().map((transaction) => (
+              <StyledCard key={transaction.id} sx={{ px: 2, py: 1.5 }}>
+                {/* Row 1: description + amount */}
+                <Box display="flex" justifyContent="space-between" alignItems="flex-start" mb={1}>
+                  <Typography variant="body2" fontWeight={700} color="textPrimary" sx={{ flex: 1, mr: 1 }}>
+                    {transaction.description}
+                  </Typography>
+                  <Typography
+                    variant="body2"
+                    fontWeight="bold"
+                    color={
+                      transaction.transaction_type === 'income' ? 'success.main' :
+                      transaction.transaction_type === 'expense' ? 'error.main' : 'info.main'
+                    }
+                    sx={{ whiteSpace: 'nowrap' }}
                   >
-                    <Box display="flex" alignItems="center">
-                      Amount
-                      {sortAmountOrder && (
-                        <SortIcon fontSize="small" sx={{ ml: 1, transform: sortAmountOrder === 'asc' ? 'rotate(180deg)' : 'none', transition: 'transform 0.2s' }} />
-                      )}
-                    </Box>
-                  </TableCell>
-                  <TableCell align="right">Actions</TableCell>
-                </StyledTableHeadRow>
-              </TableHead>
-              <TableBody>
-                {filteredTransactions().map((transaction) => (
-                  <StyledTableRow key={transaction.id}>
-                    <TableCell>
-                      <Typography variant="body2" fontWeight={600} color="textPrimary">
-                        {transaction.description}
-                      </Typography>
+                    {transaction.transaction_type === 'income' ? '+' : transaction.transaction_type === 'expense' ? '-' : ''}
+                    {currencySymbol}{parseFloat(transaction.amount).toFixed(2)}
+                  </Typography>
+                </Box>
+
+                {/* Row 2: type chip + category chip + date */}
+                <Box display="flex" alignItems="center" flexWrap="wrap" gap={1} mb={1}>
+                  <Chip
+                    icon={
+                      transaction.transaction_type === 'income' ? <TrendingUpIcon /> :
+                      transaction.transaction_type === 'expense' ? <TrendingDownIcon /> :
+                      <SavingsIcon />
+                    }
+                    label={transaction.transaction_type.charAt(0).toUpperCase() + transaction.transaction_type.slice(1)}
+                    size="small"
+                    sx={{
+                      borderRadius: 2,
+                      backgroundColor:
+                        transaction.transaction_type === 'income' ? 'rgba(46, 125, 50, 0.1)' :
+                        transaction.transaction_type === 'expense' ? 'rgba(211, 47, 47, 0.1)' :
+                        'rgba(2, 136, 209, 0.1)',
+                      color:
+                        transaction.transaction_type === 'income' ? 'rgb(27, 94, 32)' :
+                        transaction.transaction_type === 'expense' ? 'rgb(198, 40, 40)' :
+                        'rgb(1, 87, 155)',
+                      border: 'none'
+                    }}
+                  />
+                  <Chip
+                    label={transaction.category_name || 'Uncategorized'}
+                    size="small"
+                    variant="outlined"
+                    sx={{ borderRadius: 2 }}
+                  />
+                  <Typography variant="caption" color="textSecondary" sx={{ ml: 'auto' }}>
+                    {new Date(transaction.date).toLocaleDateString()}
+                  </Typography>
+                </Box>
+
+                {/* Row 3: action buttons */}
+                <Box display="flex" justifyContent="flex-end" gap={1}>
+                  <IconButton
+                    onClick={() => handleEditTransaction(transaction)}
+                    size="small"
+                    sx={{ color: theme.palette.text.secondary }}
+                  >
+                    <EditIcon fontSize="small" />
+                  </IconButton>
+                  <IconButton
+                    onClick={() => handleDeleteClick(transaction)}
+                    size="small"
+                    color="error"
+                  >
+                    <DeleteIcon fontSize="small" />
+                  </IconButton>
+                </Box>
+              </StyledCard>
+            ))}
+          </Stack>
+        ) : (
+          /* Desktop: full table */
+          <StyledCard>
+            <TableContainer>
+              <Table sx={{ minWidth: 700 }}>
+                <TableHead>
+                  <StyledTableHeadRow>
+                    <TableCell>Description</TableCell>
+                    <TableCell>Date</TableCell>
+                    <TableCell>Category</TableCell>
+                    <TableCell>Type</TableCell>
+                    <TableCell
+                      onClick={() => setSortAmountOrder(sortAmountOrder === 'asc' ? 'desc' : 'asc')}
+                      sx={{ cursor: 'pointer', userSelect: 'none' }}
+                    >
+                      <Box display="flex" alignItems="center">
+                        Amount
+                        {sortAmountOrder && (
+                          <SortIcon fontSize="small" sx={{ ml: 1, transform: sortAmountOrder === 'asc' ? 'rotate(180deg)' : 'none', transition: 'transform 0.2s' }} />
+                        )}
+                      </Box>
                     </TableCell>
-                    <TableCell>{new Date(transaction.date).toLocaleDateString()}</TableCell>
-                    <TableCell>
-                      <Chip 
-                        label={transaction.category_name || 'Uncategorized'} 
-                        size="small" 
-                        variant="outlined"
-                        sx={{ borderRadius: 2 }}
-                      />
-                    </TableCell>
-                    <TableCell>
-                      <Chip
-                        icon={
-                          transaction.transaction_type === 'income' ? <TrendingUpIcon /> :
-                          transaction.transaction_type === 'expense' ? <TrendingDownIcon /> :
-                          <SavingsIcon />
-                        }
-                        label={transaction.transaction_type.charAt(0).toUpperCase() + transaction.transaction_type.slice(1)}
-                        size="small"
-                        color={
-                          transaction.transaction_type === 'income' ? 'success' :
-                          transaction.transaction_type === 'expense' ? 'error' : 'info'
-                        }
-                        variant="soft" // If not supported, defaults to filled/outlined logic usually or use transparent
-                        sx={{ 
-                          borderRadius: 2,
-                          backgroundColor: 
-                            transaction.transaction_type === 'income' ? 'rgba(46, 125, 50, 0.1)' :
-                            transaction.transaction_type === 'expense' ? 'rgba(211, 47, 47, 0.1)' :
-                            'rgba(2, 136, 209, 0.1)',
-                          color: 
-                            transaction.transaction_type === 'income' ? 'rgb(27, 94, 32)' :
-                            transaction.transaction_type === 'expense' ? 'rgb(198, 40, 40)' :
-                            'rgb(1, 87, 155)',
-                          border: 'none'
-                        }}
-                      />
-                    </TableCell>
-                    <TableCell>
-                      <Typography
-                        fontWeight="bold"
-                        color={
-                          transaction.transaction_type === 'income' ? 'success.main' :
-                          transaction.transaction_type === 'expense' ? 'error.main' : 'info.main'
-                        }
-                      >
-                        {transaction.transaction_type === 'income' ? '+' : transaction.transaction_type === 'expense' ? '-' : ''}
-                        {currencySymbol}{parseFloat(transaction.amount).toFixed(2)}
-                      </Typography>
-                    </TableCell>
-                    <TableCell align="right">
-                      <Tooltip title="Edit">
-                        <IconButton
-                          onClick={() => handleEditTransaction(transaction)}
+                    <TableCell align="right">Actions</TableCell>
+                  </StyledTableHeadRow>
+                </TableHead>
+                <TableBody>
+                  {filteredTransactions().map((transaction) => (
+                    <StyledTableRow key={transaction.id}>
+                      <TableCell>
+                        <Typography variant="body2" fontWeight={600} color="textPrimary">
+                          {transaction.description}
+                        </Typography>
+                      </TableCell>
+                      <TableCell>{new Date(transaction.date).toLocaleDateString()}</TableCell>
+                      <TableCell>
+                        <Chip
+                          label={transaction.category_name || 'Uncategorized'}
                           size="small"
-                          sx={{ color: theme.palette.text.secondary, mr: 1 }}
-                        >
-                          <EditIcon fontSize="small" />
-                        </IconButton>
-                      </Tooltip>
-                      <Tooltip title="Delete">
-                        <IconButton
-                          onClick={() => handleDeleteClick(transaction)}
+                          variant="outlined"
+                          sx={{ borderRadius: 2 }}
+                        />
+                      </TableCell>
+                      <TableCell>
+                        <Chip
+                          icon={
+                            transaction.transaction_type === 'income' ? <TrendingUpIcon /> :
+                            transaction.transaction_type === 'expense' ? <TrendingDownIcon /> :
+                            <SavingsIcon />
+                          }
+                          label={transaction.transaction_type.charAt(0).toUpperCase() + transaction.transaction_type.slice(1)}
                           size="small"
-                          color="error"
+                          color={
+                            transaction.transaction_type === 'income' ? 'success' :
+                            transaction.transaction_type === 'expense' ? 'error' : 'info'
+                          }
+                          sx={{
+                            borderRadius: 2,
+                            backgroundColor:
+                              transaction.transaction_type === 'income' ? 'rgba(46, 125, 50, 0.1)' :
+                              transaction.transaction_type === 'expense' ? 'rgba(211, 47, 47, 0.1)' :
+                              'rgba(2, 136, 209, 0.1)',
+                            color:
+                              transaction.transaction_type === 'income' ? 'rgb(27, 94, 32)' :
+                              transaction.transaction_type === 'expense' ? 'rgb(198, 40, 40)' :
+                              'rgb(1, 87, 155)',
+                            border: 'none'
+                          }}
+                        />
+                      </TableCell>
+                      <TableCell>
+                        <Typography
+                          fontWeight="bold"
+                          color={
+                            transaction.transaction_type === 'income' ? 'success.main' :
+                            transaction.transaction_type === 'expense' ? 'error.main' : 'info.main'
+                          }
                         >
-                          <DeleteIcon fontSize="small" />
-                        </IconButton>
-                      </Tooltip>
-                    </TableCell>
-                  </StyledTableRow>
-                ))}
-              </TableBody>
-            </Table>
-          </TableContainer>
-        </StyledCard>
+                          {transaction.transaction_type === 'income' ? '+' : transaction.transaction_type === 'expense' ? '-' : ''}
+                          {currencySymbol}{parseFloat(transaction.amount).toFixed(2)}
+                        </Typography>
+                      </TableCell>
+                      <TableCell align="right">
+                        <Tooltip title="Edit">
+                          <IconButton
+                            onClick={() => handleEditTransaction(transaction)}
+                            size="small"
+                            sx={{ color: theme.palette.text.secondary, mr: 1 }}
+                          >
+                            <EditIcon fontSize="small" />
+                          </IconButton>
+                        </Tooltip>
+                        <Tooltip title="Delete">
+                          <IconButton
+                            onClick={() => handleDeleteClick(transaction)}
+                            size="small"
+                            color="error"
+                          >
+                            <DeleteIcon fontSize="small" />
+                          </IconButton>
+                        </Tooltip>
+                      </TableCell>
+                    </StyledTableRow>
+                  ))}
+                </TableBody>
+              </Table>
+            </TableContainer>
+          </StyledCard>
+        )
       ) : (
         <StyledCard sx={{ minHeight: 400, display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'center', p: 4 }}>
           <Box 
