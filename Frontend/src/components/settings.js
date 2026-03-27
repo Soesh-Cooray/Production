@@ -146,8 +146,7 @@ const SettingsPage = () => {
             await apiClient.post('/auth/users/set_password/',
                 {
                     current_password: passwords.current_password,
-                    new_password: passwords.new_password,
-                    re_new_password: passwords.re_new_password
+                    new_password: passwords.new_password
                 },
                 { baseURL: API_BASE }
             );
