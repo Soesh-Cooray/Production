@@ -65,3 +65,20 @@ class Transaction(models.Model):
 
     def __str__(self):
         return f"{self.description} - {self.amount}"
+
+
+class SavingsGoal(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='savings_goals')
+    category = models.ForeignKey(Category, on_delete=models.CASCADE, related_name='savings_goals')
+    title = models.CharField(max_length=120)
+    target_amount = models.DecimalField(max_digits=12, decimal_places=2)
+    start_date = models.DateField()
+    target_date = models.DateField(null=True, blank=True)
+    notes = models.TextField(blank=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        ordering = ['-created_at']
+
+    def __str__(self):
+        return f"{self.title} - {self.target_amount}"

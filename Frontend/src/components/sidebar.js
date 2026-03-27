@@ -6,6 +6,7 @@ import {
 import DashboardIcon from '@mui/icons-material/Dashboard';
 import AttachMoneyIcon from '@mui/icons-material/AttachMoney';
 import SavingsIcon from '@mui/icons-material/Savings';
+import FlagIcon from '@mui/icons-material/Flag';
 import BarChartIcon from '@mui/icons-material/BarChart';
 import ExitToAppIcon from '@mui/icons-material/ExitToApp';
 import MenuIcon from '@mui/icons-material/Menu';
@@ -247,6 +248,20 @@ function Sidebar({ open, onClose }) {
                         <SavingsIcon />
                     </ListItemIcon>
                     <ListItemText primary="Budgets" sx={{ opacity: open ? 1 : 0 }} />
+                </ListItem>
+
+                <ListItem
+                    button
+                    key="SavingsGoals"
+                    onClick={() => handleNavigation('/savings-goals')}
+                    sx={{
+                        backgroundColor: isActive('/savings-goals') ? 'rgba(128, 128, 128, 0.68)' : 'transparent',
+                    }}
+                >
+                    <ListItemIcon sx={{ minWidth: 0, mr: 3, justifyContent: open ? 'flex-start' : 'center' }}>
+                        <FlagIcon />
+                    </ListItemIcon>
+                    <ListItemText primary="Savings Goals" sx={{ opacity: open ? 1 : 0 }} />
                 </ListItem>
 
                 <ListItem

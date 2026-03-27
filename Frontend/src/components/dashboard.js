@@ -7,10 +7,11 @@ import AccountBalanceWalletIcon from '@mui/icons-material/AccountBalanceWallet';
 import ArrowCircleUpIcon from '@mui/icons-material/ArrowCircleUp';
 import ArrowCircleDownIcon from '@mui/icons-material/ArrowCircleDown';
 import SavingsSharpIcon from '@mui/icons-material/SavingsSharp';
+import FlagIcon from '@mui/icons-material/Flag';
 import { AdapterDateFns } from '@mui/x-date-pickers/AdapterDateFns';
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import { DatePicker } from '@mui/x-date-pickers/DatePicker';
-import { transactionAPI, budgetAPI, categoryAPI, getCurrencySymbol, apiClient, API_BASE } from '../api';
+import { transactionAPI, budgetAPI, categoryAPI, savingsGoalAPI, getCurrencySymbol, apiClient, API_BASE } from '../api';
 import { format, subDays } from 'date-fns';
 
 // Register the chart components
@@ -148,6 +149,44 @@ const BudgetProgressCard = ({ name, spent, amount, remaining, percent, currencyS
   );
 };
 
+const SavingsGoalCard = ({ title, categoryName, currentAmount, targetAmount, remaining, percent, currencySymbol }) => {
+  const theme = useTheme();
+  return (
+    <Card sx={{
+      p: 3,
+      borderRadius: 3,
+      boxShadow: theme.palette.mode === 'dark' ? '0 2px 10px rgba(0, 0, 0, 0.2)' : '0 2px 10px rgba(0,0,0,0.05)',
+      mb: 2,
+      minWidth: 320,
+      backgroundColor: theme.palette.background.paper,
+    }}>
+      <Box display="flex" justifyContent="space-between" alignItems="center" mb={1}>
+        <Typography variant="h6" sx={{ fontWeight: 'bold', color: theme.palette.text.primary }}>{title}</Typography>
+        <FlagIcon sx={{ color: theme.palette.text.secondary }} />
+      </Box>
+      <Typography variant="body2" color="textSecondary" sx={{ mb: 1 }}>{categoryName}</Typography>
+      <Box display="flex" justifyContent="space-between" alignItems="center" mb={1}>
+        <Typography sx={{ fontWeight: 500, color: theme.palette.text.primary }}>{currencySymbol}{currentAmount.toFixed(2)}</Typography>
+        <Typography sx={{ fontWeight: 500, color: theme.palette.text.primary }}>of {currencySymbol}{targetAmount.toLocaleString(undefined, { minimumFractionDigits: 2 })}</Typography>
+      </Box>
+      <LinearProgress
+        variant="determinate"
+        value={percent}
+        sx={{
+          height: 8,
+          borderRadius: 4,
+          backgroundColor: theme.palette.mode === 'dark' ? 'rgba(255, 255, 255, 0.1)' : '#f5f5f5',
+          mb: 1
+        }}
+      />
+      <Box display="flex" justifyContent="space-between" alignItems="center">
+        <Typography variant="body2" color="textSecondary">Remaining: {currencySymbol}{remaining.toLocaleString(undefined, { minimumFractionDigits: 2 })}</Typography>
+        <Typography variant="body2" color="textSecondary">{percent.toFixed(0)}%</Typography>
+      </Box>
+    </Card>
+  );
+};
+
 const Dashboard = () => {
   const theme = useTheme();
   const [loading, setLoading] = useState(true);
@@ -179,6 +218,7 @@ const Dashboard = () => {
   });
   const [recentTransactions, setRecentTransactions] = useState([]);
   const [recentBudgets, setRecentBudgets] = useState([]);
+  const [recentSavingsGoals, setRecentSavingsGoals] = useState([]);
   const [categories, setCategories] = useState([]);
   const [transactions, setTransactions] = useState([]);
   const [currencySymbol, setCurrencySymbol] = useState(getCurrencySymbol());
@@ -230,18 +270,20 @@ const Dashboard = () => {
       const formattedStartDate = formatDateForApi(startDate);
       const formattedEndDate = formatDateForApi(endDate);
 
-      const [expensesRes, incomesRes, savingsRes, budgetsRes, categoriesRes] = await Promise.all([
+      const [expensesRes, incomesRes, savingsRes, budgetsRes, categoriesRes, savingsGoalsRes] = await Promise.all([
         transactionAPI.getExpenses(formattedStartDate, formattedEndDate),
         transactionAPI.getIncomes(formattedStartDate, formattedEndDate),
         transactionAPI.getSavings(formattedStartDate, formattedEndDate),
         budgetAPI.getAll(),
-        categoryAPI.getExpenseCategories()
+        categoryAPI.getExpenseCategories(),
+        savingsGoalAPI.getAll()
       ]);
 
       const expenses = expensesRes.data;
       const incomes = incomesRes.data;
       const savingsTxns = savingsRes.data;
       const budgets = budgetsRes.data;
+      const savingsGoals = savingsGoalsRes.data;
       const allTransactions = [...expenses, ...incomes, ...savingsTxns].sort((a, b) => new Date(b.date) - new Date(a.date));
       setTransactions(allTransactions);
       setCategories(categoriesRes.data);
@@ -272,6 +314,11 @@ const Dashboard = () => {
         .slice()
         .sort((a, b) => new Date(b.created_at) - new Date(a.created_at));
       setRecentBudgets(sortedBudgets.slice(0, 2));
+
+      const sortedGoals = savingsGoals
+        .slice()
+        .sort((a, b) => new Date(b.created_at) - new Date(a.created_at));
+      setRecentSavingsGoals(sortedGoals.slice(0, 2));
 
       setLoading(false);
     } catch (err) {
@@ -686,6 +733,38 @@ const Dashboard = () => {
             </Grid>
           );
         })}
+      </Grid>
+
+      {/* Recent Savings Goals */}
+      <Typography variant="h6" sx={{ mb: 2, fontWeight: 'bold', color: theme.palette.text.primary }}>Recent Savings Goals</Typography>
+      <Grid container spacing={3} sx={{ mb: 4 }}>
+        {recentSavingsGoals.map((goal) => {
+          const currentAmount = Number(goal.current_amount || 0);
+          const targetAmount = Number(goal.target_amount || 0);
+          const remaining = Number(goal.remaining_amount || 0);
+          const percent = targetAmount ? Math.min((currentAmount / targetAmount) * 100, 100) : 0;
+
+          return (
+            <Grid item xs={12} sm={6} md={4} key={goal.id}>
+              <SavingsGoalCard
+                title={goal.title}
+                categoryName={goal.category?.name || 'Savings Category'}
+                currentAmount={currentAmount}
+                targetAmount={targetAmount}
+                remaining={remaining}
+                percent={percent}
+                currencySymbol={currencySymbol}
+              />
+            </Grid>
+          );
+        })}
+        {recentSavingsGoals.length === 0 && (
+          <Grid item xs={12}>
+            <Paper sx={{ p: 2 }}>
+              <Typography variant="body2" color="textSecondary">No savings goals yet.</Typography>
+            </Paper>
+          </Grid>
+        )}
       </Grid>
     </Box>
   );

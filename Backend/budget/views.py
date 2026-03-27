@@ -1,7 +1,7 @@
 from rest_framework import generics, permissions, status, viewsets
 from rest_framework.response import Response
-from .models import Budget, Category, Transaction
-from .serializers import BudgetSerializer, CategorySerializer, TransactionSerializer
+from .models import Budget, Category, Transaction, SavingsGoal
+from .serializers import BudgetSerializer, CategorySerializer, TransactionSerializer, SavingsGoalSerializer
 from rest_framework.permissions import IsAuthenticated
 
 from rest_framework.decorators import action
@@ -103,6 +103,22 @@ class TransactionViewSet(viewsets.ModelViewSet):
             qs = qs.filter(date__range=[start_date, end_date])
         serializer = self.get_serializer(qs, many=True)
         return Response(serializer.data)
+
+
+class SavingsGoalViewSet(viewsets.ModelViewSet):
+    serializer_class = SavingsGoalSerializer
+    permission_classes = [IsAuthenticated]
+
+    def get_queryset(self):
+        return SavingsGoal.objects.filter(user=self.request.user).select_related('category')
+
+    def perform_create(self, serializer):
+        with transaction.atomic():
+            serializer.save(user=self.request.user)
+
+    def perform_update(self, serializer):
+        with transaction.atomic():
+            serializer.save(user=self.request.user)
 
     @action(detail=False, methods=['get'])
     def incomes(self, request):

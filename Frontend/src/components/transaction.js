@@ -100,6 +100,8 @@ function TransactionsPage() {
   const [transactionToDelete, setTransactionToDelete] = useState(null);
   const [currencySymbol, setCurrencySymbol] = useState(getCurrencySymbol());
   const [sortAmountOrder, setSortAmountOrder] = useState(null);
+  const [showAddCategoryInline, setShowAddCategoryInline] = useState(false);
+  const [newCategoryName, setNewCategoryName] = useState('');
 
 
   const handleLogout = useCallback(() => {
@@ -172,6 +174,8 @@ function TransactionsPage() {
     setCategory('');
     setType('expense');
     setEditingTransaction(null);
+    setShowAddCategoryInline(false);
+    setNewCategoryName('');
     setOpenAddDialog(true);
   };
 
@@ -246,7 +250,53 @@ function TransactionsPage() {
     setDate(transaction.date);
     setCategory(transaction.category);
     setType(transaction.transaction_type);
+    setShowAddCategoryInline(false);
+    setNewCategoryName('');
     setOpenAddDialog(true);
+  };
+
+  const handleAddInlineCategory = async () => {
+    if (!newCategoryName.trim()) {
+      setSnackbar({
+        open: true,
+        message: 'Category name is required',
+        severity: 'error'
+      });
+      return;
+    }
+
+    try {
+      const response = await categoryAPI.create({
+        name: newCategoryName.trim(),
+        transaction_type: type
+      });
+      const createdCategory = response.data;
+
+      setAllCategories((prev) => [...prev, createdCategory]);
+      if (type === 'expense') {
+        setExpenseCategories((prev) => [...prev, createdCategory]);
+      } else if (type === 'income') {
+        setIncomeCategories((prev) => [...prev, createdCategory]);
+      } else {
+        setSavingsCategories((prev) => [...prev, createdCategory]);
+      }
+
+      setCategory(createdCategory.id);
+      setNewCategoryName('');
+      setShowAddCategoryInline(false);
+      setSnackbar({
+        open: true,
+        message: 'Category added successfully',
+        severity: 'success'
+      });
+    } catch (err) {
+      console.error('Error creating category:', err);
+      setSnackbar({
+        open: true,
+        message: 'Failed to add category',
+        severity: 'error'
+      });
+    }
   };
 
   const handleDeleteClick = (transaction) => {
@@ -737,6 +787,39 @@ function TransactionsPage() {
                     ))}
                   </Select>
                 </FormControl>
+                {!showAddCategoryInline ? (
+                  <Button
+                    size="small"
+                    onClick={() => setShowAddCategoryInline(true)}
+                    sx={{ mt: 1 }}
+                  >
+                    + Add category
+                  </Button>
+                ) : (
+                  <Box sx={{ mt: 1 }}>
+                    <TextField
+                      fullWidth
+                      size="small"
+                      label={`New ${type} category`}
+                      value={newCategoryName}
+                      onChange={(e) => setNewCategoryName(e.target.value)}
+                    />
+                    <Box display="flex" gap={1} mt={1}>
+                      <Button size="small" variant="contained" onClick={handleAddInlineCategory}>
+                        Add
+                      </Button>
+                      <Button
+                        size="small"
+                        onClick={() => {
+                          setShowAddCategoryInline(false);
+                          setNewCategoryName('');
+                        }}
+                      >
+                        Cancel
+                      </Button>
+                    </Box>
+                  </Box>
+                )}
               </Grid>
             </Grid>
           </Box>

@@ -46,6 +46,7 @@ export const categoryAPI = {
   getAll: () => apiClient.get('categories/'),
   getExpenseCategories: () => apiClient.get('categories/expense_categories/'),
   getIncomeCategories: () => apiClient.get('categories/income_categories/'),
+  getSavingsCategories: () => apiClient.get('categories/savings_categories/'),
   create: (categoryData) => apiClient.post('categories/', categoryData),
   update: (id, categoryData) => apiClient.put(`categories/${id}/`, categoryData),
   delete: (id) => apiClient.delete(`categories/${id}/`),
@@ -57,6 +58,13 @@ export const budgetAPI = {
   create: (budgetData) => apiClient.post('budgets/', budgetData),
   update: (id, budgetData) => apiClient.put(`budgets/${id}/`, budgetData),
   delete: (id) => apiClient.delete(`budgets/${id}/`),
+};
+
+export const savingsGoalAPI = {
+  getAll: () => apiClient.get('savings-goals/'),
+  create: (goalData) => apiClient.post('savings-goals/', goalData),
+  update: (id, goalData) => apiClient.put(`savings-goals/${id}/`, goalData),
+  delete: (id) => apiClient.delete(`savings-goals/${id}/`),
 };
 
 //  currency list
@@ -136,6 +144,7 @@ const api = {
   transaction: transactionAPI,
   category: categoryAPI,
   budget: budgetAPI,
+  savingsGoal: savingsGoalAPI,
 };
 
 export default api;

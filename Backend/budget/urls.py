@@ -1,11 +1,12 @@
 from rest_framework.routers import DefaultRouter
 from django.urls import path, include
-from .views import BudgetViewSet, CategoryViewSet, TransactionViewSet
+from .views import BudgetViewSet, CategoryViewSet, TransactionViewSet, SavingsGoalViewSet
 
 router = DefaultRouter()
 router.register(r'budgets', BudgetViewSet, basename='budget')
 router.register(r'categories', CategoryViewSet, basename='category')
 router.register(r'transactions', TransactionViewSet, basename='transaction')
+router.register(r'savings-goals', SavingsGoalViewSet, basename='savings-goal')
 
 urlpatterns = [
     path('transactions/expenses/', TransactionViewSet.as_view({'get': 'expenses'}), name='transaction-expenses'),
