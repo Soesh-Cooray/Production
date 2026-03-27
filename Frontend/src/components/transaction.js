@@ -385,7 +385,22 @@ function TransactionsPage() {
   return (
     <Container maxWidth="xl" sx={{ py: 4, minHeight: '100vh' }}>
       {/* Header */}
-      <Box display="flex" justifyContent="space-between" alignItems="center" mb={4} flexWrap="wrap" gap={2}>
+      <Box
+        display="flex"
+        justifyContent="space-between"
+        alignItems="center"
+        mb={4}
+        flexWrap="wrap"
+        gap={2}
+        sx={!isMobile ? {
+          p: 3,
+          borderRadius: 3,
+          border: `1px solid ${theme.palette.divider}`,
+          background: theme.palette.mode === 'dark'
+            ? 'linear-gradient(135deg, rgba(45,56,72,0.5), rgba(26,32,44,0.45))'
+            : 'linear-gradient(135deg, #f5fffa, #edf4ff)',
+        } : undefined}
+      >
         <Box>
           <Typography variant="h4" sx={{ fontWeight: 800, color: theme.palette.text.primary, mb: 1 }}>
             Transactions
@@ -412,7 +427,16 @@ function TransactionsPage() {
       </Box>
 
       {/* Filters Card */}
-      <StyledCard sx={{ mb: 4, px: 2, py: 2 }}>
+      <StyledCard sx={{
+        mb: 4,
+        px: 2,
+        py: 2,
+        borderRadius: 4,
+        border: `1px solid ${theme.palette.divider}`,
+        boxShadow: !isMobile
+          ? (theme.palette.mode === 'dark' ? '0 12px 32px rgba(0,0,0,0.35)' : '0 12px 30px rgba(34, 67, 115, 0.1)')
+          : undefined,
+      }}>
         <Stack direction={{ xs: 'column', md: 'row' }} spacing={2} alignItems="center">
           <TextField
             placeholder="Search transactions..."

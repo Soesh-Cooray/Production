@@ -21,6 +21,7 @@ import {
 	Snackbar,
 	TextField,
 	Typography,
+	useTheme,
 } from '@mui/material';
 import EditIcon from '@mui/icons-material/Edit';
 import DeleteIcon from '@mui/icons-material/Delete';
@@ -39,6 +40,7 @@ const getGoalPercent = (goal) => {
 };
 
 function SavingsGoalsPage() {
+	const theme = useTheme();
 	const [goals, setGoals] = useState([]);
 	const [categories, setCategories] = useState([]);
 	const [loading, setLoading] = useState(true);
@@ -221,8 +223,10 @@ function SavingsGoalsPage() {
 					p: { xs: 2, md: 3 },
 					mb: 3,
 					borderRadius: 3,
-					background: 'linear-gradient(135deg, #e6fff4, #eef6ff)',
-					border: '1px solid rgba(90, 120, 150, 0.2)',
+					background: theme.palette.mode === 'dark'
+						? 'linear-gradient(135deg, rgba(22, 62, 76, 0.45), rgba(40, 54, 78, 0.45))'
+						: 'linear-gradient(135deg, #e6fff4, #eef6ff)',
+					border: `1px solid ${theme.palette.divider}`,
 				}}
 			>
 			<Box display="flex" justifyContent="space-between" alignItems="center" mb={0}>
@@ -250,7 +254,7 @@ function SavingsGoalsPage() {
 
 			<Grid container spacing={2} sx={{ mb: 3 }}>
 				<Grid item xs={12} md={6}>
-					<Paper sx={{ p: 2, borderRadius: 2 }}>
+					<Paper sx={{ p: 2, borderRadius: 3, border: `1px solid ${theme.palette.divider}` }}>
 						<Typography variant="subtitle2" color="textSecondary">Total Goal Target</Typography>
 						<Typography variant="h5" sx={{ fontWeight: 700 }}>
 							{currencySymbol}{totalTarget.toLocaleString(undefined, { minimumFractionDigits: 2 })}
@@ -258,7 +262,7 @@ function SavingsGoalsPage() {
 					</Paper>
 				</Grid>
 				<Grid item xs={12} md={6}>
-					<Paper sx={{ p: 2, borderRadius: 2 }}>
+					<Paper sx={{ p: 2, borderRadius: 3, border: `1px solid ${theme.palette.divider}` }}>
 						<Typography variant="subtitle2" color="textSecondary">Total Saved Across Goals</Typography>
 						<Typography variant="h5" sx={{ fontWeight: 700 }}>
 							{currencySymbol}{totalSaved.toLocaleString(undefined, { minimumFractionDigits: 2 })}
@@ -281,13 +285,15 @@ function SavingsGoalsPage() {
 									p: 3,
 									borderRadius: 4,
 									minWidth: 320,
-									border: '1px solid rgba(120, 144, 156, 0.2)',
-									boxShadow: '0 12px 30px rgba(0, 0, 0, 0.1)',
-									background: 'linear-gradient(160deg, rgba(255,255,255,0.96), rgba(244,251,255,0.9))',
+									border: `1px solid ${theme.palette.divider}`,
+									boxShadow: theme.palette.mode === 'dark' ? '0 12px 30px rgba(0, 0, 0, 0.35)' : '0 12px 30px rgba(0, 0, 0, 0.1)',
+									background: theme.palette.mode === 'dark'
+										? 'linear-gradient(160deg, rgba(32,42,56,0.95), rgba(25,33,44,0.92))'
+										: 'linear-gradient(160deg, rgba(255,255,255,0.96), rgba(244,251,255,0.9))',
 									transition: 'all 0.25s ease',
 									'&:hover': {
 										transform: 'translateY(-5px)',
-										boxShadow: '0 16px 36px rgba(0, 0, 0, 0.16)',
+										boxShadow: theme.palette.mode === 'dark' ? '0 18px 38px rgba(0, 0, 0, 0.42)' : '0 16px 36px rgba(0, 0, 0, 0.16)',
 									},
 								}}
 							>
@@ -346,7 +352,9 @@ function SavingsGoalsPage() {
 								borderColor: 'primary.main',
 								borderStyle: 'dashed',
 								borderWidth: 1,
-								background: 'linear-gradient(180deg, #ffffff, #f8fbff)',
+								background: theme.palette.mode === 'dark'
+									? 'linear-gradient(180deg, rgba(255,255,255,0.03), rgba(255,255,255,0.01))'
+									: 'linear-gradient(180deg, #ffffff, #f8fbff)',
 							}}
 						>
 							<SavingsIcon sx={{ fontSize: 60, color: 'primary.main', mb: 2 }} />

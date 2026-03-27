@@ -566,19 +566,24 @@ function AddBudgetDialog({ open, onClose, onAddBudget, categories, onAddCustomCa
     );
 }
 
-const BudgetProgressCard = ({ name, period, startDate, spent, amount, remaining, percent, onEdit, onDelete, currencySymbol }) => (
+const BudgetProgressCard = ({ name, period, startDate, spent, amount, remaining, percent, onEdit, onDelete, currencySymbol }) => {
+    const theme = useTheme();
+
+    return (
     <Card sx={{
         p: 3,
         borderRadius: 4,
-        boxShadow: '0 12px 32px rgba(0,0,0,0.12)',
+        boxShadow: theme.palette.mode === 'dark' ? '0 14px 34px rgba(0,0,0,0.35)' : '0 12px 32px rgba(0,0,0,0.12)',
         mb: 2,
         minWidth: 320,
-        border: '1px solid rgba(120, 144, 156, 0.2)',
-        background: 'linear-gradient(160deg, rgba(255,255,255,0.96), rgba(244,251,255,0.9))',
+        border: `1px solid ${theme.palette.divider}`,
+        background: theme.palette.mode === 'dark'
+            ? 'linear-gradient(160deg, rgba(32,42,56,0.95), rgba(25,33,44,0.92))'
+            : 'linear-gradient(160deg, rgba(255,255,255,0.98), rgba(244,251,255,0.92))',
         transition: 'all 0.25s ease-in-out',
         '&:hover': {
             transform: 'translateY(-6px)',
-            boxShadow: '0 18px 38px rgba(0,0,0,0.2)'
+            boxShadow: theme.palette.mode === 'dark' ? '0 20px 42px rgba(0,0,0,0.42)' : '0 18px 38px rgba(0,0,0,0.2)'
         }
     }}>
         <Box display="flex" justifyContent="space-between" alignItems="center" mb={1}>
@@ -641,6 +646,7 @@ const BudgetProgressCard = ({ name, period, startDate, spent, amount, remaining,
             </Typography>
         </Box>
     </Card>
-);
+    );
+};
 
 export default BudgetsPage;
