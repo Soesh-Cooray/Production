@@ -104,22 +104,6 @@ class TransactionViewSet(viewsets.ModelViewSet):
         serializer = self.get_serializer(qs, many=True)
         return Response(serializer.data)
 
-
-class SavingsGoalViewSet(viewsets.ModelViewSet):
-    serializer_class = SavingsGoalSerializer
-    permission_classes = [IsAuthenticated]
-
-    def get_queryset(self):
-        return SavingsGoal.objects.filter(user=self.request.user).select_related('category')
-
-    def perform_create(self, serializer):
-        with transaction.atomic():
-            serializer.save(user=self.request.user)
-
-    def perform_update(self, serializer):
-        with transaction.atomic():
-            serializer.save(user=self.request.user)
-
     @action(detail=False, methods=['get'])
     def incomes(self, request):
         start_date = request.query_params.get('start_date')
@@ -141,3 +125,19 @@ class SavingsGoalViewSet(viewsets.ModelViewSet):
             qs = qs.filter(date__range=[start_date, end_date])
         serializer = self.get_serializer(qs, many=True)
         return Response(serializer.data)
+
+
+class SavingsGoalViewSet(viewsets.ModelViewSet):
+    serializer_class = SavingsGoalSerializer
+    permission_classes = [IsAuthenticated]
+
+    def get_queryset(self):
+        return SavingsGoal.objects.filter(user=self.request.user).select_related('category')
+
+    def perform_create(self, serializer):
+        with transaction.atomic():
+            serializer.save(user=self.request.user)
+
+    def perform_update(self, serializer):
+        with transaction.atomic():
+            serializer.save(user=self.request.user)
