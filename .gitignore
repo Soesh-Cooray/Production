@@ -33,4 +33,3 @@ __pycache__/
 *.pyd
 .Python
 Backend/personal_budget_manager/settings.py
-Backend/personal_budget_manager/settings.py
