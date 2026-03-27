@@ -34,7 +34,7 @@ const StyledTableHeadRow = styled(TableRow)(({ theme }) => ({
   '& th': {
     fontWeight: 600,
     color: theme.palette.text.secondary,
-    backgroundColor: theme.palette.mode === 'dark' ? 'rgba(255, 255, 255, 0.05)' : '#f8f9fa',
+    backgroundColor: theme.palette.mode === 'dark' ? 'rgba(33, 150, 243, 0.14)' : 'rgba(25, 118, 210, 0.08)',
     borderBottom: `1px solid ${theme.palette.divider}`,
     whiteSpace: 'nowrap'
   }
@@ -43,7 +43,7 @@ const StyledTableHeadRow = styled(TableRow)(({ theme }) => ({
 const StyledTableRow = styled(TableRow)(({ theme }) => ({
   transition: 'background-color 0.2s ease',
   '&:hover': {
-    backgroundColor: theme.palette.mode === 'dark' ? 'rgba(255, 255, 255, 0.05)' : 'rgba(0, 0, 0, 0.02)',
+    backgroundColor: theme.palette.mode === 'dark' ? 'rgba(33, 150, 243, 0.08)' : 'rgba(25, 118, 210, 0.05)',
   },
   '& td': {
     borderBottom: `1px solid ${theme.palette.divider}`,
@@ -548,7 +548,18 @@ function TransactionsPage() {
           </Stack>
         ) : (
           /* Desktop: full table */
-          <StyledCard>
+          <StyledCard
+            sx={{
+              borderRadius: 4,
+              border: `1px solid ${theme.palette.divider}`,
+              background: theme.palette.mode === 'dark'
+                ? 'linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01))'
+                : 'linear-gradient(180deg, #ffffff, #f8fbff)',
+              boxShadow: theme.palette.mode === 'dark'
+                ? '0 10px 30px rgba(0,0,0,0.35)'
+                : '0 12px 30px rgba(34, 67, 115, 0.12)',
+            }}
+          >
             <TableContainer>
               <Table sx={{ minWidth: 700 }}>
                 <TableHead>

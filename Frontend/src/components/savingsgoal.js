@@ -214,16 +214,39 @@ function SavingsGoalsPage() {
 	}
 
 	return (
-		<Container>
-			<Box display="flex" justifyContent="space-between" alignItems="center" mb={2} mt={2}>
+		<Container maxWidth="xl" sx={{ py: 3 }}>
+			<Paper
+				elevation={0}
+				sx={{
+					p: { xs: 2, md: 3 },
+					mb: 3,
+					borderRadius: 3,
+					background: 'linear-gradient(135deg, #e6fff4, #eef6ff)',
+					border: '1px solid rgba(90, 120, 150, 0.2)',
+				}}
+			>
+			<Box display="flex" justifyContent="space-between" alignItems="center" mb={0}>
 				<Box>
 					<Typography variant="h4" sx={{ fontWeight: 'bold' }}>Savings Goals</Typography>
-					<Typography variant="subtitle1">Create goals and track savings progress by category</Typography>
+					<Typography variant="subtitle1" color="textSecondary">Create goals and track savings progress by category</Typography>
 				</Box>
-				<Button variant="contained" startIcon={<AddIcon />} onClick={handleOpenAddDialog}>
+				<Button
+					variant="contained"
+					startIcon={<AddIcon />}
+					onClick={handleOpenAddDialog}
+					sx={{
+						borderRadius: 3,
+						px: 2.5,
+						py: 1,
+						textTransform: 'none',
+						fontWeight: 700,
+						boxShadow: '0 10px 24px rgba(25, 118, 210, 0.25)',
+					}}
+				>
 					Add Savings Goal
 				</Button>
 			</Box>
+			</Paper>
 
 			<Grid container spacing={2} sx={{ mb: 3 }}>
 				<Grid item xs={12} md={6}>
@@ -253,7 +276,21 @@ function SavingsGoalsPage() {
 
 					return (
 						<Grid item xs={12} sm={6} md={4} key={goal.id}>
-							<Card sx={{ p: 3, borderRadius: 3, minWidth: 320 }}>
+							<Card
+								sx={{
+									p: 3,
+									borderRadius: 4,
+									minWidth: 320,
+									border: '1px solid rgba(120, 144, 156, 0.2)',
+									boxShadow: '0 12px 30px rgba(0, 0, 0, 0.1)',
+									background: 'linear-gradient(160deg, rgba(255,255,255,0.96), rgba(244,251,255,0.9))',
+									transition: 'all 0.25s ease',
+									'&:hover': {
+										transform: 'translateY(-5px)',
+										boxShadow: '0 16px 36px rgba(0, 0, 0, 0.16)',
+									},
+								}}
+							>
 								<Box display="flex" justifyContent="space-between" alignItems="center" mb={1}>
 									<Box>
 										<Typography variant="h6" sx={{ fontWeight: 'bold' }}>{goal.title}</Typography>
@@ -301,7 +338,17 @@ function SavingsGoalsPage() {
 
 				{goals.length === 0 && (
 					<Grid item xs={12} sx={{ textAlign: 'center', mt: 4 }}>
-						<Paper elevation={3} sx={{ p: 5, borderRadius: 2, borderColor: 'primary.main', borderStyle: 'dashed' }}>
+						<Paper
+							elevation={0}
+							sx={{
+								p: 5,
+								borderRadius: 3,
+								borderColor: 'primary.main',
+								borderStyle: 'dashed',
+								borderWidth: 1,
+								background: 'linear-gradient(180deg, #ffffff, #f8fbff)',
+							}}
+						>
 							<SavingsIcon sx={{ fontSize: 60, color: 'primary.main', mb: 2 }} />
 							<Typography variant="h6" color="textSecondary" mb={1}>
 								No savings goals yet
@@ -315,7 +362,18 @@ function SavingsGoalsPage() {
 				)}
 			</Grid>
 
-			<Dialog open={openDialog} onClose={handleCloseDialog} fullWidth maxWidth="sm">
+			<Dialog
+				open={openDialog}
+				onClose={handleCloseDialog}
+				fullWidth
+				maxWidth="sm"
+				PaperProps={{
+					sx: {
+						borderRadius: 4,
+						border: '1px solid rgba(120, 144, 156, 0.2)',
+					},
+				}}
+			>
 				<DialogTitle sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
 					{editingGoal ? 'Edit Savings Goal' : 'Add Savings Goal'}
 					<IconButton aria-label="close" onClick={handleCloseDialog}>

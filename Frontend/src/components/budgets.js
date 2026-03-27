@@ -12,6 +12,7 @@ import CalendarTodayIcon from '@mui/icons-material/CalendarToday';
 import { categoryAPI, budgetAPI, transactionAPI, getCurrencySymbol } from '../api';
 
 function BudgetsPage() {
+    const theme = useTheme();
     const [budgets, setBudgets] = useState([]);
     const [categories, setCategories] = useState([]);
     const [transactions, setTransactions] = useState([]);
@@ -168,20 +169,45 @@ function BudgetsPage() {
     }
 
     return (
-        <Container>
-            <Box display="flex" justifyContent="space-between" alignItems="center" mb={2} marginTop={2}>
+        <Container maxWidth="xl" sx={{ py: 3 }}>
+            <Paper
+                elevation={0}
+                sx={{
+                    p: { xs: 2, md: 3 },
+                    mb: 3,
+                    borderRadius: 3,
+                    background: theme.palette.mode === 'dark'
+                        ? 'linear-gradient(135deg, rgba(53, 75, 99, 0.35), rgba(28, 40, 56, 0.4))'
+                        : 'linear-gradient(135deg, #f4fff7, #e9f7ff)',
+                    border: `1px solid ${theme.palette.divider}`,
+                }}
+            >
+            <Box display="flex" justifyContent="space-between" alignItems="center" mb={0}>
                 <Box>
                     <Typography variant="h4" sx={{ fontWeight: 'bold' }}>
                         Budgets
                     </Typography>
-                    <Typography variant="subtitle1">
+                    <Typography variant="subtitle1" color="textSecondary">
                         Set and track your spending limits
                     </Typography>
                 </Box>
-                <Button variant="contained" startIcon={<AddIcon />} onClick={handleAddBudgetOpen}>
+                <Button
+                    variant="contained"
+                    startIcon={<AddIcon />}
+                    onClick={handleAddBudgetOpen}
+                    sx={{
+                        borderRadius: 3,
+                        px: 2.5,
+                        py: 1,
+                        textTransform: 'none',
+                        fontWeight: 700,
+                        boxShadow: '0 10px 24px rgba(25, 118, 210, 0.25)',
+                    }}
+                >
                     Add Budget
                 </Button>
             </Box>
+            </Paper>
 
             <Grid container spacing={3} alignItems="flex-start">
                 {budgets.map((budget) => {
@@ -211,7 +237,23 @@ function BudgetsPage() {
                 })}
                 {budgets.length === 0 && (
                     <Grid item xs={12} sx={{ textAlign: 'center', mt: 4 }}>
-                        <Paper elevation={10} sx={{ padding: 5, width: 1150, height: 350, borderRadius: 2, borderColor: 'primary.main', borderStyle: 'dashed' }}>
+                        <Paper
+                            elevation={0}
+                            sx={{
+                                p: 5,
+                                width: '100%',
+                                maxWidth: 980,
+                                minHeight: 320,
+                                borderRadius: 3,
+                                borderColor: 'primary.main',
+                                borderStyle: 'dashed',
+                                borderWidth: 1,
+                                mx: 'auto',
+                                background: theme.palette.mode === 'dark'
+                                    ? 'linear-gradient(180deg, rgba(255,255,255,0.03), rgba(255,255,255,0.01))'
+                                    : 'linear-gradient(180deg, #ffffff, #f8fbff)',
+                            }}
+                        >
                             <SavingsIcon sx={{ fontSize: 60, color: 'primary.main', mb: 2 }} />
                             <Typography variant="h6" color="textSecondary" mb={1}>
                                 No budgets set up yet
@@ -340,7 +382,18 @@ function AddBudgetDialog({ open, onClose, onAddBudget, categories, onAddCustomCa
     };
 
     return (
-        <Dialog open={open} onClose={onClose} fullWidth maxWidth="sm">
+            <Dialog
+                open={open}
+                onClose={onClose}
+                fullWidth
+                maxWidth="sm"
+                PaperProps={{
+                    sx: {
+                        borderRadius: 4,
+                        border: `1px solid ${theme.palette.divider}`,
+                    },
+                }}
+            >
             <DialogTitle sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
                 {editingBudget ? 'Edit Budget' : 'Add Budget'}
                 <IconButton aria-label="close" onClick={onClose}>
@@ -516,14 +569,16 @@ function AddBudgetDialog({ open, onClose, onAddBudget, categories, onAddCustomCa
 const BudgetProgressCard = ({ name, period, startDate, spent, amount, remaining, percent, onEdit, onDelete, currencySymbol }) => (
     <Card sx={{
         p: 3,
-        borderRadius: 3,
-        boxShadow: '0 8px 24px rgba(0,0,0,0.12)',
+        borderRadius: 4,
+        boxShadow: '0 12px 32px rgba(0,0,0,0.12)',
         mb: 2,
         minWidth: 320,
-        transition: 'all 0.3s ease-in-out',
+        border: '1px solid rgba(120, 144, 156, 0.2)',
+        background: 'linear-gradient(160deg, rgba(255,255,255,0.96), rgba(244,251,255,0.9))',
+        transition: 'all 0.25s ease-in-out',
         '&:hover': {
-            transform: 'translateY(-4px)',
-            boxShadow: '0 12px 32px rgba(0,0,0,0.18)'
+            transform: 'translateY(-6px)',
+            boxShadow: '0 18px 38px rgba(0,0,0,0.2)'
         }
     }}>
         <Box display="flex" justifyContent="space-between" alignItems="center" mb={1}>
