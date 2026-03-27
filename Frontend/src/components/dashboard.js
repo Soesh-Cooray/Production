@@ -386,27 +386,74 @@ const Dashboard = () => {
     },
   };
 
+  const addMonthsClamped = (date, months) => {
+    const base = new Date(date);
+    const day = base.getDate();
+    base.setDate(1);
+    base.setMonth(base.getMonth() + months);
+    const lastDay = new Date(base.getFullYear(), base.getMonth() + 1, 0).getDate();
+    base.setDate(Math.min(day, lastDay));
+    return base;
+  };
+
+  const addYearsClamped = (date, years) => {
+    const base = new Date(date);
+    const day = base.getDate();
+    base.setDate(1);
+    base.setFullYear(base.getFullYear() + years);
+    const lastDay = new Date(base.getFullYear(), base.getMonth() + 1, 0).getDate();
+    base.setDate(Math.min(day, lastDay));
+    return base;
+  };
+
+  const getNextPeriodDate = (date, period) => {
+    if (period === 'weekly') {
+      const next = new Date(date);
+      next.setDate(next.getDate() + 7);
+      return next;
+    }
+    if (period === 'yearly') {
+      return addYearsClamped(date, 1);
+    }
+    return addMonthsClamped(date, 1);
+  };
+
+  const getActivePeriodRange = (budget) => {
+    const start = new Date(budget.start_date);
+    if (Number.isNaN(start.getTime())) {
+      return null;
+    }
+
+    const now = new Date();
+    let periodStart = new Date(start);
+    let periodEnd = getNextPeriodDate(periodStart, budget.period);
+    let guard = 0;
+
+    while (periodEnd <= now && guard < 600) {
+      periodStart = periodEnd;
+      periodEnd = getNextPeriodDate(periodStart, budget.period);
+      guard += 1;
+    }
+
+    return { periodStart, periodEnd };
+  };
+
   // Helper to calculate spent for a budget
   const calculateSpent = (budget) => {
-    const budgetStart = new Date(budget.start_date);
-    let periodEnd;
-    if (budget.period === 'monthly') {
-      periodEnd = new Date(budgetStart.getFullYear(), budgetStart.getMonth() + 1, budgetStart.getDate());
-    } else if (budget.period === 'weekly') {
-      periodEnd = new Date(budgetStart);
-      periodEnd.setDate(periodEnd.getDate() + 7);
-    } else {
-      periodEnd = new Date(budgetStart);
-      periodEnd.setDate(periodEnd.getDate() + 1);
+    const activeRange = getActivePeriodRange(budget);
+    if (!activeRange) {
+      return 0;
     }
+
+    const { periodStart, periodEnd } = activeRange;
 
     return transactions
       .filter(txn => {
-        const txnCatId = typeof txn.category === 'object' ? txn.category.id : txn.category;
-        const budgetCatId = typeof budget.category === 'object' ? budget.category.id : budget.category;
+        const txnCatId = Number(typeof txn.category === 'object' ? txn.category.id : txn.category);
+        const budgetCatId = Number(typeof budget.category === 'object' ? budget.category.id : budget.category);
         return (
           txnCatId === budgetCatId &&
-          new Date(txn.date) >= budgetStart &&
+          new Date(txn.date) >= periodStart &&
           new Date(txn.date) < periodEnd
         );
       })
