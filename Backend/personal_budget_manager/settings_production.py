@@ -90,7 +90,7 @@ DJOSER = {
     'PASSWORD_CHANGED_EMAIL_CONFIRMATION': True,
     'USERNAME_CHANGED_EMAIL_CONFIRMATION': False,
     'PASSWORD_RESET_CONFIRM_RETYPE': True,
-    'PASSWORD_RESET_SHOW_EMAIL_NOT_FOUND': True,
+    'PASSWORD_RESET_SHOW_EMAIL_NOT_FOUND': False,
     'EMAIL': {
         'password_reset': 'accounts.emails.CustomPasswordResetEmail',
         'password_changed_confirmation': 'accounts.emails.CustomPasswordChangedEmail',
@@ -235,7 +235,7 @@ LOGGING = {
 }
 
 # Djoser / Email Settings
-DOMAIN = 'budget-master-app.vercel.app'
+DOMAIN = os.environ.get('FRONTEND_DOMAIN', 'production-budget-master-frontend.vercel.app')
 SITE_NAME = 'BudgetMaster'
 
 # Default primary key field type

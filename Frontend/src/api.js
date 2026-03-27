@@ -1,11 +1,29 @@
 
 import axios from 'axios';
 
-// Root API base (e.g., https://your-backend.vercel.app). Falls back to current origin
-export const API_BASE =
-  process.env.REACT_APP_API_BASE ||
-  (typeof window !== 'undefined' && window.__API_BASE__) ||
-  (typeof window !== 'undefined' ? window.location.origin : '');
+const PRODUCTION_API_BASE = 'https://production-budget-master-backend.vercel.app';
+
+const resolveApiBase = () => {
+  const envBase = process.env.REACT_APP_API_BASE;
+  if (envBase) {
+    return envBase;
+  }
+
+  if (typeof window !== 'undefined' && window.__API_BASE__) {
+    return window.__API_BASE__;
+  }
+
+  if (typeof window !== 'undefined') {
+    const host = window.location.hostname;
+    const isLocal = host === 'localhost' || host === '127.0.0.1';
+    return isLocal ? 'http://127.0.0.1:8000' : PRODUCTION_API_BASE;
+  }
+
+  return PRODUCTION_API_BASE;
+};
+
+// Root API base (frontend can still override with REACT_APP_API_BASE).
+export const API_BASE = resolveApiBase();
 
 // Budget endpoints live under /api/
 export const apiClient = axios.create({
