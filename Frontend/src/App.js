@@ -10,6 +10,7 @@ import ForgotPasswordPage from './components/forgotpasswordpage';
 import ResetPasswordConfirmPage from './components/resetpasswordconfirmpage';
 import BudgetsPage from './components/budgets';
 import SavingsGoalsPage from './components/savingsgoal';
+import DebtPage from './components/debt';
 import Dashboard from './components/dashboard';
 import Reports from './components/reports';
 import Sidebar from './components/sidebar';
@@ -20,7 +21,7 @@ import { DRAWER_WIDTH, COLLAPSED_WIDTH } from './constants';
 
 function App() {
     const location = useLocation();
-    const showSidebar = ['/transaction', '/budgets', '/savings-goals', '/reports', '/dashboard', '/settings', '/faq'].includes(location.pathname);
+    const showSidebar = ['/transaction', '/budgets', '/savings-goals', '/debts', '/reports', '/dashboard', '/settings', '/faq'].includes(location.pathname);
     const [open, setOpen] = useState(() => window.innerWidth >= 960);
 
     const handleDrawerToggle = () => {
@@ -103,6 +104,7 @@ function App() {
                         <Route path="/reset-password-confirm" element={<ResetPasswordConfirmPage />} />
                         <Route path="/budgets" element={<BudgetsPage />} />
                         <Route path="/savings-goals" element={<SavingsGoalsPage />} />
+                        <Route path="/debts" element={<DebtPage />} />
                         <Route path="/reports" element={<Reports />} />
                         <Route path="/dashboard" element={<Dashboard />} />
                         <Route path="/settings" element={<SettingsPage />} />

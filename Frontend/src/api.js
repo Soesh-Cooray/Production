@@ -67,6 +67,13 @@ export const savingsGoalAPI = {
   delete: (id) => apiClient.delete(`savings-goals/${id}/`),
 };
 
+export const debtAPI = {
+  getAll: () => apiClient.get('debts/'),
+  create: (debtData) => apiClient.post('debts/', debtData),
+  update: (id, debtData) => apiClient.put(`debts/${id}/`, debtData),
+  delete: (id) => apiClient.delete(`debts/${id}/`),
+};
+
 //  currency list
 export const currencyList = [
   { code: 'USD', symbol: '$', name: 'US Dollar' },
@@ -145,6 +152,7 @@ const api = {
   category: categoryAPI,
   budget: budgetAPI,
   savingsGoal: savingsGoalAPI,
+  debt: debtAPI,
 };
 
 export default api;

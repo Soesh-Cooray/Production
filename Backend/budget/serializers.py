@@ -4,6 +4,7 @@ from rest_framework import serializers
 from django.db.models import Sum
 from .models import Budget, Category, Transaction
 from .models import SavingsGoal
+from .models import Debt
 
 
 # Serializer for the Category model
@@ -95,3 +96,39 @@ class SavingsGoalSerializer(serializers.ModelSerializer):
         current = self.get_current_amount(obj)
         percent = (current / obj.target_amount) * Decimal('100')
         return percent if percent <= 100 else Decimal('100.00')
+
+
+class DebtSerializer(serializers.ModelSerializer):
+    type = serializers.CharField(source='debt_type')
+
+    class Meta:
+        model = Debt
+        fields = [
+            'id',
+            'user',
+            'title',
+            'person',
+            'type',
+            'total_amount',
+            'paid_amount',
+            'due_date',
+            'notes',
+            'created_at',
+            'updated_at',
+        ]
+        read_only_fields = ['id', 'user', 'created_at', 'updated_at']
+
+    def validate(self, attrs):
+        total_amount = attrs.get('total_amount', getattr(self.instance, 'total_amount', None))
+        paid_amount = attrs.get('paid_amount', getattr(self.instance, 'paid_amount', Decimal('0.00')))
+
+        if total_amount is not None and total_amount <= 0:
+            raise serializers.ValidationError({'total_amount': 'Total amount must be greater than 0.'})
+
+        if paid_amount is not None and paid_amount < 0:
+            raise serializers.ValidationError({'paid_amount': 'Paid amount cannot be negative.'})
+
+        if total_amount is not None and paid_amount is not None and paid_amount > total_amount:
+            raise serializers.ValidationError({'paid_amount': 'Paid amount cannot exceed total amount.'})
+
+        return attrs
