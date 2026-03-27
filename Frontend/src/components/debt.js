@@ -23,6 +23,7 @@ import {
 	TableRow,
 	TextField,
 	Typography,
+	useMediaQuery,
 	useTheme,
 } from '@mui/material';
 import AddIcon from '@mui/icons-material/Add';
@@ -73,6 +74,7 @@ function statusConfig(status) {
 
 function DebtPage() {
 	const theme = useTheme();
+	const isMobile = useMediaQuery(theme.breakpoints.down('md'));
 	const [debts, setDebts] = useState([]);
 	const [loading, setLoading] = useState(true);
 	const [currencySymbol, setCurrencySymbol] = useState(getCurrencySymbol());
@@ -333,62 +335,66 @@ function DebtPage() {
 	};
 
 	return (
-		<Container maxWidth="xl" sx={{ py: 3 }}>
+		<Container maxWidth="xl" sx={{ py: 4, minHeight: '100vh' }}>
 			{loading && (
 				<Paper sx={{ p: 2, mb: 2, borderRadius: 2 }}>
 					<Typography color="text.secondary">Loading debts...</Typography>
 				</Paper>
 			)}
-			<Paper
-				elevation={0}
-				sx={{
-					p: { xs: 2, md: 3 },
-					mb: 3,
+			<Box
+				display="flex"
+				justifyContent="space-between"
+				alignItems="center"
+				mb={4}
+				flexWrap="wrap"
+				gap={2}
+				sx={!isMobile ? {
+					p: 3,
 					borderRadius: 3,
-					background:
-						theme.palette.mode === 'dark'
-							? 'linear-gradient(135deg, rgba(60, 72, 84, 0.45), rgba(22, 28, 36, 0.4))'
-							: 'linear-gradient(135deg, #f6f9ff, #f1fff9)',
 					border: `1px solid ${theme.palette.divider}`,
-				}}
+					background: theme.palette.mode === 'dark'
+						? 'linear-gradient(135deg, rgba(45,56,72,0.5), rgba(26,32,44,0.45))'
+						: 'linear-gradient(135deg, #f5fffa, #edf4ff)',
+				} : undefined}
 			>
-				<Box
+				<Box>
+					<Typography variant="h4" sx={{ fontWeight: 800, mb: 1 }}>
+						Debt Management
+					</Typography>
+					<Typography variant="body1" color="text.secondary">
+						Track money you owe and money owed to you.
+					</Typography>
+				</Box>
+				<Button
+					variant="contained"
+					startIcon={<AddIcon />}
+					onClick={openCreateDialog}
 					sx={{
-						display: 'flex',
-						justifyContent: 'space-between',
-						alignItems: { xs: 'flex-start', md: 'center' },
-						flexDirection: { xs: 'column', md: 'row' },
-						gap: 2,
+						borderRadius: 3,
+						px: 3,
+						py: 1.5,
+						fontWeight: 'bold',
+						boxShadow: '0 4px 14px 0 rgba(0,0,0,0.15)',
+						textTransform: 'none',
 					}}
 				>
-					<Box>
-						<Typography variant="h4" sx={{ fontWeight: 700 }}>
-							Debt Management
-						</Typography>
-						<Typography variant="subtitle1" color="text.secondary">
-							Track money you owe and money owed to you.
-						</Typography>
-					</Box>
-					<Button
-						variant="contained"
-						startIcon={<AddIcon />}
-						onClick={openCreateDialog}
-						sx={{
-							borderRadius: 3,
-							px: 2.5,
-							py: 1,
-							textTransform: 'none',
-							fontWeight: 700,
-						}}
-					>
-						Add Debt
-					</Button>
-				</Box>
-			</Paper>
+					Add Debt
+				</Button>
+			</Box>
 
 			<Grid container spacing={2} sx={{ mb: 3 }}>
 				<Grid item xs={12} md={4}>
-					<Paper sx={{ p: 2.5, borderRadius: 3, height: '100%' }}>
+					<Paper
+						sx={{
+							p: 2.5,
+							borderRadius: 3,
+							height: '100%',
+							border: `1px solid ${theme.palette.divider}`,
+							boxShadow: theme.palette.mode === 'dark'
+								? '0 8px 20px rgba(0,0,0,0.3)'
+								: '0 8px 20px rgba(34, 67, 115, 0.08)',
+						}}
+					>
 						<Typography variant="body2" color="text.secondary">
 							I Owe
 						</Typography>
@@ -398,7 +404,17 @@ function DebtPage() {
 					</Paper>
 				</Grid>
 				<Grid item xs={12} md={4}>
-					<Paper sx={{ p: 2.5, borderRadius: 3, height: '100%' }}>
+					<Paper
+						sx={{
+							p: 2.5,
+							borderRadius: 3,
+							height: '100%',
+							border: `1px solid ${theme.palette.divider}`,
+							boxShadow: theme.palette.mode === 'dark'
+								? '0 8px 20px rgba(0,0,0,0.3)'
+								: '0 8px 20px rgba(34, 67, 115, 0.08)',
+						}}
+					>
 						<Typography variant="body2" color="text.secondary">
 							Owed To Me
 						</Typography>
@@ -408,7 +424,17 @@ function DebtPage() {
 					</Paper>
 				</Grid>
 				<Grid item xs={12} md={4}>
-					<Paper sx={{ p: 2.5, borderRadius: 3, height: '100%' }}>
+					<Paper
+						sx={{
+							p: 2.5,
+							borderRadius: 3,
+							height: '100%',
+							border: `1px solid ${theme.palette.divider}`,
+							boxShadow: theme.palette.mode === 'dark'
+								? '0 8px 20px rgba(0,0,0,0.3)'
+								: '0 8px 20px rgba(34, 67, 115, 0.08)',
+						}}
+					>
 						<Typography variant="body2" color="text.secondary">
 							Overdue Entries
 						</Typography>
@@ -419,38 +445,138 @@ function DebtPage() {
 				</Grid>
 			</Grid>
 
-			<TableContainer component={Paper} sx={{ borderRadius: 3 }}>
-				<Table>
-					<TableHead>
-						<TableRow>
-							<TableCell>Debt</TableCell>
-							<TableCell>Type</TableCell>
-							<TableCell align="right">Total</TableCell>
-							<TableCell align="right">Paid</TableCell>
-							<TableCell align="right">Remaining</TableCell>
-							<TableCell>Due Date</TableCell>
-							<TableCell>Status</TableCell>
-							<TableCell align="right">Actions</TableCell>
-						</TableRow>
-					</TableHead>
-					<TableBody>
-						{debts.length === 0 ? (
+			{debts.length === 0 ? (
+				<Paper
+					sx={{
+						py: 5,
+						px: 2,
+						borderRadius: 4,
+						textAlign: 'center',
+						border: `1px solid ${theme.palette.divider}`,
+						boxShadow: theme.palette.mode === 'dark'
+							? '0 10px 28px rgba(0,0,0,0.35)'
+							: '0 10px 25px rgba(34, 67, 115, 0.1)',
+					}}
+				>
+					<Stack spacing={1} alignItems="center">
+						<CreditCardIcon color="disabled" sx={{ fontSize: 44 }} />
+						<Typography variant="h6">No debts added yet</Typography>
+						<Typography color="text.secondary">
+							Create your first debt entry to start tracking repayments.
+						</Typography>
+						<Button variant="outlined" onClick={openCreateDialog} startIcon={<AddIcon />}>
+							Add First Debt
+						</Button>
+					</Stack>
+				</Paper>
+			) : isMobile ? (
+				<Stack spacing={2}>
+					{debts.map((debt) => {
+						const remaining = Math.max(Number(debt.totalAmount) - Number(debt.paidAmount), 0);
+						const status = getStatus(debt);
+						const config = statusConfig(status);
+
+						return (
+							<Paper
+								key={debt.id}
+								sx={{
+									p: 2,
+									borderRadius: 4,
+									border: `1px solid ${theme.palette.divider}`,
+									boxShadow: theme.palette.mode === 'dark'
+										? '0 10px 24px rgba(0,0,0,0.35)'
+										: '0 10px 22px rgba(34, 67, 115, 0.1)',
+								}}
+							>
+								<Box display="flex" justifyContent="space-between" alignItems="flex-start" mb={1}>
+									<Typography sx={{ fontWeight: 700, pr: 1 }}>{debt.title}</Typography>
+									<Typography sx={{ fontWeight: 700 }}>
+										{currencySymbol}{remaining.toFixed(2)}
+									</Typography>
+								</Box>
+
+								<Box display="flex" alignItems="center" flexWrap="wrap" gap={1} mb={1}>
+									<Chip
+										label={debt.type === 'i_owe' ? 'I Owe' : 'Owed To Me'}
+										size="small"
+										color={debt.type === 'i_owe' ? 'default' : 'primary'}
+										variant={debt.type === 'i_owe' ? 'outlined' : 'filled'}
+									/>
+									<Chip label={config.label} size="small" color={config.color} />
+									<Typography variant="caption" color="text.secondary" sx={{ ml: 'auto' }}>
+										{debt.dueDate ? new Date(debt.dueDate).toLocaleDateString() : 'No due date'}
+									</Typography>
+								</Box>
+
+								<Typography variant="body2" color="text.secondary" mb={1}>
+									{debt.person}
+								</Typography>
+
+								<Box display="flex" justifyContent="space-between" mb={1}>
+									<Typography variant="body2" color="text.secondary">
+										Total: {currencySymbol}{Number(debt.totalAmount).toFixed(2)}
+									</Typography>
+									<Typography variant="body2" color="text.secondary">
+										Paid: {currencySymbol}{Number(debt.paidAmount).toFixed(2)}
+									</Typography>
+								</Box>
+
+								<Box display="flex" justifyContent="flex-end" gap={1}>
+									<IconButton
+										color="success"
+										onClick={() => openPaymentDialog(debt)}
+										title="Update payment"
+									>
+										<PaymentsIcon fontSize="small" />
+									</IconButton>
+									<IconButton
+										color="primary"
+										onClick={() => openEditDialog(debt)}
+										title="Edit debt"
+									>
+										<EditIcon fontSize="small" />
+									</IconButton>
+									<IconButton
+										color="error"
+										onClick={() => handleDeleteDebt(debt.id)}
+										title="Delete debt"
+									>
+										<DeleteIcon fontSize="small" />
+									</IconButton>
+								</Box>
+							</Paper>
+						);
+					})}
+				</Stack>
+			) : (
+				<TableContainer
+					component={Paper}
+					sx={{
+						borderRadius: 4,
+						border: `1px solid ${theme.palette.divider}`,
+						background: theme.palette.mode === 'dark'
+							? 'linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01))'
+							: 'linear-gradient(180deg, #ffffff, #f8fbff)',
+						boxShadow: theme.palette.mode === 'dark'
+							? '0 10px 30px rgba(0,0,0,0.35)'
+							: '0 12px 30px rgba(34, 67, 115, 0.12)',
+					}}
+				>
+					<Table>
+						<TableHead>
 							<TableRow>
-								<TableCell colSpan={8} align="center" sx={{ py: 5 }}>
-									<Stack spacing={1} alignItems="center">
-										<CreditCardIcon color="disabled" sx={{ fontSize: 44 }} />
-										<Typography variant="h6">No debts added yet</Typography>
-										<Typography color="text.secondary">
-											Create your first debt entry to start tracking repayments.
-										</Typography>
-										<Button variant="outlined" onClick={openCreateDialog} startIcon={<AddIcon />}>
-											Add First Debt
-										</Button>
-									</Stack>
-								</TableCell>
+								<TableCell>Debt</TableCell>
+								<TableCell>Type</TableCell>
+								<TableCell align="right">Total</TableCell>
+								<TableCell align="right">Paid</TableCell>
+								<TableCell align="right">Remaining</TableCell>
+								<TableCell>Due Date</TableCell>
+								<TableCell>Status</TableCell>
+								<TableCell align="right">Actions</TableCell>
 							</TableRow>
-						) : (
-							debts.map((debt) => {
+						</TableHead>
+						<TableBody>
+							{debts.map((debt) => {
 								const remaining = Math.max(Number(debt.totalAmount) - Number(debt.paidAmount), 0);
 								const status = getStatus(debt);
 								const config = statusConfig(status);
@@ -509,11 +635,11 @@ function DebtPage() {
 										</TableCell>
 									</TableRow>
 								);
-							})
-						)}
-					</TableBody>
-				</Table>
-			</TableContainer>
+							})}
+						</TableBody>
+					</Table>
+				</TableContainer>
+			)}
 
 			<Dialog open={dialogOpen} onClose={closeDialog} maxWidth="sm" fullWidth>
 				<DialogTitle>{editingDebtId ? 'Update Debt' : 'Add Debt'}</DialogTitle>
